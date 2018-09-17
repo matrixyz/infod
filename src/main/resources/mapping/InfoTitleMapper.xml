@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzsc.infod.mapper.InfoTitleMapper">
+
+    <select id="selectJoin" resultType="com.zzsc.infod.model.InfoTitleDto" parameterType="com.zzsc.infod.model.InfoTitleDto"  >
+        SELECT
+              tid,
+              title,
+              des,
+              cre_time,
+              creator
+        FROM
+        info_title
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+           <if test="tid!=null">AND tid=#{tid}</if>
+           <if test="title!=null">AND title=#{title}</if>
+           <if test="des!=null">AND des=#{des}</if>
+           <if test="creTime!=null">AND cre_time=#{creTime}</if>
+           <if test="creator!=0">AND creator=#{creator}</if>
+        </trim>
+    </select>
+</mapper>
