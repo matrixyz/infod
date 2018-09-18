@@ -33,10 +33,39 @@ public class FileUtil {
         return temp;
 
     }
+    public static File[] getFilesInPath(String path){
+        File newFile = new File(path);
+        File[] res=null;
+        if (!newFile.exists()||!newFile.isDirectory()) {
+            return null;
+        }else {
+            String [] fileNames=newFile.list();
+            int len= fileNames.length;
+              res=new File[len];
+            for (int i = 0; i < len; i++) {
+                res[i]=new File(path+"/"+fileNames[i]);
+            }
+        }
+        return  res;
+    }
+    /**
+     *
+     * @param unit 单位大小
+     * @param size 总大小，单位字节
+     * @return
+     */
+    public static String getFileSize(char unit,long size){
+        if(unit=='k'){
+            return (long)(size/1000)+"KB";
+        }else if(unit=='m'){
+            return (long)(size/1000000)+"MB";
+        }
+        return size+"byte";
+    }
     /**-----------------------------------------------------------------------
      *getAppPath需要一个当前程序使用的Java类的class属性参数，它可以返回打包过的
      *Java可执行文件（jar，war）所处的系统目录名或非打包Java程序所处的目录
-     *@param cls为Class类型
+     *@param   acls为Class类型
      *@return 返回值为该类所在的Java程序运行的目录
     -------------------------------------------------------------------------*/
     public static String getAppPath(Class cls){

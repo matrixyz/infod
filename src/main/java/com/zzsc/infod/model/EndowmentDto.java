@@ -5,7 +5,18 @@ public class EndowmentDto extends Endowment{
     String page;
     String beginDate;
     String endDate;
+    int repeatTimes;//重复次数
 
+    public int getRepeatTimes() {
+        return repeatTimes;
+    }
+
+    public void setRepeatTimes(int repeatTimes) {
+        this.repeatTimes = repeatTimes;
+    }
+    public void setRepeatTimesAdd( ) {
+        this.repeatTimes+=1;
+    }
     public String getPage() {
         return page;
     }

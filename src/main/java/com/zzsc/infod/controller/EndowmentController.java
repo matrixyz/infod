@@ -40,14 +40,12 @@ public class EndowmentController {
         if (endowmentDto.getPage() == null||"".equals(endowmentDto.getPage())) {
             endowmentDto.setPage("1");
         }
-        System.out.println("");
-        int pageNum= Integer.parseInt(endowmentDto.getPage());
-        PageHelper.startPage(pageNum,10);
+
 
 
         List<EndowmentDto> list=EndowmentService.list(endowmentDto);
-        PageInfo<EndowmentDto> pageInfo = new PageInfo<>(list);
-        model.addAttribute("pageInfo",pageInfo);
+
+
         model.addAttribute("EndowmentList",list);
         model.addAttribute("queryParams",endowmentDto);
         return "adm/Endowment-list";
