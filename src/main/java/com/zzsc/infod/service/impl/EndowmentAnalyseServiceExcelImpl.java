@@ -4,9 +4,8 @@ import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.StringUtil;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
+
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.ArrayList;
@@ -18,8 +17,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
 
-    @Override
-    public List<EndowmentDto> analyseCityExcel(File file) {
+
+    /*public List<EndowmentDto> analyseCityExcel(File file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
         try {
@@ -65,6 +64,58 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             e.printStackTrace();
         }
         return EndowmentDtos;
+    }*/
+
+    public   List<EndowmentDto> analyseCityExcel(File file) {
+        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+        if (true) {
+            Workbook workbook = null;
+
+
+            try {
+
+
+                workbook = WorkbookFactory.create(file); //使用WorkbookFactory创建，会安装xls或xlsx
+                Sheet sheet = workbook.getSheetAt(0);
+                if (null != sheet) {
+                    int rowNo = sheet.getLastRowNum();
+                    for (int i = 3; i < rowNo; i++) {
+
+
+                        Row row = sheet.getRow(i);
+
+
+                        EndowmentDto endowmentDto = new EndowmentDto();
+
+                        if (StringUtil.isNotEmpty(row.getCell(2).getRichStringCellValue().getString())) {
+                            endowmentDto.setCid(row.getCell(2).getRichStringCellValue().getString());
+                        }
+                        if (StringUtil.isNotEmpty(row.getCell(3).getRichStringCellValue().getString())) {
+                            endowmentDto.setName(row.getCell(3).getRichStringCellValue().getString());
+                        }
+
+                        EndowmentDtos.add(endowmentDto);
+
+
+                        System.out.print("  ");
+
+                    }
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    workbook.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return EndowmentDtos;
+
     }
 
     @Override
