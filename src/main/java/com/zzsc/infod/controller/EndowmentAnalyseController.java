@@ -14,17 +14,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.beans.PropertyEditorSupport;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -155,7 +157,7 @@ public class EndowmentAnalyseController {
     }
 
     @RequestMapping(value="/excelAnalyseList",method= RequestMethod.GET)
-    public String  excelAnalyseList( Model model, EndowmentDto endowmentDto) throws IOException {
+    public String  excelAnalyseList( Model model, EndowmentDto endowmentDto,BindingResult bindingResult) throws IOException {
         if (StringUtil.isEmpty(endowmentDto.getPage()) ) {
             endowmentDto.setPage("1");
         }
@@ -182,5 +184,21 @@ public class EndowmentAnalyseController {
         return  "adm/EndowmentAnalyseExcelResut-list";
 
     }
+    @InitBinder
+    public void InitBinder(WebDataBinder dataBinder) {
+        dataBinder.registerCustomEditor(Date.class, new PropertyEditorSupport() {
+            public void setAsText(String value) {
+                try {
+                    setValue(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value));
+                } catch(ParseException e) {
+                    setValue(null);
+                }
+            }
 
+            public String getAsText() {
+                return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) getValue());
+            }
+
+        });
+    }
 }

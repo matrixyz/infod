@@ -104,7 +104,7 @@ public class PageBean<T> {
         if(totalCount%pageSize==0)
             this.toIndex=fromIndex+pageSize-1;
         else
-            this.toIndex=totalCount%pageSize;
+            this.toIndex=this.fromIndex+totalCount%pageSize;
 
         int pagesListSize=(int)Math.ceil(totalPages*1.0/pageListSize);
         for(int i=0;i<=pagesListSize;i++){

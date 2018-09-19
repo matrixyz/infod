@@ -53,8 +53,8 @@
                                         </div>
                                         <label class="col-sm-1 control-label no-padding-right" for="beginDate"> 添加时间：</label>
                                         <div class="col-sm-3">
-                                            <input readonly="readonly"  type="text" id="beginDate" name="beginDate" placeholder="客户添加时间开始" class="col-sm-6 "  th:value="${queryParams.beginDate==null?'':#dates.format(queryParams.beginDate,'yyyy-MM-dd HH:mm:ss')}" />
-                                            <input  readonly="readonly" type="text" id="endDate" name="endDate" placeholder="客户添加时间结束" class="col-sm-6 "  th:value="${queryParams.endDate==null?'':#dates.format(queryParams.endDate,'yyyy-MM-dd HH:mm:ss')}" />
+                                            <input readonly="readonly"  type="text" id="beginDate" name="beginDate" placeholder="客户添加时间开始" class="col-sm-6 "  th:value="${queryParams.beginDate}" />
+                                            <input  readonly="readonly" type="text" id="endDate" name="endDate" placeholder="客户添加时间结束" class="col-sm-6 "  th:value="${queryParams.endDate}" />
                                         </div>
                                         <label class="col-sm-1 control-label no-padding-right"   > 客户经理：</label>
                                         <div class="col-sm-3">
