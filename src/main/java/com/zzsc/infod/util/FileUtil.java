@@ -132,5 +132,26 @@ public class FileUtil {
         File jarFile = home.getSource();
         return jarFile.getParentFile().getPath();
     }
-
+    /**
+     * 递归删除目录下的所有文件及子目录下所有文件
+     * @param path 将要删除的文件目录
+     * @return boolean Returns "true" if all deletions were successful.
+     *                 If a deletion fails, the method stops attempting to
+     *                 delete and returns "false".
+     */
+    public static boolean deleteDir(String path) {
+        File dir=new File(path);
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            //递归删除目录中的子目录下
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir( path+"/"+children[i]);
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        // 目录此时为空，可以删除
+        return true;
+    }
 }

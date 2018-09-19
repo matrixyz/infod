@@ -121,26 +121,26 @@
 
                                     <div class="modal-footer no-margin-top">
                                         <span class=" pull-left no-margin"  >共计</span>
-                                        <span class=" pull-left no-margin" th:text="${pageInfo.total}" style="color: #00B83F"></span>
+                                        <span class=" pull-left no-margin"  style="color: #00B83F"></span>
                                         <span class=" pull-left no-margin"  >条记录</span>
                                         <span class=" pull-left no-margin"  >&nbsp;&nbsp;共计</span>
-                                        <span class=" pull-left no-margin" th:text="${pageInfo.pages}"></span>
+                                        <span class=" pull-left no-margin" ></span>
                                         <span class=" pull-left no-margin"  >页</span>
 
                                         <span class=" pull-left no-margin"  >&nbsp;&nbsp;当前在第</span>
-                                        <span class=" pull-left no-margin" th:text="${pageInfo.pageNum}"></span>
+                                        <span class=" pull-left no-margin"></span>
                                         <span class=" pull-left no-margin"  >页</span>
 
 
                                         <span class=" pull-right no-margin"  >
                                         <ul class="pagination pull-left no-margin" >
-                                            <li th:class="${pageInfo.isFirstPage}?'disabled':''" ><a th:href="'javascript:gotopage(1)'" >首页</a></li>
-                                            <li th:class="${pageInfo.hasPreviousPage}?'':'disabled'" ><a th:href="'javascript:gotopage('+${pageInfo.prePage}+')'">&laquo;</a></li>
-                                            <li th:each="i:${pageInfo.navigatepageNums}"   th:class="${pageInfo.pageNum==i}?'active':''">
-                                                <a   th:href="'javascript:gotopage('+${i}+')'" th:text="${i}" ></a>
+                                            <li><a th:href="'javascript:gotopage(1)'" >首页</a></li>
+                                            <li ><a th:href="'javascript:gotopage()'">&laquo;</a></li>
+                                            <li>
+                                                <a   th:href="'javascript:gotopage()'" th:text="${i}" ></a>
                                             </li>
-                                            <li  th:class="${pageInfo.hasNextPage}?'':'disabled'" ><a th:href="'javascript:gotopage('+${pageInfo.nextPage}+')'">&raquo;</a></li>
-                                            <li th:class="${pageInfo.isLastPage}?'disabled':''" ><a th:href="'javascript:gotopage('+${pageInfo.pages}+')'">尾页</a></li>
+                                            <li  ><a th:href="'javascript:gotopage()'">&raquo;</a></li>
+                                            <li><a th:href="'javascript:gotopage()'">尾页</a></li>
                                         </ul>
                                         </span>
                                     </div>
@@ -291,7 +291,6 @@
 
             var data = new FormData();
 
-            alert(files.length);
             var len=files.length;
             for(var i=0;i<len;i++) {
                 data.append('inputfile', files[i]);
@@ -328,6 +327,37 @@
 
 
         });
+        function getList() {
+            $('#postResWarning').modal('show');
+            $.ajax({
+                url: '/EndowmentAnalyse/list',
+                type: 'GET',
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(msg){
+                    var detail="<tr>";
+                    $.each(msg,function(index,value) {
+                        detail+="<tr>";
+                        detail+="<td ><input type='checkbox' id='cbx"+value.id+"' /></td>"
+                        detail+="<td>"+value.fileName+"</td>"
+
+                        detail+="<td>"+value.fileSize+"</td>"
+                        detail+="<td>"+value.fileType+"</td>"
+                        detail+="<td>"+value.dataSize+"</td>"
+                        detail+="<td>"+value.uploadProgress+"</td>"
+                        detail+="<td>"+value.result+"</td>"
+                        detail+="<td><a href='javascript:delfile("+value.id+")'>删除</a></td>"
+                        detail+="</tr>";
+                    });
+
+                    $('#uploadDataInfoList').html(detail);
+                    console.log(detail);
+                    $('#postResWarning').modal('hide');
+                }
+            });
+        }
+        getList();
     });
 </script>
 </body>

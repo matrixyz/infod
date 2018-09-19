@@ -17,8 +17,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
 
-
-    /*public List<EndowmentDto> analyseCityExcel(File file) {
+    @Override
+   /* public List<EndowmentDto> analyseCityExcel(File file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
         try {
@@ -65,57 +65,40 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         }
         return EndowmentDtos;
     }*/
-
-    public   List<EndowmentDto> analyseCityExcel(File file) {
+    public List<EndowmentDto> analyseCityExcel(File file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
-        if (true) {
-            Workbook workbook = null;
+
+        Workbook workbook = null;
+        try {
+
+            workbook = WorkbookFactory.create(file);
+            //工作表对象
+            Sheet sheet = workbook.getSheetAt(0);
+             int rowLength=sheet.getLastRowNum();
+
+            for (int i = 3; i < rowLength; i++) {
+                Row  row = sheet.getRow(i);
+                EndowmentDto endowmentDto=new EndowmentDto();
+                endowmentDto.setCid(row.getCell(2).toString());
+                endowmentDto.setName(row.getCell(3).toString());
+                EndowmentDtos.add(endowmentDto);
+            }
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
             try {
-
-
-                workbook = WorkbookFactory.create(file); //使用WorkbookFactory创建，会安装xls或xlsx
-                Sheet sheet = workbook.getSheetAt(0);
-                if (null != sheet) {
-                    int rowNo = sheet.getLastRowNum();
-                    for (int i = 3; i < rowNo; i++) {
-
-
-                        Row row = sheet.getRow(i);
-
-
-                        EndowmentDto endowmentDto = new EndowmentDto();
-
-                        if (StringUtil.isNotEmpty(row.getCell(2).getRichStringCellValue().getString())) {
-                            endowmentDto.setCid(row.getCell(2).getRichStringCellValue().getString());
-                        }
-                        if (StringUtil.isNotEmpty(row.getCell(3).getRichStringCellValue().getString())) {
-                            endowmentDto.setName(row.getCell(3).getRichStringCellValue().getString());
-                        }
-
-                        EndowmentDtos.add(endowmentDto);
-
-
-                        System.out.print("  ");
-
-                    }
-                }
-
-
-            } catch (Exception e) {
+                workbook.close();
+            } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    workbook.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
             }
         }
-        return EndowmentDtos;
 
+
+
+
+        return EndowmentDtos;
     }
 
     @Override

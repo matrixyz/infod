@@ -7,6 +7,8 @@ import com.zzsc.infod.model.EndowmentAnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
+import com.zzsc.infod.util.PageBean;
+import com.zzsc.infod.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -41,31 +43,59 @@ public class EndowmentAnalyseController {
     @Autowired
     HttpSession session;
 
+    @ResponseBody
     @RequestMapping(value="/list",method= RequestMethod.GET )
-    public String getList(Model model, EndowmentDto endowmentDto  ){
+    public  List<EndowmentAnalyseExcelUploadDto> getList(  EndowmentDto endowmentDto  ){
 
         if (endowmentDto.getPage() == null||"".equals(endowmentDto.getPage())) {
             endowmentDto.setPage("1");
         }
-        System.out.println("");
         int pageNum= Integer.parseInt(endowmentDto.getPage());
-        PageHelper.startPage(pageNum,10);
-
-
         List<EndowmentAnalyseExcelUploadDto> list=new ArrayList<>();
-        EndowmentAnalyseExcelUploadDto temp=new EndowmentAnalyseExcelUploadDto();
-        temp.setFileName("没有数据!");
-        list.add(temp);
-        PageInfo<EndowmentAnalyseExcelUploadDto> pageInfo = new PageInfo<>(list);
-        model.addAttribute("pageInfo",pageInfo);
-        model.addAttribute("EndowmentAnalyseExcelUploadDto",list);
+        File[] files=FileUtil.getFilesInPath(endowmentCityUpload);
+        int id=1;
+        for ( File file:files){
+            String fileName=       file.getName();
+
+            EndowmentAnalyseExcelUploadDto info=new EndowmentAnalyseExcelUploadDto();
+
+            info.setFileName(fileName);
+            info.setDataSize(FileUtil.getFileSize('k',file.length()));
+            info.setFileType("Excel");
+            info.setUploadProgress(100);
+            info.setResult("上传成功");
+            info.setId(id++);
+            list.add(info);
+        }
+
+       if(files.length==0){
+           EndowmentAnalyseExcelUploadDto temp=new EndowmentAnalyseExcelUploadDto();
+           temp.setFileName("没有数据!");
+           list.add(temp);
+       }
+
+
+
+
+        return list;
+    }
+
+
+    @RequestMapping(value="/listview",method= RequestMethod.GET )
+    public String getListview(Model model, EndowmentDto endowmentDto  ){
+
 
         return "adm/EndowmentAnalyseExcelUpload-list";
     }
+
+
     @ResponseBody
     @RequestMapping("/upload")
     public List<EndowmentAnalyseExcelUploadDto>  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files, HttpServletRequest request) throws IOException {
 
+
+        if(files.length>0)
+            FileUtil.delPath(endowmentCityUpload);
         List<EndowmentAnalyseExcelUploadDto> list=new ArrayList<>();
         int id=1;
         for ( MultipartFile file:files){
@@ -82,7 +112,6 @@ public class EndowmentAnalyseController {
             list.add(info);
             File temp=new File(endowmentCityUpload+"\\"+fileName);
             file.getSize();
-            System.out.println(fileName);
 
 
             if (file.getSize()<1024*1000){
@@ -127,19 +156,24 @@ public class EndowmentAnalyseController {
 
     @RequestMapping(value="/excelAnalyseList",method= RequestMethod.GET)
     public String  excelAnalyseList( Model model, EndowmentDto endowmentDto) throws IOException {
-        if (endowmentDto.getPage() == null||"".equals(endowmentDto.getPage())) {
+        if (StringUtil.isEmpty(endowmentDto.getPage()) ) {
             endowmentDto.setPage("1");
         }
         if(applications.getAttribute(Constant.endowmentCityApplication)!=null){
+
+
             List<EndowmentDto> lists=( List<EndowmentDto>)applications.getAttribute(Constant.endowmentCityApplication);
             int pageNum= Integer.parseInt(endowmentDto.getPage());
-            PageHelper.startPage(pageNum,50);
+
+            PageBean pageInfo=new PageBean();
+           // pageInfo.setPageList(lists);
+            pageInfo.setTotalCount(lists.size());
+            pageInfo.setPageNo(pageNum);
 
 
-            PageInfo<EndowmentDto> pageInfo = new PageInfo<>(lists);
 
             model.addAttribute("pageInfo",pageInfo);
-            model.addAttribute("EndowmentList",lists);
+            model.addAttribute("EndowmentList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
             model.addAttribute("queryParams",endowmentDto);
         }
 

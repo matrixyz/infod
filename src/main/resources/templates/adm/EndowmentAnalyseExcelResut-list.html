@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
-                                <form id="form-Endowment"   role="form" action="/Endowment/list" METHOD="get">
+                                <form id="form-Endowment"   role="form" action="/EndowmentAnalyse/excelAnalyseList" METHOD="get">
                                     <div class="row">
                                         <label class="col-sm-1 control-label no-padding-right" for="custAddr"> 客户姓名：</label>
                                         <div class="col-sm-3">
@@ -103,7 +103,7 @@
                                         </tr>
                                         </thead>
 
-                                        <tbody>
+                                        <tbody >
 
                                         <tr th:each="item:${EndowmentList}">
                                             <!--复选框-->
@@ -124,6 +124,31 @@
                                         </tbody>
                                     </table>
 
+                                    <div class="modal-footer no-margin-top">
+                                        <span class=" pull-left no-margin"  >共计</span>
+                                        <span class=" pull-left no-margin" th:text="${pageInfo.totalCount}" style="color: #00B83F"></span>
+                                        <span class=" pull-left no-margin"  >条记录</span>
+                                        <span class=" pull-left no-margin"  >&nbsp;&nbsp;共计</span>
+                                        <span class=" pull-left no-margin" th:text="${pageInfo.totalPages}"></span>
+                                        <span class=" pull-left no-margin"  >页</span>
+
+                                        <span class=" pull-left no-margin"  >&nbsp;&nbsp;当前在第</span>
+                                        <span class=" pull-left no-margin" th:text="${pageInfo.pageNo}"></span>
+                                        <span class=" pull-left no-margin"  >页</span>
+
+
+                                        <span class=" pull-right no-margin"  >
+                                        <ul class="pagination pull-left no-margin" >
+                                            <li th:class="${pageInfo.isFirstPage}?'disabled':''" ><a th:href="'javascript:gotopage(1)'" >首页</a></li>
+                                            <li th:class="${pageInfo.hasPreviousPage}?'':'disabled'" ><a th:href="'javascript:gotopage('+${pageInfo.prePage}+')'">&laquo;</a></li>
+                                            <li th:each="i:${pageInfo.navigatepageNums}"   th:class="${pageInfo.pageNo==i}?'active':''">
+                                                <a   th:href="'javascript:gotopage('+${i}+')'" th:text="${i}" ></a>
+                                            </li>
+                                            <li  th:class="${pageInfo.hasNextPage}?'':'disabled'" ><a th:href="'javascript:gotopage('+${pageInfo.nextPage}+')'">&raquo;</a></li>
+                                            <li th:class="${pageInfo.isLastPage}?'disabled':''" ><a th:href="'javascript:gotopage('+${pageInfo.totalPages}+')'">尾页</a></li>
+                                        </ul>
+                                        </span>
+                                    </div>
 
                                 </div>
                             </div>
