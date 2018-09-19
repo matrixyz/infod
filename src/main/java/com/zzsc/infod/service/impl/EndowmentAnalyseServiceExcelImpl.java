@@ -4,9 +4,8 @@ import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.StringUtil;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
+
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
     @Override
-    public List<EndowmentDto> analyseCityExcel(File file) {
+   /* public List<EndowmentDto> analyseCityExcel(File file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
         try {
@@ -64,6 +63,41 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return EndowmentDtos;
+    }*/
+    public List<EndowmentDto> analyseCityExcel(File file) {
+        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+
+        Workbook workbook = null;
+        try {
+
+            workbook = WorkbookFactory.create(file);
+            //工作表对象
+            Sheet sheet = workbook.getSheetAt(0);
+             int rowLength=sheet.getLastRowNum();
+
+            for (int i = 3; i < rowLength; i++) {
+                Row  row = sheet.getRow(i);
+                EndowmentDto endowmentDto=new EndowmentDto();
+                endowmentDto.setCid(row.getCell(2).toString());
+                endowmentDto.setName(row.getCell(3).toString());
+                EndowmentDtos.add(endowmentDto);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+
         return EndowmentDtos;
     }
 
