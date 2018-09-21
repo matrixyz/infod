@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzsc.infod.mapper">
+
+    <select id="selectJoin" resultType="com.zzsc.infod.model.MedicalDto" parameterType="com.zzsc.infod.model.MedicalDto"  >
+        SELECT
+              mid,
+              name,
+              cid,
+              area_name,
+              tid
+        FROM
+        medical
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+           <if test="mid!=0">AND mid=#{mid}</if>
+           <if test="name!=null">AND name=#{name}</if>
+           <if test="cid!=null">AND cid=#{cid}</if>
+           <if test="areaName!=null">AND area_name=#{areaName}</if>
+           <if test="tid!=0">AND tid=#{tid}</if>
+        </trim>
+    </select>
+</mapper>
