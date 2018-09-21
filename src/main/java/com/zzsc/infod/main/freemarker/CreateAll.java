@@ -2,7 +2,7 @@ package com.zzsc.infod.main.freemarker;
 
 public class CreateAll {
     public static void main(String[] args) {
-        String table = "endowment";
+        String table = "medical";
         try {
              CreateController.main(new String[]{table});
             CreateMapper.main(new String[]{table});

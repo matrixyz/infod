@@ -25,7 +25,7 @@ public class JDBCUtil {
         password=( prop.getProperty("spring.datasource.password"));
         jdbcDriver=( prop.getProperty("spring.datasource.driver-class-name"));
         encryptor.setPassword(prop.getProperty("jasypt.encryptor.password"));
-        password= encryptor.decrypt("9drT0VyJQ9VW68ZbpNuXIhUjuR4BARKf");
+        password= encryptor.decrypt("lS5+INoRk/erRTvhgvRDuA==");
     } catch (IOException e) {
         e.printStackTrace();
     }

@@ -31,7 +31,6 @@ import java.util.Properties;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableScheduling
 @EnableAutoConfiguration
 @ServletComponentScan
 @EnableEncryptableProperties

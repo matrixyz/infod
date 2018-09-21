@@ -80,6 +80,12 @@
                                                     <i class="ace-icon fa fa-pencil "></i>
                                                 </button>
                                             </a>
+                                            <a href="#">
+                                                <button class="btn btn-warning  " id="btn-analyse-all-excel" >
+                                                    城镇、城乡合并分析并显示
+                                                    <i class="ace-icon fa fa-pencil "></i>
+                                                </button>
+                                            </a>
                                         </td>
 
 
@@ -191,7 +197,7 @@
                                             <strong>正在处理...可能需花费2-5秒，请稍等！</strong>
                                         </h4>
                                         <div class="progress progress-striped active" style="margin-bottom: 0;" id="processBar">
-                                            <div class="progress-bar" style="width: 100%;"></div>
+                                            <div class="progress-bar" style="width: 50%;"></div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -260,16 +266,29 @@
         });
         $( "#btn-analyse-excel" ).click(function () {
             $.ajax({
-                url: '/EndowmentAnalyse/analyse?type=EndowmentCity',
+                url: '[[${analyseType}]]',
                 type: 'GET',
                 cache: false,
                 processData: false,
                 contentType: false,
                 success: function(msg){
-
-
                     if(msg=='SUCCESS')
-                    location.href="/EndowmentAnalyse/excelAnalyseList";
+                    location.href="/MedicalAnalyse/getAnalyseRusultList?type=[[${type}]]";
+                    $('#postResWarning').modal('hide');
+                }
+            });
+
+        });
+        $( "#btn-analyse-all-excel" ).click(function () {
+            $.ajax({
+                url: '/MedicalAnalyse/analyseAll',
+                type: 'GET',
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(msg){
+                    if(msg=='SUCCESS')
+                    location.href="/MedicalAnalyse/getAnalyseRusultList?type=medicalAllApplication";
                     $('#postResWarning').modal('hide');
                 }
             });
@@ -296,8 +315,9 @@
                 data.append('inputfile', files[i]);
 
             }
+            data.append("type",'[[${type}]]');
                 $.ajax({
-                    url: '/EndowmentAnalyse/upload',
+                    url: '/[[${uploadType}]]/upload',
                     type: 'POST',
                     data: data,
                     cache: false,
@@ -327,10 +347,11 @@
 
 
         });
+        var getFileListUrl='[[${getFileListUrl}]]';
         function getList() {
             $('#postResWarning').modal('show');
             $.ajax({
-                url: '/EndowmentAnalyse/list',
+                url:getFileListUrl,
                 type: 'GET',
                 cache: false,
                 processData: false,

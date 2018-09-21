@@ -20,6 +20,14 @@ public class FileUtil {
             System.out.println(newFile.delete());
         }
     }
+    //清空某个目录
+    public static void emptyPath(String path){
+        File[] files=getFilesInPath(path);
+        for (File file:files  ) {
+            file.delete();
+        }
+    }
+
     public static String[] getFileList( ) {
         String path=PropertiesUtil.get("app.static.html.path")+"upload/thumb/";
         File newFile = new File(path);
@@ -48,6 +56,7 @@ public class FileUtil {
         }
         return  res;
     }
+
     /**
      *
      * @param unit 单位大小

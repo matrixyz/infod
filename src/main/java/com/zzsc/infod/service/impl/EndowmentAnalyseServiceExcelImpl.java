@@ -5,7 +5,9 @@ import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.StringUtil;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.ArrayList;
@@ -18,53 +20,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
     @Override
-   /* public List<EndowmentDto> analyseCityExcel(File file) {
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
-        try {
-            // 创建输入流，读取Excel
-            InputStream is = new FileInputStream(file.getAbsolutePath());
-            // jxl提供的Workbook类
-            Workbook wb = Workbook.getWorkbook(is);
-            // Excel的页签数量
-            int sheet_size = wb.getNumberOfSheets();
-            List res=new ArrayList();
-            for (int index = 0 ;index <1; index++) {
-
-                // 每个页签创建一个Sheet对象
-                Sheet sheet = wb.getSheet(index);
-                //获取该sheet 的有效数据的行数
-                int totalRows=sheet.getRows();
-
-                for (int i = 3; i < totalRows; i++) {
-                    if(sheet.getCell(0, i)!=null&&StringUtil.isEmpty(sheet.getCell(0, i).getContents()))
-                        continue;
-
-
-
-                    EndowmentDto endowmentDto=new EndowmentDto();
-
-                    if(StringUtil.isNotEmpty(sheet.getCell(2, i).getContents())) {
-                        endowmentDto.setCid(sheet.getCell(2, i).getContents());
-                    }
-                    if(StringUtil.isNotEmpty(sheet.getCell(3, i).getContents())) {
-                        endowmentDto.setName(sheet.getCell(3, i).getContents());
-                    }
-
-                    EndowmentDtos.add(endowmentDto);
-                }
-            }
-            wb.close();
-            is.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (BiffException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return EndowmentDtos;
-    }*/
     public List<EndowmentDto> analyseCityExcel(File file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
@@ -78,6 +34,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
             for (int i = 3; i < rowLength; i++) {
                 Row  row = sheet.getRow(i);
+
                 EndowmentDto endowmentDto=new EndowmentDto();
                 endowmentDto.setCid(row.getCell(2).toString());
                 endowmentDto.setName(row.getCell(3).toString());
@@ -99,6 +56,13 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
         return EndowmentDtos;
+    }
+
+    @Override
+    public List<EndowmentDto> analyseVallageExcel(File file) {
+
+
+        return null;
     }
 
     @Override
@@ -126,5 +90,48 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
     }
     public Map<String, EndowmentDto> init(String path){
         return getEndowmentFromRow(getFiles(path));
+    }
+
+    public static void main(String[] args) {
+
+        File  file=new File("C:\\Users\\Administrator\\Desktop\\叶县社保数据对比\\20180611 叶县城乡居民参保数据\\保安.xlsx");
+        Workbook workbook = null;
+        try {
+            boolean isE2007=false;
+            if(file.getName().endsWith("xlsx")){
+                isE2007=true;
+            }
+            if(isE2007){
+                workbook = new XSSFWorkbook(file);
+            }else {
+                workbook = WorkbookFactory.create(file);
+            }
+
+            //workbook = WorkbookFactory.create(file);
+            //工作表对象
+            Sheet sheet = workbook.getSheetAt(0);
+            int rowLength=sheet.getLastRowNum();
+
+            for (int i =1; i < 200; i++) {
+                Row  row = sheet.getRow(i);
+                for (int j=0;j<10;j++){
+                    System.out.print(row.getCell(j).toString());
+                    System.out.print("-");
+
+                }
+                System.out.println("");
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

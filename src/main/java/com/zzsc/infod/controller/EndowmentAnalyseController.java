@@ -1,9 +1,7 @@
 package com.zzsc.infod.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.zzsc.infod.constant.Constant;
-import com.zzsc.infod.model.EndowmentAnalyseExcelUploadDto;
+import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
@@ -11,7 +9,6 @@ import com.zzsc.infod.util.PageBean;
 import com.zzsc.infod.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,19 +44,19 @@ public class EndowmentAnalyseController {
 
     @ResponseBody
     @RequestMapping(value="/list",method= RequestMethod.GET )
-    public  List<EndowmentAnalyseExcelUploadDto> getList(  EndowmentDto endowmentDto  ){
+    public  List<AnalyseExcelUploadDto> getList(EndowmentDto endowmentDto  ){
 
         if (endowmentDto.getPage() == null||"".equals(endowmentDto.getPage())) {
             endowmentDto.setPage("1");
         }
         int pageNum= Integer.parseInt(endowmentDto.getPage());
-        List<EndowmentAnalyseExcelUploadDto> list=new ArrayList<>();
+        List<AnalyseExcelUploadDto> list=new ArrayList<>();
         File[] files=FileUtil.getFilesInPath(endowmentCityUpload);
         int id=1;
         for ( File file:files){
             String fileName=       file.getName();
 
-            EndowmentAnalyseExcelUploadDto info=new EndowmentAnalyseExcelUploadDto();
+            AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
 
             info.setFileName(fileName);
             info.setDataSize(FileUtil.getFileSize('k',file.length()));
@@ -71,7 +68,7 @@ public class EndowmentAnalyseController {
         }
 
        if(files.length==0){
-           EndowmentAnalyseExcelUploadDto temp=new EndowmentAnalyseExcelUploadDto();
+           AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
            temp.setFileName("没有数据!");
            list.add(temp);
        }
@@ -93,17 +90,17 @@ public class EndowmentAnalyseController {
 
     @ResponseBody
     @RequestMapping("/upload")
-    public List<EndowmentAnalyseExcelUploadDto>  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files, HttpServletRequest request) throws IOException {
+    public List<AnalyseExcelUploadDto>  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files, HttpServletRequest request) throws IOException {
 
 
         if(files.length>0)
-            FileUtil.delPath(endowmentCityUpload);
-        List<EndowmentAnalyseExcelUploadDto> list=new ArrayList<>();
+            FileUtil.emptyPath(endowmentCityUpload);
+        List<AnalyseExcelUploadDto> list=new ArrayList<>();
         int id=1;
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
 
-            EndowmentAnalyseExcelUploadDto info=new EndowmentAnalyseExcelUploadDto();
+            AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
 
             info.setFileName(fileName);
             info.setDataSize(FileUtil.getFileSize('k',file.getSize()));

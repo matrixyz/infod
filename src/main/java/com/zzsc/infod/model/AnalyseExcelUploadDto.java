@@ -1,6 +1,6 @@
 package com.zzsc.infod.model;
 
-public class EndowmentAnalyseExcelUploadDto {
+public class AnalyseExcelUploadDto {
     private String fileName;
     private String fileType;
     private String fileSize;

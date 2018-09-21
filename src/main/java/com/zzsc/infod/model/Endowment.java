@@ -15,7 +15,7 @@ public class Endowment{
         // 开户银行名称
         private String bankSub;
         // 数据标题
-        private String tid;
+        private int tid;
 
           public void setEid(int eid) {
                  this.eid = eid;
@@ -63,12 +63,12 @@ public class Endowment{
           public String getBankSub() {
             return bankSub;
           }
-          public void setTid(String tid) {
+          public void setTid(int tid) {
 
-                this.tid = StringUtil.filterEmpty(tid);
+                this.tid = tid;
 
           }
-          public String getTid() {
+          public int getTid() {
             return tid;
           }
     }

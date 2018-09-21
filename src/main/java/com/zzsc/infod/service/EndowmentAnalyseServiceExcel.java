@@ -9,6 +9,7 @@ import java.util.Map;
 public interface EndowmentAnalyseServiceExcel {
 
     List<EndowmentDto> analyseCityExcel(File  file);
+    List<EndowmentDto> analyseVallageExcel(File  file);
     File[] getFiles(String path);
     Map<String,EndowmentDto> getEndowmentFromRow(File[] file);
     Map<String, EndowmentDto> init(String path);

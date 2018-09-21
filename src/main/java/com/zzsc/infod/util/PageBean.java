@@ -102,9 +102,15 @@ public class PageBean<T> {
         this.fromIndex=(pageNo-1)*pageSize;
 
         if(totalCount%pageSize==0)
-            this.toIndex=fromIndex+pageSize-1;
-        else
-            this.toIndex=this.fromIndex+totalCount%pageSize;
+            this.toIndex=fromIndex+pageSize;
+        else{
+            if(pageNo==totalPages){
+                this.toIndex=this.fromIndex+totalCount%pageSize;
+
+            }else{
+                this.toIndex=fromIndex+pageSize;
+            }
+        }
 
         int pagesListSize=(int)Math.ceil(totalPages*1.0/pageListSize);
         for(int i=0;i<=pagesListSize;i++){
@@ -120,7 +126,7 @@ public class PageBean<T> {
         for(int j=0;j<currentPageNoList.size();j++ ){
             if(pageNo>=currentPageNoList.get(j)){
                 navigatepageNums.clear();
-                for(int i=currentPageNoList.get(j);i<currentPageNoList.get(j+1);i++){
+                for(int i=currentPageNoList.get(j);i<currentPageNoList.get((j==(currentPageNoList.size()-1)?j:(j+1)));i++){
                     navigatepageNums.add(i);
                 }
             }

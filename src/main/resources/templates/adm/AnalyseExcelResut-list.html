@@ -45,30 +45,17 @@
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
-                                <form id="form-Endowment"   role="form" action="/EndowmentAnalyse/excelAnalyseList" METHOD="get">
-                                    <div class="row">
-                                        <label class="col-sm-1 control-label no-padding-right" for="custAddr"> 客户姓名：</label>
-                                        <div class="col-sm-3">
-                                            <input   type="text" id="custAddr" name="custAddr" placeholder="客户姓名" class="col-sm-12"   maxlength="50"/>
-                                        </div>
-                                        <label class="col-sm-1 control-label no-padding-right" for="beginDate"> 添加时间：</label>
-                                        <div class="col-sm-3">
-                                            <input readonly="readonly"  type="text" id="beginDate" name="beginDate" placeholder="客户添加时间开始" class="col-sm-6 "  th:value="${queryParams.beginDate}" />
-                                            <input  readonly="readonly" type="text" id="endDate" name="endDate" placeholder="客户添加时间结束" class="col-sm-6 "  th:value="${queryParams.endDate}" />
-                                        </div>
-                                        <label class="col-sm-1 control-label no-padding-right"   > 客户经理：</label>
-                                        <div class="col-sm-3">
+                                <form id="form-Endowment"   role="form" action="/MedicalAnalyse/getAnalyseRusultList" METHOD="get">
 
-                                        </div>
-                                    </div>
-                                    <div class="space-4"><input type="hidden" name="page" id="page"/></div>
+                                    <div class="space-4"><input type="hidden" name="page" id="page"/>
+                                    <input type="hidden" name="type" th:value="${type}"/></div>
                                 </form>
                                 <!--数据操作工具栏开始-->
                                 <table width="100%" class="CSSearchTbl" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td  >
                                             <a class="btn btn-primary   "  id="btn-search" >
-                                                开始搜索
+                                                只显示重复数据
                                                 <i class="ace-icon fa fa-search"></i>
                                             </a>
 
@@ -105,11 +92,11 @@
 
                                         <tbody >
 
-                                        <tr th:each="item:${EndowmentList}">
+                                        <tr th:each="item:${MedicalList}">
                                             <!--复选框-->
                                             <td class="center">
                                                 <label class="position-relative">
-                                                    <input type="checkbox" class="ace" th:value="${item.eid}" />
+                                                    <input type="checkbox" class="ace" th:value="${item.mid}" />
                                                     <span class="lbl"></span>
                                                 </label>
                                             </td>

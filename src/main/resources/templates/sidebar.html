@@ -13,7 +13,7 @@
 
 
 
-        <li  class=" active open hsub " >
+        <li>
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-list"></i>
                 <span class="menu-text">数据查询</span>
@@ -58,7 +58,7 @@
                 </li>
             </ul>
         </li>
-        <li    >
+        <li  th:class="${#strings.contains( currUrl,'Analyse')?'active open hsub':''}"  >
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-list"></i>
                 <span class="menu-text">数据上传</span>
@@ -69,34 +69,35 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
-                <li  class=" active ">
-                    <a href="/CrmCustomer/list">
+                <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/CityListview')?'active':''}">
+                    <a href="/MedicalAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城镇职工医疗保险数据上传
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li   >
-                    <a href="/CrmCustomer/list">
+                <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/VallageListview')?'active':''}" >
+                    <a href="/MedicalAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民医疗保险数据上传
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li   >
-                    <a href="/CrmCustomer/list">
+                <li   th:class="${#strings.contains( currUrl,'EndowmentAnalyse/CityListview')?'active':''}"   >
+                    <a href="/EndowmentAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        城乡居民养老保险数据上传
+                        机关事业养老保险数据上传
+
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li   >
-                    <a href="/CrmCustomer/list">
+                <li    th:class="${#strings.contains( currUrl,'EndowmentAnalyse/VallageListview')?'active':''}"  >
+                    <a href="/EndowmentAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        机关事业养老保险数据上传
+                        城乡居民养老保险数据上传
                     </a>
 
                     <b class="arrow"></b>

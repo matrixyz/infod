@@ -61,7 +61,7 @@ public interface EndowmentMapper {
                 if(Endowment.getBankSub() !=null){
                     WHERE("bank_sub=#{bankSub}");
                 }
-                if(Endowment.getTid() !=null){
+                if(Endowment.getTid() !=0){
                     WHERE("tid=#{tid}");
                 }
 
@@ -89,7 +89,7 @@ public interface EndowmentMapper {
                 if(Endowment.getBankSub() !=null){
                     WHERE("bank_sub=#{bankSub}");
                 }
-                if(Endowment.getTid() !=null){
+                if(Endowment.getTid() !=0){
                     WHERE("tid=#{tid}");
                 }
             }}.toString();
@@ -116,7 +116,7 @@ public interface EndowmentMapper {
                 if(Endowment.getBankSub() !=null){
                     SET("bank_sub=#{bankSub}");
                 }
-                if(Endowment.getTid() !=null){
+                if(Endowment.getTid() !=0){
                     SET("tid=#{tid}");
                 }
 
@@ -153,7 +153,7 @@ public interface EndowmentMapper {
                     SET("bank_sub=#{bankSub}");
                     VALUES("bank_sub","#{bankSub}");
                 }
-                if(Endowment.getTid() !=null){
+                if(Endowment.getTid() !=0){
                     SET("tid=#{tid}");
                     VALUES("tid","#{tid}");
                 }
