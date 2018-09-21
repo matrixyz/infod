@@ -144,7 +144,6 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                 vallage.put(key,city.get(key));
             }
         }
-
         return vallage;
     }
     @Override
@@ -156,7 +155,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             String fileName=       file.getName();
             AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
             info.setFileName(fileName);
-            info.setDataSize(FileUtil.getFileSize('k',file.length()));
+            info.setFileSize(FileUtil.getFileSize('k',file.length()));
             info.setFileType("Excel");
             info.setUploadProgress(100);
             info.setResult("上传成功");

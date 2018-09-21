@@ -14,6 +14,6 @@ public class Constant {
     public final static String SUCCESS="SUCCESS";
     public final static String ERR="ERR";
     public final static String ERR_FILE_MAX_SIZE="ERR_FILE_MAX_SIZE";
-    public final static int maxFileSize=1000*1000*10;
+    public final static int maxFileSize=1000*1000*200;
 
 }

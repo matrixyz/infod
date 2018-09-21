@@ -5,6 +5,7 @@ import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.MedicalDto;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
+import com.zzsc.infod.util.NumUtil;
 import com.zzsc.infod.util.PageBean;
 import com.zzsc.infod.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/MedicalAnalyse")
@@ -61,7 +60,7 @@ public class MedicalAnalyseController {
 
     @RequestMapping(value="/CityListview",method= RequestMethod.GET )
     public String getCityListview(Model model, MedicalDto MedicalDto  ){
-
+        System.out.println("ccccccccccccccccccccccc"+session.getId());
         model.addAttribute("getFileListUrl","/MedicalAnalyse/CityList");
         model.addAttribute("analyseType","/MedicalAnalyse/analyseCity");
         model.addAttribute("analyseResultUrl","/MedicalAnalyse/analyseCity");
@@ -81,14 +80,25 @@ public class MedicalAnalyseController {
         return "adm/AnalyseExcelUpload-list";
     }
 
+    @ResponseBody
+    @RequestMapping("/getProgress")
+    public String getProgress(  ){
+        if(session.getAttribute("uploadProgress")==null){
+            System.out.println("aaaaaaaaaaaaaaaaaaaa"+session.getId());
+            return "0";
+        }
+        return session.getAttribute("uploadProgress").toString();
+    }
 
     @ResponseBody
     @RequestMapping("/upload")
     public List<AnalyseExcelUploadDto>  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
-                                                   @RequestParam(value = "type",required = true) String type,
-                                                   HttpServletRequest request) throws IOException {
+                                                   @RequestParam(value = "type",required = true) String type  ) throws IOException {
 
         String uploadPath=null;
+        session.setAttribute("uploadProgress",0);
+        System.out.println("bbbbbbbbbbbbbbbbbbbbbbb"+session.getId());
+
         if(files.length>0){
             if(type.equals(Constant.medicalCity)){
                 uploadPath=medicalCityUpload;
@@ -97,17 +107,19 @@ public class MedicalAnalyseController {
 
             }
             FileUtil.emptyPath(uploadPath);
+
         }
 
         List<AnalyseExcelUploadDto> list=new ArrayList<>();
         int id=1;
+        int progress=0;
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
 
             AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
 
             info.setFileName(fileName);
-            info.setDataSize(FileUtil.getFileSize('k',file.getSize()));
+            info.setFileSize(FileUtil.getFileSize('k',file.getSize()));
             info.setFileType("Excel");
             info.setUploadProgress(100);
             info.setResult("上传成功");
@@ -119,9 +131,16 @@ public class MedicalAnalyseController {
 
             if (file.getSize()<Constant.maxFileSize){
                 file.transferTo(temp);
+                progress++;
 
+                session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
             } else{
                 System.out.println(Constant.ERR_FILE_MAX_SIZE);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
@@ -181,7 +200,8 @@ public class MedicalAnalyseController {
 
             if(!all.isEmpty()){
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(all.values());
-
+               // mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+                mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.medicalAllApplication,mapKeyList);
                 return Constant.SUCCESS;
             }

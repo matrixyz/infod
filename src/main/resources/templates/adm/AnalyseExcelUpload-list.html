@@ -111,9 +111,9 @@
                                             <th>文件名称</th>
                                             <th>文件类型</th>
                                             <th>文件大小</th>
-                                            <th>数据量</th>
+
                                             <th>上传状态</th>
-                                            <th>分析结果</th>
+
 
                                             <th>操作</th>
                                         </tr>
@@ -197,7 +197,7 @@
                                             <strong>正在处理...可能需花费2-5秒，请稍等！</strong>
                                         </h4>
                                         <div class="progress progress-striped active" style="margin-bottom: 0;" id="processBar">
-                                            <div class="progress-bar" style="width: 50%;"></div>
+                                            <div class="progress-bar" style="width: 0%;"></div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -304,8 +304,25 @@
         $('#btn-upload-file').click(function () {
             $('#inputfile').trigger("click");
         });
+
+
+        var processBar;
+
         $('#inputfile').on('change',null,function(){
             $('#postResWarning').modal('show');
+            processBar=setInterval(function (args) {
+                $.ajax({
+                    url:"/MedicalAnalyse/getProgress",
+                    type: 'GET',
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(msg){
+                        console.log(msg);
+                        $(".progress-bar").css("width",msg+"%");
+                    }
+                });
+            },2000);
             var files = $('#inputfile').prop('files');
 
             var data = new FormData();
@@ -329,19 +346,19 @@
                             detail+="<tr>";
                             detail+="<td ><input type='checkbox' id='cbx"+value.id+"' /></td>"
                             detail+="<td>"+value.fileName+"</td>"
-
-                            detail+="<td>"+value.fileSize+"</td>"
                             detail+="<td>"+value.fileType+"</td>"
-                            detail+="<td>"+value.dataSize+"</td>"
-                            detail+="<td>"+value.uploadProgress+"</td>"
+                            detail+="<td>"+value.fileSize+"</td>"
+
                             detail+="<td>"+value.result+"</td>"
                             detail+="<td><a href='javascript:delfile("+value.id+")'>删除</a></td>"
                             detail+="</tr>";
                         });
 
                         $('#uploadDataInfoList').html(detail);
-                        console.log(detail);
+                        window.clearInterval(processBar);
                         $('#postResWarning').modal('hide');
+                        $('#inputfile').val("");
+                        $(".progress-bar").css("width","0%");
                     }
                 });
 
@@ -362,23 +379,24 @@
                         detail+="<tr>";
                         detail+="<td ><input type='checkbox' id='cbx"+value.id+"' /></td>"
                         detail+="<td>"+value.fileName+"</td>"
-
-                        detail+="<td>"+value.fileSize+"</td>"
                         detail+="<td>"+value.fileType+"</td>"
-                        detail+="<td>"+value.dataSize+"</td>"
-                        detail+="<td>"+value.uploadProgress+"</td>"
+                        detail+="<td>"+value.fileSize+"</td>"
+
+
                         detail+="<td>"+value.result+"</td>"
                         detail+="<td><a href='javascript:delfile("+value.id+")'>删除</a></td>"
                         detail+="</tr>";
                     });
 
                     $('#uploadDataInfoList').html(detail);
-                    console.log(detail);
                     $('#postResWarning').modal('hide');
                 }
             });
         }
         getList();
+
+
+
     });
 </script>
 </body>
