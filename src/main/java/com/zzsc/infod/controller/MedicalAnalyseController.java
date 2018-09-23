@@ -26,8 +26,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.beans.PropertyEditorSupport;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -106,8 +105,8 @@ public class MedicalAnalyseController {
 
         String uploadPath=null;
         session.setAttribute("uploadProgress",0);
-        System.out.println("bbbbbbbbbbbbbbbbbbbbbbb"+session.getId());
-
+        Map<String,InputStream> files_;
+        files_ = new HashMap<>();
         if(files.length>0){
             if(type.equals(Constant.medicalCity)){
                 uploadPath=medicalCityUpload;
@@ -122,7 +121,8 @@ public class MedicalAnalyseController {
         List<AnalyseExcelUploadDto> list=new ArrayList<>();
         int id=1;
         int progress=0;
-        Queue<MultipartFile> QueueMedicalCity=null;
+        //Queue<MultipartFile> QueueMedical=new LinkedList<>();
+        Map<String, MedicalDto> res =new HashMap<>();
 
 
         for ( MultipartFile file:files){
@@ -137,101 +137,117 @@ public class MedicalAnalyseController {
             info.setResult("上传成功");
             info.setId(id++);
             list.add(info);
-            File temp=new File(uploadPath+"\\"+fileName);
             file.getSize();
-           /* Thread thread2 = new Thread(()->{
-
-
-
-            },"thread2"); thread2.start();*/
-
-
             if (file.getSize()<Constant.maxFileSize){
-                file.transferTo(temp);
-                progress++;
 
+                medicalAnalyseServiceExcel.init(res,file,type);
+                progress++;
                 session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
             } else{
                 System.out.println(Constant.ERR_FILE_MAX_SIZE);
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            files_.put(fileName,file.getInputStream());
         }
 
-      /*  Workbook workbook = null;
-        try {
-            //获取excel文件的io流
-            InputStream is = file.getInputStream();
-            //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
-            if(fileName.endsWith(xls)){
-                //2003
-                workbook = new HSSFWorkbook(is);
-            }else if(fileName.endsWith(xlsx)){
-                //2007
-                workbook = new XSSFWorkbook(is);
-            }
-        } catch (IOException e) {
-            logger.info(e.getMessage());
+
+
+        if(type.equals(Constant.medicalCity)){
+            applications.setAttribute(Constant.medicalCityApplication,res);
         }
-*/
+        if(type.equals(Constant.medicalVallage)){
+            applications.setAttribute(Constant.medicalVallageApplication,res);
+        }
 
-
+        new MyThread2(files_,uploadPath).start();
 
         return list;
 
 
 
     }
+
+    class MyThread2 extends Thread {
+        private Map<String,InputStream>  files_;
+        private String finalUploadPath;
+
+        public MyThread2( Map<String,InputStream>  files,String finalUploadPath) {
+            this.files_ = files;
+            this.finalUploadPath = finalUploadPath;
+
+        }
+
+        public void run() {
+
+
+            for (String key : files_.keySet()) {
+                String fileName = key;
+                try {
+                    OutputStream outputStream =new FileOutputStream(new File(finalUploadPath + "\\" + fileName));
+
+                    int bytesWritten = 0;
+                    int byteCount = 0;
+                    byte[] bytes = new byte[1024*1000*10];
+                    while ((byteCount = files_.get(key).read(bytes)) != -1)
+                    {
+                        outputStream.write(bytes, bytesWritten, byteCount);
+                        bytesWritten += byteCount;
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        files_.get(key).close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+
+    }
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws IOException {
-
-
-            Map<String, MedicalDto> res=medicalAnalyseServiceExcel.init(medicalCityUpload,Constant.medicalCity);
+        Object target=applications.getAttribute(Constant.medicalCityApplication);
+        if(target!=null&& target instanceof Map ){
+            Map<String, MedicalDto> res=(Map<String, MedicalDto> ) applications.getAttribute(Constant.medicalCityApplication);
             if(!res.isEmpty()){
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(res.values());
-
                 applications.setAttribute(Constant.medicalCityApplication,mapKeyList);
                 return Constant.SUCCESS;
             }
-
-
-
-
-
+        }else if(target!=null&& target instanceof List ){
+            return Constant.SUCCESS;
+        }
         return  Constant.ERR;
-
     }
 
     @ResponseBody
     @RequestMapping(value="/analyseVallage",method= RequestMethod.GET)
     public String  analyseVallage(  HttpServletRequest request) throws IOException {
-
-
-            Map<String, MedicalDto> res=medicalAnalyseServiceExcel.init(medicalVallageUpload,Constant.medicalVallage);
+        Object target=applications.getAttribute(Constant.medicalVallageApplication);
+        if(target!=null&& target instanceof Map ){
+            Map<String, MedicalDto> res=(Map<String, MedicalDto> ) applications.getAttribute(Constant.medicalVallageApplication);
             if(!res.isEmpty()){
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(res.values());
-
                 applications.setAttribute(Constant.medicalVallageApplication,mapKeyList);
                 return Constant.SUCCESS;
             }
-
-
-
-
-
+        }else if(target!=null&& target instanceof List ){
+            return Constant.SUCCESS;
+        }
         return  Constant.ERR;
-
     }
     @ResponseBody
     @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
     public String  analyseAll(  HttpServletRequest request) throws IOException {
 
 
-            Map<String, MedicalDto> all=medicalAnalyseServiceExcel.initMerge(medicalCityUpload,medicalVallageUpload);
+            //Map<String, MedicalDto> all=medicalAnalyseServiceExcel.initMerge(medicalCityUpload,medicalVallageUpload);
+            Map<String, MedicalDto> all=null;
 
             if(!all.isEmpty()){
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(all.values());
@@ -247,33 +263,7 @@ public class MedicalAnalyseController {
 
 
 
-    @RequestMapping(value="/getAnalyseRusultList",method= RequestMethod.GET)
-    public String  excelAnalyseList( Model model, MedicalDto MedicalDto, @RequestParam(value = "type",required = true) String type  ) throws IOException {
-        if (StringUtil.isEmpty(MedicalDto.getPage()) ) {
-            MedicalDto.setPage("1");
-        }
-        String appDataName=null;
-        if(type.equals(Constant.medicalCity)){
-            appDataName=Constant.medicalCityApplication;
-        }  else if(type.equals(Constant.medicalVallage)){
-            appDataName=Constant.medicalVallageApplication;
-        }else{
-            appDataName=Constant.medicalAllApplication;
-        }
-        if(applications.getAttribute(appDataName)!=null){
-            List<MedicalDto> lists=( List<MedicalDto>)applications.getAttribute(appDataName);
-            int pageNum= Integer.parseInt(MedicalDto.getPage());
-            PageBean pageInfo=new PageBean();
-            pageInfo.setTotalCount(lists.size());
-            pageInfo.setPageNo(pageNum);
-            model.addAttribute("pageInfo",pageInfo);
-            model.addAttribute("MedicalList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
 
-            model.addAttribute("queryParams",MedicalDto);
-            model.addAttribute("type",type);
-        }
-        return  "adm/AnalyseExcelResut-list";
-    }
 
 
 }

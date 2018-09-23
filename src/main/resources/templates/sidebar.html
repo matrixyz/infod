@@ -13,7 +13,7 @@
 
 
 
-        <li>
+        <li  th:class="${#strings.contains( currUrl,'list')?'active open hsub':''}"  >
             <a href="#" class="dropdown-toggle">
                 <i class="menu-icon fa fa-list"></i>
                 <span class="menu-text">数据查询</span>
@@ -24,16 +24,16 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
-                <li  class=" active ">
-                    <a href="/CrmCustomer/list">
+                <li  th:class="${type=='MedicalVallage'?'active':''}">
+                    <a href="/CrmCustomer/list?type=MedicalVallage">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城镇职工医疗保险查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li   >
-                    <a href="/CrmCustomer/list">
+                <li  th:class="${type=='MedicalCity'?'active':''}" >
+                    <a href="/Medical/list?type=MedicalCity">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民医疗保险查询
                     </a>

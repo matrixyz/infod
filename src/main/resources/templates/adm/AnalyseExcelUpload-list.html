@@ -273,7 +273,7 @@
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS')
-                    location.href="/MedicalAnalyse/getAnalyseRusultList?type=[[${type}]]";
+                    location.href="/Medical/list?type=[[${type}]]";
                     $('#postResWarning').modal('hide');
                 }
             });
@@ -288,7 +288,7 @@
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS')
-                    location.href="/MedicalAnalyse/getAnalyseRusultList?type=medicalAllApplication";
+                    location.href="/Medical/list?type=medicalAllApplication";
                     $('#postResWarning').modal('hide');
                 }
             });

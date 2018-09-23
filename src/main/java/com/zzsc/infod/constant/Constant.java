@@ -15,5 +15,10 @@ public class Constant {
     public final static String ERR="ERR";
     public final static String ERR_FILE_MAX_SIZE="ERR_FILE_MAX_SIZE";
     public final static int maxFileSize=1000*1000*200;
+    public final static String FILE_EXT_XLS="xls";
+    public final static String FILE_EXT_XLSX="xlsx";
+
+    public final static String SESSION_MEDICAL_FILE_SAVE="SESSION_MEDICAL_FILE_SAVE";
+
 
 }
