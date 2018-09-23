@@ -8,8 +8,13 @@ import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.NumUtil;
 import com.zzsc.infod.util.PageBean;
 import com.zzsc.infod.util.StringUtil;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,11 +32,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@EnableAutoConfiguration
+@ComponentScan(basePackages={"com.zzsc.infod.service.impl" })
+@MapperScan(basePackages={"com.zzsc.infod.mapper" })
 @Controller
 @RequestMapping("/MedicalAnalyse")
 public class MedicalAnalyseController {
-
+    public static void main(String argv[]){
+        SpringApplication.run(MedicalAnalyseController.class,argv);
+    }
     @Autowired
     private MedicalAnalyseServiceExcel medicalAnalyseServiceExcel;
 
@@ -113,6 +122,9 @@ public class MedicalAnalyseController {
         List<AnalyseExcelUploadDto> list=new ArrayList<>();
         int id=1;
         int progress=0;
+        Queue<MultipartFile> QueueMedicalCity=null;
+
+
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
 
@@ -127,6 +139,11 @@ public class MedicalAnalyseController {
             list.add(info);
             File temp=new File(uploadPath+"\\"+fileName);
             file.getSize();
+           /* Thread thread2 = new Thread(()->{
+
+
+
+            },"thread2"); thread2.start();*/
 
 
             if (file.getSize()<Constant.maxFileSize){
@@ -143,6 +160,24 @@ public class MedicalAnalyseController {
                 e.printStackTrace();
             }
         }
+
+      /*  Workbook workbook = null;
+        try {
+            //获取excel文件的io流
+            InputStream is = file.getInputStream();
+            //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
+            if(fileName.endsWith(xls)){
+                //2003
+                workbook = new HSSFWorkbook(is);
+            }else if(fileName.endsWith(xlsx)){
+                //2007
+                workbook = new XSSFWorkbook(is);
+            }
+        } catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+*/
+
 
 
         return list;
