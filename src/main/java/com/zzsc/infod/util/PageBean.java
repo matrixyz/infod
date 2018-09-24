@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PageBean<T> {
     private int pageNo = 1;  //当前页
-    private int pageSize = 20; //每页个数
+    private int pageSize = 15; //每页个数
     private int totalCount;  //总记录数
     private int totalPages;  //总页数--只读
     private int fromIndex;//分页后某页数据的开始索引

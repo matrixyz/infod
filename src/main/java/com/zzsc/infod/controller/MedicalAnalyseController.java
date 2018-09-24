@@ -4,10 +4,8 @@ import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.MedicalDto;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.NumUtil;
-import com.zzsc.infod.util.PageBean;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
+import org.apache.tomcat.util.bcel.Const;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.beans.PropertyEditorSupport;
 import java.io.*;
@@ -54,36 +54,58 @@ public class MedicalAnalyseController {
     HttpSession session;
 
 
-    @ResponseBody
-    @RequestMapping(value="/CityList",method= RequestMethod.GET )
-    public List<AnalyseExcelUploadDto> getCityList(MedicalDto MedicalDto  ){
-        return medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalCityUpload);
-    }
-    @ResponseBody
-    @RequestMapping(value="/VallageList",method= RequestMethod.GET )
-    public List<AnalyseExcelUploadDto> getVallageList(MedicalDto MedicalDto  ){
-        return medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalVallageUpload);
-    }
 
 
     @RequestMapping(value="/CityListview",method= RequestMethod.GET )
-    public String getCityListview(Model model, MedicalDto MedicalDto  ){
-        System.out.println("ccccccccccccccccccccccc"+session.getId());
-        model.addAttribute("getFileListUrl","/MedicalAnalyse/CityList");
+    public String getCityListview(Model model, AnalyseExcelUploadDto analyseExcelUploadDto  ){
+      model.addAttribute("getFileListUrl","/MedicalAnalyse/CityList");
         model.addAttribute("analyseType","/MedicalAnalyse/analyseCity");
-        model.addAttribute("analyseResultUrl","/MedicalAnalyse/analyseCity");
+        model.addAttribute("actionUrl","/MedicalAnalyse/CityListview");
         model.addAttribute("type",Constant.medicalCity);
         model.addAttribute("uploadType",Constant.MedicalAnalyse);
+
+        List<AnalyseExcelUploadDto> list=null;
+        if(applications.getAttribute(Constant.medicalCityFileApplication)==null){
+            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalCityUpload);
+        }else{
+            list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.medicalCityFileApplication);
+        }
+        if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
+            analyseExcelUploadDto.setPage("1");
+        }
+        int pageNum= Integer.parseInt(analyseExcelUploadDto.getPage());
+        PageBean pageInfo=new PageBean();
+        pageInfo.setTotalCount(list.size());
+        pageInfo.setPageNo(pageNum);
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("FileList",list.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+
         return "adm/AnalyseExcelUpload-list";
     }
     @RequestMapping(value="/VallageListview",method= RequestMethod.GET )
-    public String getVallageListview(Model model, MedicalDto MedicalDto  ){
+    public String getVallageListview(Model model,AnalyseExcelUploadDto analyseExcelUploadDto  ){
 
         model.addAttribute("getFileListUrl","/MedicalAnalyse/VallageList");
         model.addAttribute("analyseType","/MedicalAnalyse/analyseVallage");
-
+        model.addAttribute("actionUrl","/MedicalAnalyse/VallageListview");
         model.addAttribute("type",Constant.medicalVallage);
         model.addAttribute("uploadType",Constant.MedicalAnalyse);
+
+        List<AnalyseExcelUploadDto> list=null;
+        if(applications.getAttribute(Constant.medicalVallageFileApplication)==null){
+            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalVallageUpload);
+        }else{
+            list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.medicalVallageFileApplication);
+        }
+        if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
+            analyseExcelUploadDto.setPage("1");
+        }
+        int pageNum= Integer.parseInt(analyseExcelUploadDto.getPage());
+        PageBean pageInfo=new PageBean();
+        pageInfo.setTotalCount(list.size());
+        pageInfo.setPageNo(pageNum);
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("FileList",list.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
 
         return "adm/AnalyseExcelUpload-list";
     }
@@ -92,7 +114,6 @@ public class MedicalAnalyseController {
     @RequestMapping("/getProgress")
     public String getProgress(  ){
         if(session.getAttribute("uploadProgress")==null){
-            System.out.println("aaaaaaaaaaaaaaaaaaaa"+session.getId());
             return "0";
         }
         return session.getAttribute("uploadProgress").toString();
@@ -100,7 +121,7 @@ public class MedicalAnalyseController {
 
     @ResponseBody
     @RequestMapping("/upload")
-    public List<AnalyseExcelUploadDto>  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
+    public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
                                                    @RequestParam(value = "type",required = true) String type  ) throws IOException {
 
         String uploadPath=null;
@@ -118,54 +139,62 @@ public class MedicalAnalyseController {
 
         }
 
-        List<AnalyseExcelUploadDto> list=new ArrayList<>();
-        int id=1;
+
         int progress=0;
-        //Queue<MultipartFile> QueueMedical=new LinkedList<>();
         Map<String, MedicalDto> res =new HashMap<>();
-
-
+        List<AnalyseExcelUploadDto> fileList=new ArrayList<>();
+        int id=1;
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
-
-            AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
-
-            info.setFileName(fileName);
-            info.setFileSize(FileUtil.getFileSize('k',file.getSize()));
-            info.setFileType("Excel");
-            info.setUploadProgress(100);
-            info.setResult("上传成功");
-            info.setId(id++);
-            list.add(info);
-            file.getSize();
             if (file.getSize()<Constant.maxFileSize){
+                //medicalAnalyseServiceExcel.init(res,file,type);
 
-                medicalAnalyseServiceExcel.init(res,file,type);
+                File file_=new File(uploadPath + "\\" + fileName);
+                file.transferTo(file_);
+                System.out.println(res.size());
                 progress++;
                 session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
+
+                AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
+                info.setFileName(fileName);
+                info.setFileSize(FileUtil.getFileSize('k',file.getSize()));
+                info.setFileType("Excel");
+                info.setUploadProgress(100);
+                info.setResult("上传成功");
+                info.setId(id++);
+                fileList.add(info);
+
+
+
             } else{
-                System.out.println(Constant.ERR_FILE_MAX_SIZE);
+               return (Constant.ERR_FILE_MAX_SIZE);
             }
-            files_.put(fileName,file.getInputStream());
+            //files_.put(fileName,file.getInputStream());
         }
 
 
 
         if(type.equals(Constant.medicalCity)){
-            applications.setAttribute(Constant.medicalCityApplication,res);
+            //applications.setAttribute(Constant.medicalCityApplication,res);
+            applications.setAttribute(Constant.medicalCityFileApplication ,fileList);
+
         }
         if(type.equals(Constant.medicalVallage)){
-            applications.setAttribute(Constant.medicalVallageApplication,res);
+           // applications.setAttribute(Constant.medicalVallageApplication,res);
+            applications.setAttribute(Constant.medicalVallageFileApplication ,fileList);
+
         }
 
-        new MyThread2(files_,uploadPath).start();
+       // new MyThread2(files_,uploadPath).start();
 
-        return list;
+        return Constant.SUCCESS;
 
 
 
     }
-
+    /**
+     * 将上传的文件异步的写入文件
+     */
     class MyThread2 extends Thread {
         private Map<String,InputStream>  files_;
         private String finalUploadPath;
@@ -211,15 +240,22 @@ public class MedicalAnalyseController {
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws IOException {
+
         Object target=applications.getAttribute(Constant.medicalCityApplication);
-        if(target!=null&& target instanceof Map ){
-            Map<String, MedicalDto> res=(Map<String, MedicalDto> ) applications.getAttribute(Constant.medicalCityApplication);
+        if(target==null){
+            target=medicalAnalyseServiceExcel.initByPath(medicalCityUpload,Constant.medicalCity);
+            applications.setAttribute(Constant.medicalCityApplicationMap,target);
+        }
+
+        if (  target instanceof Map ){
+            Map<String, MedicalDto> res=(Map<String, MedicalDto> )target;
             if(!res.isEmpty()){
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(res.values());
+                mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.medicalCityApplication,mapKeyList);
                 return Constant.SUCCESS;
             }
-        }else if(target!=null&& target instanceof List ){
+        }else if(  target instanceof List ){
             return Constant.SUCCESS;
         }
         return  Constant.ERR;
@@ -229,14 +265,19 @@ public class MedicalAnalyseController {
     @RequestMapping(value="/analyseVallage",method= RequestMethod.GET)
     public String  analyseVallage(  HttpServletRequest request) throws IOException {
         Object target=applications.getAttribute(Constant.medicalVallageApplication);
-        if(target!=null&& target instanceof Map ){
-            Map<String, MedicalDto> res=(Map<String, MedicalDto> ) applications.getAttribute(Constant.medicalVallageApplication);
+        if(target==null){
+            target=medicalAnalyseServiceExcel.initByPath(medicalVallageUpload,Constant.medicalVallage);
+            applications.setAttribute(Constant.medicalVallageApplicationMap,target);
+        }
+        if( target instanceof Map ){
+            Map<String, MedicalDto> res=(Map<String, MedicalDto> )target;
             if(!res.isEmpty()){
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(res.values());
+                mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.medicalVallageApplication,mapKeyList);
                 return Constant.SUCCESS;
             }
-        }else if(target!=null&& target instanceof List ){
+        }else if( target instanceof List ){
             return Constant.SUCCESS;
         }
         return  Constant.ERR;
@@ -244,24 +285,87 @@ public class MedicalAnalyseController {
     @ResponseBody
     @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
     public String  analyseAll(  HttpServletRequest request) throws IOException {
-
-
-            //Map<String, MedicalDto> all=medicalAnalyseServiceExcel.initMerge(medicalCityUpload,medicalVallageUpload);
-            Map<String, MedicalDto> all=null;
-
-            if(!all.isEmpty()){
-                List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(all.values());
-               // mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
-                mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
-                applications.setAttribute(Constant.medicalAllApplication,mapKeyList);
-                return Constant.SUCCESS;
+        Map<String, MedicalDto> all=null;
+        if( applications.getAttribute(Constant.medicalAllApplication)!=null){
+            return Constant.SUCCESS;
+        }else{
+            Object targetVallage=applications.getAttribute(Constant.medicalVallageApplicationMap);
+            Object targetCity=applications.getAttribute(Constant.medicalCityApplicationMap);
+            if(targetVallage==null){
+                return Constant.ERR_VALLAGE_ANALYSE_NOT_YET;
             }
+            if(targetCity==null){
+                return Constant.ERR_CITY_ANALYSE_NOT_YET;
+            }
+            Map<String, MedicalDto> resVallage=(Map<String, MedicalDto> )targetVallage;
+            Map<String, MedicalDto> resCity=(Map<String, MedicalDto> )targetCity;
+            all=medicalAnalyseServiceExcel.initMerge(resCity,resVallage);
+
+        }
+
+        //Map<String, MedicalDto> all=medicalAnalyseServiceExcel.initMerge(medicalCityUpload,medicalVallageUpload);
+
+        if(!all.isEmpty()){
+            List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(all.values());
+            mapKeyList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+            mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
+            applications.setAttribute(Constant.medicalAllApplication,mapKeyList);
+            return Constant.SUCCESS;
+        }
 
         return  Constant.ERR;
 
     }
 
+    @RequestMapping(value="/outPutExcel",method= RequestMethod.GET )
+    public String getListMedicalDifExcelFile(HttpServletResponse response  ){
 
+        Object all=applications.getAttribute(Constant.medicalAllApplication);
+
+        List<MedicalDto> mapKeyList = (List<MedicalDto> ) all;
+        List<MedicalDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
+
+        ServletOutputStream os =null;
+
+        try {
+            os = response.getOutputStream();// 取得输出流
+            response.setCharacterEncoding("UTF-8");
+
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + new String(Constant.dataTitleMedicalAll.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Type", "application/msexcel");
+            String[] titles = new String[]{
+                    "序号","姓名","身份证号码","单位","重复次数"
+            };
+            List<String[]> tempData=new ArrayList<>();
+            int index=1;
+            for (MedicalDto medicalDto : tempList) {
+                String[] item=new String[]{
+                        String.valueOf(index),
+                        medicalDto.getName(),
+                        medicalDto.getCid(),
+                        medicalDto.getAreaName(),
+                        String.valueOf(medicalDto.getRepeatTimes())  };
+                index++;
+                tempData.add(item);
+            }
+
+
+            ExcelUtil obj = new ExcelUtil();
+            obj.exportExcelFix("城镇、城乡医疗保险重复数据",titles,tempData,os);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
 
 

@@ -5,6 +5,7 @@ import com.zzsc.infod.model.*;
 
 import com.zzsc.infod.util.PageBean;
 import com.zzsc.infod.util.StringUtil;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,6 +20,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import com.zzsc.infod.util.UuidUtil;
 @Controller
@@ -52,11 +54,18 @@ public class MedicalController {
         String appDataName=null;
         if(type.equals(Constant.medicalCity)){
             appDataName=Constant.medicalCityApplication;
+            model.addAttribute("dataTitle",Constant.dataTitleMedicalCity);
+
         }  else if(type.equals(Constant.medicalVallage)){
             appDataName=Constant.medicalVallageApplication;
+            model.addAttribute("dataTitle",Constant.dataTitleMedicalVallage);
+
         }else{
             appDataName=Constant.medicalAllApplication;
+            model.addAttribute("dataTitle",Constant.dataTitleMedicalAll);
+
         }
+
         if(applications.getAttribute(appDataName)!=null){
             List<MedicalDto> lists=( List<MedicalDto>)applications.getAttribute(appDataName);
             int pageNum= Integer.parseInt(MedicalDto.getPage());
@@ -65,6 +74,21 @@ public class MedicalController {
             pageInfo.setPageNo(pageNum);
             model.addAttribute("pageInfo",pageInfo);
             model.addAttribute("MedicalList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+
+            model.addAttribute("queryParams",MedicalDto);
+            model.addAttribute("type",type);
+
+        }else{
+            List<MedicalDto> lists=new ArrayList<>();
+            MedicalDto medicalDto=new MedicalDto();
+            medicalDto.setName("暂无数据");
+            lists.add(medicalDto);
+
+            PageBean pageInfo=new PageBean();
+            pageInfo.setTotalCount(lists.size());
+            pageInfo.setPageNo(1);
+            model.addAttribute("pageInfo",pageInfo);
+            model.addAttribute("MedicalList",lists );
 
             model.addAttribute("queryParams",MedicalDto);
             model.addAttribute("type",type);

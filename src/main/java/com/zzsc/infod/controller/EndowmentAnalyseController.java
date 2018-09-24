@@ -4,9 +4,7 @@ import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.PageBean;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,17 +15,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.beans.PropertyEditorSupport;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/EndowmentAnalyse")
@@ -35,167 +32,330 @@ public class EndowmentAnalyseController {
 
     @Autowired
     private EndowmentAnalyseServiceExcel endowmentAnalyseServiceExcel;
+
     @Value( "${endowment.city.upload.path}")
     private String endowmentCityUpload;
+    @Value( "${endowment.vallage.upload.path}")
+    private String endowmentVallageUpload;
+
     @Autowired
     ServletContext applications;
     @Autowired
     HttpSession session;
 
+
+
+
+    @RequestMapping(value="/CityListview",method= RequestMethod.GET )
+    public String getCityListview(Model model, AnalyseExcelUploadDto analyseExcelUploadDto  ){
+        model.addAttribute("getFileListUrl","/EndowmentAnalyse/CityList");
+        model.addAttribute("analyseType","/EndowmentAnalyse/analyseCity");
+        model.addAttribute("actionUrl","/EndowmentAnalyse/CityListview");
+        model.addAttribute("type",Constant.endowmentCity);
+        model.addAttribute("uploadType",Constant.EndowmentAnalyse);
+
+        List<AnalyseExcelUploadDto> list=null;
+        if(applications.getAttribute(Constant.endowmentCityFileApplication)==null){
+            list=endowmentAnalyseServiceExcel.getAnalyseExcelUploadDtoList(endowmentCityUpload);
+        }else{
+            list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.endowmentCityFileApplication);
+        }
+        if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
+            analyseExcelUploadDto.setPage("1");
+        }
+        int pageNum= Integer.parseInt(analyseExcelUploadDto.getPage());
+        PageBean pageInfo=new PageBean();
+        pageInfo.setTotalCount(list.size());
+        pageInfo.setPageNo(pageNum);
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("FileList",list.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+
+        return "adm/AnalyseExcelEndowmentUpload-list";
+    }
+    @RequestMapping(value="/VallageListview",method= RequestMethod.GET )
+    public String getVallageListview(Model model,AnalyseExcelUploadDto analyseExcelUploadDto  ){
+
+        model.addAttribute("getFileListUrl","/EndowmentAnalyse/VallageList");
+        model.addAttribute("analyseType","/EndowmentAnalyse/analyseVallage");
+        model.addAttribute("actionUrl","/EndowmentAnalyse/VallageListview");
+        model.addAttribute("type",Constant.endowmentVallage);
+        model.addAttribute("uploadType",Constant.EndowmentAnalyse);
+
+        List<AnalyseExcelUploadDto> list=null;
+        if(applications.getAttribute(Constant.endowmentVallageFileApplication)==null){
+            list=endowmentAnalyseServiceExcel.getAnalyseExcelUploadDtoList(endowmentVallageUpload);
+        }else{
+            list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.endowmentVallageFileApplication);
+        }
+        if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
+            analyseExcelUploadDto.setPage("1");
+        }
+        int pageNum= Integer.parseInt(analyseExcelUploadDto.getPage());
+        PageBean pageInfo=new PageBean();
+        pageInfo.setTotalCount(list.size());
+        pageInfo.setPageNo(pageNum);
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("FileList",list.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+
+        return "adm/AnalyseExcelEndowmentUpload-list";
+    }
+
     @ResponseBody
-    @RequestMapping(value="/list",method= RequestMethod.GET )
-    public  List<AnalyseExcelUploadDto> getList(EndowmentDto endowmentDto  ){
-
-        if (endowmentDto.getPage() == null||"".equals(endowmentDto.getPage())) {
-            endowmentDto.setPage("1");
+    @RequestMapping("/getProgress")
+    public String getProgress(  ){
+        if(session.getAttribute("uploadProgress")==null){
+            return "0";
         }
-        int pageNum= Integer.parseInt(endowmentDto.getPage());
-        List<AnalyseExcelUploadDto> list=new ArrayList<>();
-        File[] files=FileUtil.getFilesInPath(endowmentCityUpload);
-        int id=1;
-        for ( File file:files){
-            String fileName=       file.getName();
-
-            AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
-
-            info.setFileName(fileName);
-            info.setDataSize(FileUtil.getFileSize('k',file.length()));
-            info.setFileType("Excel");
-            info.setUploadProgress(100);
-            info.setResult("上传成功");
-            info.setId(id++);
-            list.add(info);
-        }
-
-       if(files.length==0){
-           AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
-           temp.setFileName("没有数据!");
-           list.add(temp);
-       }
-
-
-
-
-        return list;
+        return session.getAttribute("uploadProgress").toString();
     }
-
-
-    @RequestMapping(value="/listview",method= RequestMethod.GET )
-    public String getListview(Model model, EndowmentDto endowmentDto  ){
-
-
-        return "adm/EndowmentAnalyseExcelUpload-list";
-    }
-
 
     @ResponseBody
     @RequestMapping("/upload")
-    public List<AnalyseExcelUploadDto>  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files, HttpServletRequest request) throws IOException {
+    public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
+                              @RequestParam(value = "type",required = true) String type  ) throws IOException {
+
+        String uploadPath=null;
+        session.setAttribute("uploadProgress",0);
+        Map<String,InputStream> files_;
+        files_ = new HashMap<>();
+        if(files.length>0){
+            if(type.equals(Constant.endowmentCity)){
+                uploadPath=endowmentCityUpload;
+            }else if(type.equals(Constant.endowmentVallage)){
+                uploadPath=endowmentVallageUpload;
+
+            }
+            FileUtil.emptyPath(uploadPath);
+
+        }
 
 
-        if(files.length>0)
-            FileUtil.emptyPath(endowmentCityUpload);
-        List<AnalyseExcelUploadDto> list=new ArrayList<>();
+        int progress=0;
+        Map<String, EndowmentDto> res =new HashMap<>();
+        List<AnalyseExcelUploadDto> fileList=new ArrayList<>();
         int id=1;
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
+            if (file.getSize()<Constant.maxFileSize){
+                //endowmentAnalyseServiceExcel.init(res,file,type);
 
-            AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
+                File file_=new File(uploadPath + "\\" + fileName);
+                file.transferTo(file_);
+                System.out.println(res.size());
+                progress++;
+                session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
 
-            info.setFileName(fileName);
-            info.setDataSize(FileUtil.getFileSize('k',file.getSize()));
-            info.setFileType("Excel");
-            info.setUploadProgress(100);
-            info.setResult("上传成功");
-            info.setId(id++);
-            list.add(info);
-            File temp=new File(endowmentCityUpload+"\\"+fileName);
-            file.getSize();
+                AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
+                info.setFileName(fileName);
+                info.setFileSize(FileUtil.getFileSize('k',file.getSize()));
+                info.setFileType("Excel");
+                info.setUploadProgress(100);
+                info.setResult("上传成功");
+                info.setId(id++);
+                fileList.add(info);
 
 
-            if (file.getSize()<1024*1000){
-                file.transferTo(temp);
 
             } else{
-
+                return (Constant.ERR_FILE_MAX_SIZE);
             }
-        }
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            //files_.put(fileName,file.getInputStream());
         }
 
-        return list;
+
+
+        if(type.equals(Constant.endowmentCity)){
+            //applications.setAttribute(Constant.endowmentCityApplication,res);
+            applications.setAttribute(Constant.endowmentCityFileApplication ,fileList);
+
+        }
+        if(type.equals(Constant.endowmentVallage)){
+            // applications.setAttribute(Constant.endowmentVallageApplication,res);
+            applications.setAttribute(Constant.endowmentVallageFileApplication ,fileList);
+
+        }
+
+        // new MyThread2(files_,uploadPath).start();
+
+        return Constant.SUCCESS;
 
 
 
     }
-    @ResponseBody
-    @RequestMapping(value="/analyse",method= RequestMethod.GET)
-    public String  analyse(  HttpServletRequest request) throws IOException {
+    /**
+     * 将上传的文件异步的写入文件
+     */
+    class MyThread2 extends Thread {
+        private Map<String,InputStream>  files_;
+        private String finalUploadPath;
 
-        String type=request.getParameter("type");
-        if(type.equals(Constant.endowmentCity)){
-            Map<String, EndowmentDto> res=endowmentAnalyseServiceExcel.init(endowmentCityUpload);
+        public MyThread2( Map<String,InputStream>  files,String finalUploadPath) {
+            this.files_ = files;
+            this.finalUploadPath = finalUploadPath;
+
+        }
+
+        public void run() {
+
+
+            for (String key : files_.keySet()) {
+                String fileName = key;
+                try {
+                    OutputStream outputStream =new FileOutputStream(new File(finalUploadPath + "\\" + fileName));
+
+                    int bytesWritten = 0;
+                    int byteCount = 0;
+                    byte[] bytes = new byte[1024*1000*10];
+                    while ((byteCount = files_.get(key).read(bytes)) != -1)
+                    {
+                        outputStream.write(bytes, bytesWritten, byteCount);
+                        bytesWritten += byteCount;
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        files_.get(key).close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+
+    }
+    @ResponseBody
+    @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
+    public String  analyseCity(  HttpServletRequest request) throws IOException {
+
+        Object target=applications.getAttribute(Constant.endowmentCityApplication);
+        if(target==null){
+            target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUpload,Constant.endowmentCity);
+            applications.setAttribute(Constant.endowmentCityApplicationMap,target);
+        }
+
+        if (  target instanceof Map ){
+            Map<String, EndowmentDto> res=(Map<String, EndowmentDto> )target;
             if(!res.isEmpty()){
                 List<EndowmentDto> mapKeyList = new ArrayList<EndowmentDto>(res.values());
-
+                mapKeyList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.endowmentCityApplication,mapKeyList);
                 return Constant.SUCCESS;
             }
+        }else if(  target instanceof List ){
+            return Constant.SUCCESS;
+        }
+        return  Constant.ERR;
+    }
 
+    @ResponseBody
+    @RequestMapping(value="/analyseVallage",method= RequestMethod.GET)
+    public String  analyseVallage(  HttpServletRequest request) throws IOException {
+        Object target=applications.getAttribute(Constant.endowmentVallageApplication);
+        if(target==null){
+            target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUpload,Constant.endowmentVallage);
+            applications.setAttribute(Constant.endowmentVallageApplicationMap,target);
+        }
+        if( target instanceof Map ){
+            Map<String, EndowmentDto> res=(Map<String, EndowmentDto> )target;
+            if(!res.isEmpty()){
+                List<EndowmentDto> mapKeyList = new ArrayList<EndowmentDto>(res.values());
+                mapKeyList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+                applications.setAttribute(Constant.endowmentVallageApplication,mapKeyList);
+                return Constant.SUCCESS;
+            }
+        }else if( target instanceof List ){
+            return Constant.SUCCESS;
+        }
+        return  Constant.ERR;
+    }
+    @ResponseBody
+    @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
+    public String  analyseAll(  HttpServletRequest request) throws IOException {
+        Map<String, EndowmentDto> all=null;
+        if( applications.getAttribute(Constant.endowmentAllApplication)!=null){
+            return Constant.SUCCESS;
+        }else{
+            Object targetVallage=applications.getAttribute(Constant.endowmentVallageApplicationMap);
+            Object targetCity=applications.getAttribute(Constant.endowmentCityApplicationMap);
+            if(targetVallage==null){
+                return Constant.ERR_VALLAGE_ANALYSE_NOT_YET;
+            }
+            if(targetCity==null){
+                return Constant.ERR_CITY_ANALYSE_NOT_YET;
+            }
+            Map<String, EndowmentDto> resVallage=(Map<String, EndowmentDto> )targetVallage;
+            Map<String, EndowmentDto> resCity=(Map<String, EndowmentDto> )targetCity;
+            all=endowmentAnalyseServiceExcel.initMerge(resCity,resVallage);
 
+        }
 
+        //Map<String, EndowmentDto> all=endowmentAnalyseServiceExcel.initMerge(endowmentCityUpload,endowmentVallageUpload);
+
+        if(!all.isEmpty()){
+            List<EndowmentDto> mapKeyList = new ArrayList<EndowmentDto>(all.values());
+            mapKeyList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+            mapKeyList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+            applications.setAttribute(Constant.endowmentAllApplication,mapKeyList);
+            return Constant.SUCCESS;
         }
 
         return  Constant.ERR;
 
     }
 
-    @RequestMapping(value="/excelAnalyseList",method= RequestMethod.GET)
-    public String  excelAnalyseList( Model model, EndowmentDto endowmentDto,BindingResult bindingResult) throws IOException {
-        if (StringUtil.isEmpty(endowmentDto.getPage()) ) {
-            endowmentDto.setPage("1");
-        }
-        if(applications.getAttribute(Constant.endowmentCityApplication)!=null){
+    @RequestMapping(value="/outPutExcel",method= RequestMethod.GET )
+    public String getListEndowmentDifExcelFile(HttpServletResponse response  ){
 
+        Object all=applications.getAttribute(Constant.endowmentAllApplication);
 
-            List<EndowmentDto> lists=( List<EndowmentDto>)applications.getAttribute(Constant.endowmentCityApplication);
-            int pageNum= Integer.parseInt(endowmentDto.getPage());
+        List<EndowmentDto> mapKeyList = (List<EndowmentDto> ) all;
+        List<EndowmentDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
 
-            PageBean pageInfo=new PageBean();
-           // pageInfo.setPageList(lists);
-            pageInfo.setTotalCount(lists.size());
-            pageInfo.setPageNo(pageNum);
+        ServletOutputStream os =null;
 
+        try {
+            os = response.getOutputStream();// 取得输出流
+            response.setCharacterEncoding("UTF-8");
 
-
-            model.addAttribute("pageInfo",pageInfo);
-            model.addAttribute("EndowmentList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
-            model.addAttribute("queryParams",endowmentDto);
-        }
-
-
-
-        return  "adm/EndowmentAnalyseExcelResut-list";
-
-    }
-    @InitBinder
-    public void InitBinder(WebDataBinder dataBinder) {
-        dataBinder.registerCustomEditor(Date.class, new PropertyEditorSupport() {
-            public void setAsText(String value) {
-                try {
-                    setValue(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value));
-                } catch(ParseException e) {
-                    setValue(null);
-                }
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + new String(Constant.dataTitleEndowmentAll.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Type", "application/msexcel");
+            String[] titles = new String[]{
+                    "序号","姓名","身份证号码","单位","重复次数"
+            };
+            List<String[]> tempData=new ArrayList<>();
+            int index=1;
+            for (EndowmentDto endowmentDto : tempList) {
+                String[] item=new String[]{
+                        String.valueOf(index),
+                        endowmentDto.getName(),
+                        endowmentDto.getCid(),
+                        endowmentDto.getOrgName(),
+                        String.valueOf(endowmentDto.getRepeatTimes())  };
+                index++;
+                tempData.add(item);
             }
 
-            public String getAsText() {
-                return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) getValue());
-            }
 
-        });
+            ExcelUtil obj = new ExcelUtil();
+            obj.exportExcelFix("城镇、城乡养老保险重复数据",titles,tempData,os);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
+
+   
 }

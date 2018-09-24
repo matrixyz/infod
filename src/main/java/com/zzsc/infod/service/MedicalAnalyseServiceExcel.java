@@ -11,9 +11,14 @@ import java.util.Map;
 public interface MedicalAnalyseServiceExcel {
     List<MedicalDto> analyseCityExcel(MultipartFile file);
     List<MedicalDto> analyseVallageExcel(MultipartFile  file);
+    List<MedicalDto> analyseCityExcel( File file);
+    List<MedicalDto> analyseVallageExcel( File  file);
     File[] getFiles(String path);
     Map<String,MedicalDto> getMedicalFromRow(Map<String,MedicalDto> medicalDtoMap,MultipartFile file,String type);
+    Map<String,MedicalDto> getMedicalFromRow( String type,File[] files);
     Map<String, MedicalDto> init( Map<String,MedicalDto>  res,MultipartFile file,String type);
-    //Map<String, MedicalDto> initMerge(String pathCity,String pathVallage);
+      Map<String, MedicalDto> initByPath(String path,String type);
+    Map<String, MedicalDto> initMerge(String pathCity,String pathVallage);
+    Map<String, MedicalDto> initMerge( Map<String, MedicalDto> city, Map<String, MedicalDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path  );
 }
