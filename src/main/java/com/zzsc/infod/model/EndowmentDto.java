@@ -17,6 +17,9 @@ public class EndowmentDto extends Endowment{
     public void setRepeatTimesAdd( ) {
         this.repeatTimes+=1;
     }
+    public void setRepeatTimesAdd(int t ) {
+        this.repeatTimes+=t;
+    }
     public String getPage() {
         return page;
     }

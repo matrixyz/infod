@@ -12,7 +12,9 @@ public class MyWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RightsInterceptor()).addPathPatterns("/**") ;
+        registry.addInterceptor(new RightsInterceptor()).addPathPatterns("/**").
+                excludePathPatterns("/PubService/*").
+                excludePathPatterns("/index.html");
         super.addInterceptors(registry);
     }
     @Override

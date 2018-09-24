@@ -1,20 +1,24 @@
 package com.zzsc.infod.controller;
+import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.service.EndowmentService;
 import com.zzsc.infod.model.*;
 
+import com.zzsc.infod.util.PageBean;
+import com.zzsc.infod.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import com.zzsc.infod.util.UuidUtil;
 @Controller
@@ -23,6 +27,8 @@ import com.zzsc.infod.util.UuidUtil;
 public class EndowmentController {
     @Autowired
     private EndowmentService EndowmentService;
+    @Autowired
+    ServletContext applications;
 
     @RequestMapping(value="",method= RequestMethod.GET )
     public Endowment get(Model model,EndowmentDto endowment ){
@@ -34,21 +40,62 @@ public class EndowmentController {
         return null;
     }
 
-    @RequestMapping(value="/list",method= RequestMethod.GET )
-    public String getList(Model model, EndowmentDto endowmentDto  ){
-
-        if (endowmentDto.getPage() == null||"".equals(endowmentDto.getPage())) {
-            endowmentDto.setPage("1");
+    @RequestMapping(value="/list",method= RequestMethod.GET)
+    public String  getAnalyseRusultList( Model model, EndowmentDto EndowmentDto, @RequestParam(value = "type",required = true) String type  ) throws IOException {
+        if (StringUtil.isEmpty(EndowmentDto.getPage()) ) {
+            EndowmentDto.setPage("1");
         }
+        String appDataName=null;
+        if(type.equals(Constant.endowmentCity)){
+            appDataName=Constant.endowmentCityApplication;
+            model.addAttribute("dataTitle",Constant.dataTitleEndowmentCity);
+
+        }  else if(type.equals(Constant.endowmentVallage)){
+            appDataName=Constant.endowmentVallageApplication;
+            model.addAttribute("dataTitle",Constant.dataTitleEndowmentVallage);
+
+        }else{
+            appDataName=Constant.endowmentAllApplication;
+            model.addAttribute("dataTitle",Constant.dataTitleEndowmentAll);
+
+        }
+        boolean flag=false;
+        if(applications.getAttribute(appDataName)!=null){
+            List<EndowmentDto> lists=( List<EndowmentDto>)applications.getAttribute(appDataName);
+            if(lists.size()==0){
+                flag=true;
+            }else {
+                int pageNum= Integer.parseInt(EndowmentDto.getPage());
+                PageBean pageInfo=new PageBean();
+                pageInfo.setTotalCount(lists.size());
+                pageInfo.setPageNo(pageNum);
+                model.addAttribute("pageInfo",pageInfo);
+                model.addAttribute("EndowmentList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+
+                model.addAttribute("queryParams",EndowmentDto);
+                model.addAttribute("type",type);
+            }
 
 
+        }else{
+            flag=true;
+        }
+        if(flag){
+            List<EndowmentDto> lists=new ArrayList<>();
+            EndowmentDto endowmentDto=new EndowmentDto();
+            endowmentDto.setName("暂无数据");
+            lists.add(endowmentDto);
 
-        List<EndowmentDto> list=EndowmentService.list(endowmentDto);
+            PageBean pageInfo=new PageBean();
+            pageInfo.setTotalCount(lists.size());
+            pageInfo.setPageNo(1);
+            model.addAttribute("pageInfo",pageInfo);
+            model.addAttribute("EndowmentList",lists );
 
-
-        model.addAttribute("EndowmentList",list);
-        model.addAttribute("queryParams",endowmentDto);
-        return "adm/Endowment-list";
+            model.addAttribute("queryParams",EndowmentDto);
+            model.addAttribute("type",type);
+        }
+        return  "adm/AnalyseExcelEndowmentResut-list";
     }
 
     @RequestMapping(value="/addPrepared",method= RequestMethod.GET )

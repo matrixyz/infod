@@ -24,34 +24,52 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
-                <li  th:class="${type=='MedicalVallage'?'active':''}">
-                    <a href="/CrmCustomer/list?type=MedicalVallage">
+                <li  th:class="${type=='MedicalCity'?'active':''}" >
+                    <a href="/Medical/list?type=MedicalCity">
+
                         <i class="menu-icon fa fa-caret-right"></i>
                         城镇职工医疗保险查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='MedicalCity'?'active':''}" >
-                    <a href="/Medical/list?type=MedicalCity">
+                <li  th:class="${type=='MedicalVallage'?'active':''}">
+                    <a href="/Medical/list?type=MedicalVallage">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民医疗保险查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
+                <li  th:class="${type=='medicalAllApplication'?'active':''}">
+                    <a href="/Medical/list?type=medicalAllApplication">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        医疗保险重复查询
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+
                 <li   >
-                    <a href="/CrmCustomer/list">
+                <li  th:class="${type=='EndowmentCity'?'active':''}" >
+                    <a href="/Endowment/list?type=EndowmentCity">
+                        机关事业养老保险查询
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li  th:class="${type=='EndowmentVallage'?'active':''}" >
+                    <a href="/Endowment/list?type=EndowmentVallage">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民养老保险查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li   >
-                    <a href="/CrmCustomer/list">
+                <li  th:class="${type=='endowmentAllApplication'?'active':''}">
+                    <a href="/Endowment/list?type=endowmentAllApplication">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        机关事业养老保险查询
+                        养老保险重复查询
                     </a>
 
                     <b class="arrow"></b>
@@ -72,7 +90,7 @@
                 <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/CityListview')?'active':''}">
                     <a href="/MedicalAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        城镇职工医疗保险数据上传
+                        城镇职工医疗保险上传
                     </a>
 
                     <b class="arrow"></b>
@@ -80,7 +98,7 @@
                 <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/VallageListview')?'active':''}" >
                     <a href="/MedicalAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        城乡居民医疗保险数据上传
+                        城乡居民医疗保险上传
                     </a>
 
                     <b class="arrow"></b>
@@ -88,7 +106,7 @@
                 <li   th:class="${#strings.contains( currUrl,'EndowmentAnalyse/CityListview')?'active':''}"   >
                     <a href="/EndowmentAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        机关事业养老保险数据上传
+                        机关事业养老保险上传
 
                     </a>
 
@@ -97,7 +115,7 @@
                 <li    th:class="${#strings.contains( currUrl,'EndowmentAnalyse/VallageListview')?'active':''}"  >
                     <a href="/EndowmentAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        城乡居民养老保险数据上传
+                        城乡居民养老保险上传
                     </a>
 
                     <b class="arrow"></b>

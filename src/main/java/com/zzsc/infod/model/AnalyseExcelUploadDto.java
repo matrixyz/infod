@@ -8,6 +8,15 @@ public class AnalyseExcelUploadDto {
     private int uploadProgress;
     private String result;
     private int id;
+    private String page;
+
+    public String getPage() {
+        return page;
+    }
+
+    public void setPage(String page) {
+        this.page = page;
+    }
 
     public int getId() {
         return id;

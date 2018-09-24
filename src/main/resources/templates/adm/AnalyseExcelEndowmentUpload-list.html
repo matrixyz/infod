@@ -32,7 +32,7 @@
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
                                 <form id="form-Endowment"   role="form" th:action="${actionUrl}" METHOD="get">
-                                  <!--  <div class="row">
+                                   <!-- <div class="row">
                                         <label class="col-sm-1 control-label no-padding-right" for="custAddr"> 文件名：</label>
                                         <div class="col-sm-3">
                                             <input   type="text" id="custAddr" name="custAddr" placeholder=" 文件名" class="col-sm-12"   maxlength="50"/>
@@ -278,7 +278,7 @@
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS')
-                    location.href="/Medical/list?type=[[${type}]]";
+                    location.href="/Endowment/list?type=[[${type}]]";
                     $('#postResWarning').modal('hide');
                 }
             });
@@ -288,14 +288,15 @@
             $('#processBar').css("display","");
             $(".progress-bar").css("width","100%");
             $.ajax({
-                url: '/MedicalAnalyse/analyseAll',
+                url: '/EndowmentAnalyse/analyseAll',
                 type: 'GET',
                 cache: false,
                 processData: false,
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS'){
-                        location.href="/Medical/list?type=medicalAllApplication";
+                        //alert(msg);
+                       location.href="/Endowment/list?type=endowmentAllApplication";
 
                     }else{
                         $('#postResContent').find("strong").html(msg);
@@ -325,7 +326,7 @@
             $('#postResWarning').modal('show');
             processBar=setInterval(function (args) {
                 $.ajax({
-                    url:"/MedicalAnalyse/getProgress",
+                    url:"/EndowmentAnalyse/getProgress",
                     type: 'GET',
                     cache: false,
                     processData: false,

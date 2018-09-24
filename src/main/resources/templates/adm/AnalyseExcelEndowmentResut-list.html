@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
-                                <form id="form-Endowment"   role="form" action="/Medical/list" METHOD="get">
+                                <form id="form-Endowment"   role="form" action="/Endowment/list" METHOD="get">
 
                                     <div class="space-4"><input type="hidden" name="page" id="page"/>
                                     <input type="hidden" name="type" th:value="${type}"/></div>
@@ -80,11 +80,11 @@
 
                                         <tbody  class="tbody_td_padding_5">
 
-                                        <tr th:each="item:${MedicalList}">
+                                        <tr th:each="item:${EndowmentList}">
                                             <!--复选框-->
                                             <td class="center">
                                                 <label class="position-relative">
-                                                    <input type="checkbox" class="ace" th:value="${item.mid}" />
+                                                    <input type="checkbox" class="ace" th:value="${item.eid}" />
                                                     <span class="lbl"></span>
                                                 </label>
                                             </td>
@@ -92,7 +92,7 @@
 
                                                 <td   th:text="${item.name}"> </td>
                                                 <td   th:text="${item.cid}"> </td>
-                                                <td   th:text="${item.areaName}"> </td>
+                                                <td   th:text="${item.orgName}"> </td>
 
                                                 <td   th:text="${item.repeatTimes}"> </td>
 
@@ -211,7 +211,7 @@
         }
         window.gotopage=gotopage;
         $( "#btn-export-excel" ).click(function () {
-            var a = $("<a href='/MedicalAnalyse/outPutExcel' target='_blank'>excel</a>").get(0);
+            var a = $("<a href='/EndowmentAnalyse/outPutExcel' target='_blank'>excel</a>").get(0);
 
             var e = document.createEvent('MouseEvents');
             e.initEvent( 'click', true, true );
