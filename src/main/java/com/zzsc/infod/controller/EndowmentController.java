@@ -49,15 +49,20 @@ public class EndowmentController {
         if(type.equals(Constant.endowmentCity)){
             appDataName=Constant.endowmentCityApplication;
             model.addAttribute("dataTitle",Constant.dataTitleEndowmentCity);
+            model.addAttribute("checkExportType","outPutExcelCheckCity");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcelCity");
 
         }  else if(type.equals(Constant.endowmentVallage)){
             appDataName=Constant.endowmentVallageApplication;
             model.addAttribute("dataTitle",Constant.dataTitleEndowmentVallage);
+            model.addAttribute("checkExportType","outPutExcelCheckVallage");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcelVallage");
 
         }else{
             appDataName=Constant.endowmentAllApplication;
             model.addAttribute("dataTitle",Constant.dataTitleEndowmentAll);
-
+            model.addAttribute("checkExportType","outPutExcelCheckAll");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcelAll");
         }
         boolean flag=false;
         if(applications.getAttribute(appDataName)!=null){
@@ -70,7 +75,8 @@ public class EndowmentController {
                 pageInfo.setTotalCount(lists.size());
                 pageInfo.setPageNo(pageNum);
                 model.addAttribute("pageInfo",pageInfo);
-                model.addAttribute("EndowmentList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+               model.addAttribute("EndowmentList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+                //model.addAttribute("EndowmentList",lists );
 
                 model.addAttribute("queryParams",EndowmentDto);
                 model.addAttribute("type",type);

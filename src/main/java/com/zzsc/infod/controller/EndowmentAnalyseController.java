@@ -113,7 +113,12 @@ public class EndowmentAnalyseController {
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
                               @RequestParam(value = "type",required = true) String type  ) throws IOException {
-
+        for ( MultipartFile file:files) {
+            String fileName = file.getOriginalFilename();
+            if(!fileName.endsWith(Constant.FILE_EXT_XLS)&&!fileName.endsWith(Constant.FILE_EXT_XLSX)){
+                return Constant.ERR_UPLOAD_FILE_TYPE;
+            }
+        }
         String uploadPath=null;
         session.setAttribute("uploadProgress",0);
         Map<String,InputStream> files_;
@@ -126,10 +131,7 @@ public class EndowmentAnalyseController {
 
             }
             FileUtil.emptyPath(uploadPath);
-
         }
-
-
         int progress=0;
         Map<String, EndowmentDto> res =new HashMap<>();
         List<AnalyseExcelUploadDto> fileList=new ArrayList<>();
@@ -137,14 +139,10 @@ public class EndowmentAnalyseController {
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
             if (file.getSize()<Constant.maxFileSize){
-                //endowmentAnalyseServiceExcel.init(res,file,type);
-
                 File file_=new File(uploadPath + "\\" + fileName);
                 file.transferTo(file_);
-                System.out.println(res.size());
                 progress++;
                 session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
-
                 AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
                 info.setFileName(fileName);
                 info.setFileSize(FileUtil.getFileSize('k',file.getSize()));
@@ -153,13 +151,9 @@ public class EndowmentAnalyseController {
                 info.setResult("上传成功");
                 info.setId(id++);
                 fileList.add(info);
-
-
-
             } else{
                 return (Constant.ERR_FILE_MAX_SIZE);
             }
-            //files_.put(fileName,file.getInputStream());
         }
 
 
@@ -307,53 +301,46 @@ public class EndowmentAnalyseController {
 
     }
 
-    @RequestMapping(value="/outPutExcel",method= RequestMethod.GET )
-    public String getListEndowmentDifExcelFile(HttpServletResponse response  ){
+    @ResponseBody
+    @RequestMapping(value="/outPutExcelCheckAll",method= RequestMethod.GET )
+    public String checkEndowmentDifExcelFile(   ){
 
-        Object all=applications.getAttribute(Constant.endowmentAllApplication);
+        return endowmentAnalyseServiceExcel.checkEndowmentDifExcelFile(
+                applications,Constant.endowmentAllApplication,
+                Constant.ERR_ALL_ANALYSE_NOT_YET_ENDOWMENT,Constant.EMPTY_ALL_ANALYSE_NOT_YET_ENDOWMENT);
 
-        List<EndowmentDto> mapKeyList = (List<EndowmentDto> ) all;
-        List<EndowmentDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
-        tempList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+    }
+    @ResponseBody
+    @RequestMapping(value="/outPutExcelCheckCity",method= RequestMethod.GET )
+    public String checkEndowmentDifExcelFileCity(    ){
 
-        ServletOutputStream os =null;
+        return endowmentAnalyseServiceExcel.checkEndowmentDifExcelFile(
+                applications,Constant.endowmentCityApplication,
+                Constant.ERR_CITY_ANALYSE_NOT_YET_ENDOWMENT,Constant.EMPTY_ALL_ANALYSE_NOT_YET_ENDOWMENT);
 
-        try {
-            os = response.getOutputStream();// 取得输出流
-            response.setCharacterEncoding("UTF-8");
+    }
+    @ResponseBody
+    @RequestMapping(value="/outPutExcelCheckVallage",method= RequestMethod.GET )
+    public String checkEndowmentDifExcelFileVallage(    ){
 
-            response.setHeader("Content-Disposition", "attachment; filename="
-                    + new String(Constant.dataTitleEndowmentAll.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
-            response.setHeader("Content-Type", "application/msexcel");
-            String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","重复次数"
-            };
-            List<String[]> tempData=new ArrayList<>();
-            int index=1;
-            for (EndowmentDto endowmentDto : tempList) {
-                String[] item=new String[]{
-                        String.valueOf(index),
-                        endowmentDto.getName(),
-                        endowmentDto.getCid(),
-                        endowmentDto.getOrgName(),
-                        String.valueOf(endowmentDto.getRepeatTimes())  };
-                index++;
-                tempData.add(item);
-            }
+        return endowmentAnalyseServiceExcel.checkEndowmentDifExcelFile(
+                applications,Constant.endowmentVallageApplication,
+                Constant.ERR_VALLAGE_ANALYSE_NOT_YET_ENDOWMENT,Constant.EMPTY_ALL_ANALYSE_NOT_YET_ENDOWMENT);
 
-
-            ExcelUtil obj = new ExcelUtil();
-            obj.exportExcelFix("城镇、城乡养老保险重复数据",titles,tempData,os);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            try {
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    }
+    @RequestMapping(value="/outPutExcelAll",method= RequestMethod.GET )
+    public String getListEndowmentDifExcelFileAll(HttpServletResponse response  ){
+        endowmentAnalyseServiceExcel.getListEndowmentDifExcelFile(applications,response,Constant.endowmentAllApplication,Constant.dataTitleEndowmentAll);
+        return null;
+    }
+    @RequestMapping(value="/outPutExcelCity",method= RequestMethod.GET )
+    public String getListEndowmentDifExcelFileCity(HttpServletResponse response  ){
+        endowmentAnalyseServiceExcel.getListEndowmentDifExcelFile(applications,response,Constant.endowmentCityApplication,Constant.dataTitleEndowmentCity);
+        return null;
+    }
+    @RequestMapping(value="/outPutExcelVallage",method= RequestMethod.GET )
+    public String getListEndowmentDifExcelFileVallage(HttpServletResponse response  ){
+        endowmentAnalyseServiceExcel.getListEndowmentDifExcelFile(applications,response,Constant.endowmentVallageApplication,Constant.dataTitleEndowmentVallage);
         return null;
     }
 

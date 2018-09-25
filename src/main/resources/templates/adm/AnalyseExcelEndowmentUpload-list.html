@@ -357,13 +357,21 @@
 
                         if(msg=='SUCCESS'){
                             gotopage(1);
-                        }else{
-                            if(msg=='ERR_FILE_MAX_SIZE'){
-                                $('#postResWarning').modal('show');
-                                $('#postResContent').find("strong").html('文件太大,请重新上传！');
-                                $('#processBar').css("display","none");
-                            }
+                        }else if(msg=='ERR_FILE_MAX_SIZE'){
+                            $('#postResWarning').modal('show');
+                            $('#postResContent').find("strong").html('文件太大,请重新上传！');
+                            $('#processBar').css("display","none");
+                            $('#closeMsg').css("display","");
+
+
+                        }else {
+                            $('#postResWarning').modal('show');
+                            $('#postResContent').find("strong").html(msg);
+                            $('#processBar').css("display","none");
+                            $('#closeMsg').css("display","");
+
                         }
+                        clearInterval(processBar);
                     }
                 });
 

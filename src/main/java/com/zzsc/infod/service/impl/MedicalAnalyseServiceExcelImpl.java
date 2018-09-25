@@ -1,5 +1,6 @@
 package com.zzsc.infod.service.impl;
 
+import com.sun.deploy.net.HttpResponse;
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.MedicalDto;
@@ -16,14 +17,16 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExcel {
 
@@ -154,7 +157,11 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             res=res.subList(2,res.size());
             for (List<Object> re : res) {
                 int col=0;
+                if(re.get(0)==null||re.get(1)==null){
+                    continue;
+                }
                 MedicalDto medicalDto=new MedicalDto();
+
                 for (Object o : re) {
                     if(col==3)
                         medicalDto.setName(String.valueOf(o));
@@ -200,8 +207,12 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             Sheet sheet = workbook.getSheetAt(0);
             int rowLength=sheet.getLastRowNum();
 
-            for (int i = 3; i < rowLength; i++) {
+            for (int i = 1; i < rowLength; i++) {
                 Row row = sheet.getRow(i);
+                if(row.getCell(6)==null||row.getCell(3)==null){
+
+                    continue;
+                }
                 MedicalDto medicalDto=new MedicalDto();
                 medicalDto.setCid(row.getCell(6).toString());
                 medicalDto.setName(row.getCell(3).toString());
@@ -242,6 +253,9 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             List<List<Object>> res=reader.getAllValueList();
             for (List<Object> re : res) {
                 int col=0;
+                if(re.get(0)==null||re.get(1)==null){
+                    continue;
+                }
                 MedicalDto medicalDto=new MedicalDto();
                 for (Object o : re) {
                     if(col==3)
@@ -370,6 +384,12 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
     public List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String medicalUpload) {
         List<AnalyseExcelUploadDto> list=new ArrayList<>();
         File[] files= FileUtil.getFilesInPath(medicalUpload);
+        if(files==null||files.length==0){
+            AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
+            temp.setFileName("没有数据!");
+            list.add(temp);
+            return list;
+        }
         int id=1;
         for ( File file:files){
             String fileName=       file.getName();
@@ -382,11 +402,72 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             info.setId(id++);
             list.add(info);
         }
-        if(files.length==0){
-            AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
-            temp.setFileName("没有数据!");
-            list.add(temp);
-        }
+
         return list;
+    }
+
+    @Override
+    public String checkMedicalDifExcelFile(ServletContext applications, String appType,String errType,String emptyType) {
+
+        Object all=applications.getAttribute(appType);
+        if(all==null){
+            return errType;
+        }
+        List<MedicalDto> mapKeyList = (List<MedicalDto> ) all;
+        List<MedicalDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
+        if(tempList.size()==0){
+            return emptyType;
+        }
+        return Constant.SUCCESS;
+    }
+
+    @Override
+    public int getListMedicalDifExcelFile(ServletContext applications,HttpServletResponse response, String appType, String excelFileTitle) {
+        Object all=applications.getAttribute(appType);
+
+        List<MedicalDto> mapKeyList = (List<MedicalDto> ) all;
+        List<MedicalDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
+
+        ServletOutputStream os =null;
+
+        try {
+            os = response.getOutputStream();// 取得输出流
+            response.setCharacterEncoding("UTF-8");
+
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Type", "application/msexcel");
+            String[] titles = new String[]{
+                    "序号","姓名","身份证号码","单位","重复次数"
+            };
+            List<String[]> tempData=new ArrayList<>();
+            int index=1;
+            for (MedicalDto medicalDto : tempList) {
+                String[] item=new String[]{
+                        String.valueOf(index),
+                        medicalDto.getName(),
+                        medicalDto.getCid(),
+                        medicalDto.getAreaName(),
+                        String.valueOf(medicalDto.getRepeatTimes())  };
+                index++;
+                tempData.add(item);
+            }
+
+
+            ExcelUtil obj = new ExcelUtil();
+            obj.exportExcelFix("城镇、城乡医疗保险重复数据",titles,tempData,os);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
     }
 }

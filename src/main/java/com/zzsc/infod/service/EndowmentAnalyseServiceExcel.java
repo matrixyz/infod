@@ -4,6 +4,8 @@ import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -22,5 +24,7 @@ public interface EndowmentAnalyseServiceExcel {
     Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage);
     Map<String, EndowmentDto> initMerge( Map<String, EndowmentDto> city, Map<String, EndowmentDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path  );
+    String checkEndowmentDifExcelFile(ServletContext applications, String appType, String errType, String emptyType);
+    int getListEndowmentDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle);
 
 }

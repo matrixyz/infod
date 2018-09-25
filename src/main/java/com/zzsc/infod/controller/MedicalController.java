@@ -55,14 +55,20 @@ public class MedicalController {
         if(type.equals(Constant.medicalCity)){
             appDataName=Constant.medicalCityApplication;
             model.addAttribute("dataTitle",Constant.dataTitleMedicalCity);
+            model.addAttribute("checkExportType","outPutExcelCheckCity");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcelCity");
 
         }  else if(type.equals(Constant.medicalVallage)){
             appDataName=Constant.medicalVallageApplication;
             model.addAttribute("dataTitle",Constant.dataTitleMedicalVallage);
+            model.addAttribute("checkExportType","outPutExcelCheckVallage");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcelVallage");
 
         }else{
             appDataName=Constant.medicalAllApplication;
             model.addAttribute("dataTitle",Constant.dataTitleMedicalAll);
+            model.addAttribute("checkExportType","outPutExcelCheckAll");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcelAll");
 
         }
 

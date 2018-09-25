@@ -23,6 +23,10 @@ public class EventModelReadExcel {
     // 所有值列表
     private List<List<Object>> allValueList = new ArrayList<>();
 
+    /**
+     *
+     * @param beginRow  开始取数据的行数，第一行就是1，不是0
+     */
     public EventModelReadExcel(int beginRow) {
         this.beginRow = beginRow;
     }

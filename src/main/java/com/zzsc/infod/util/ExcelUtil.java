@@ -24,10 +24,15 @@ public class ExcelUtil {
 
         for (int i = rowStartIndex; i < rowLength; i++) {
             Row row = sheet.getRow(i);
+
+
             String[] rowInfo=new String[targetColumnIndex.length];
             int j=0;
             for (int c  :targetColumnIndex) {
-                rowInfo[j++]=row.getCell(c).toString();
+                if(row.getCell(c)!=null)
+                    rowInfo[j++]=row.getCell(c).toString();
+                else
+                    rowInfo[j++]=null;
             }
             res.add(rowInfo);
         }
@@ -105,7 +110,7 @@ public class ExcelUtil {
 
         }
 
-        for (int i = 1; i < rowLen; i++) {
+        for (int i = 1; i <= rowLen; i++) {
             HSSFRow row = sheet.createRow(i);
 
             for (int j = 0; j < colLen; j++) {

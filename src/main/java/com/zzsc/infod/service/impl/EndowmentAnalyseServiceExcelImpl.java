@@ -10,16 +10,19 @@ import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.StringUtil;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseServiceExcel {
 
@@ -32,13 +35,12 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             //获取excel文件的io流
             InputStream is = file.getInputStream();
             workbook = WorkbookFactory.create(is);
-            List<String[]> cells= ExcelUtil.getWorkbookInfo(3,new int[]{2,3},workbook);
-            String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
+            List<String[]> cells= ExcelUtil.getWorkbookInfo(2,new int[]{0,1,2},workbook);
             for (String[] item:cells) {
                 EndowmentDto endowmentDto=new EndowmentDto();
-                endowmentDto.setCid(item[0]);
-                endowmentDto.setName(item[1]);
-                endowmentDto.setOrgName(area);
+                endowmentDto.setCid(item[1]);
+                endowmentDto.setName(item[0]);
+                endowmentDto.setOrgName(item[2]);
                 EndowmentDtos.add(endowmentDto);
 
             }
@@ -115,20 +117,23 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             //2003
             workbook = new HSSFWorkbook(new FileInputStream(file));
 
-            List<String[]> cells=ExcelUtil.getWorkbookInfo(3,new int[]{2,3},workbook);
-            String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
+            List<String[]> cells=ExcelUtil.getWorkbookInfo(1,new int[]{2,3,4},workbook);
+            //String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
 
             for (String[] item:cells) {
                 EndowmentDto endowmentDto=new EndowmentDto();
-                endowmentDto.setCid(item[0]);
-                endowmentDto.setName(item[1]);
-                endowmentDto.setOrgName(area);
+                endowmentDto.setCid(item[1]);
+                endowmentDto.setName(item[0]);
+                endowmentDto.setOrgName(item[2]);
                 EndowmentDtos.add(endowmentDto);
             }
 
-        } catch (Exception e) {
-            //e.printStackTrace();
+        } catch (OfficeXmlFileException e) {
+            e.printStackTrace();
             return analyseCityExcelEventmode(file);
+
+        } catch (Exception e) {
+            e.printStackTrace();
 
         }
         return EndowmentDtos;
@@ -139,14 +144,18 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         long startTime = System.currentTimeMillis();
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
-        EventModelReadExcel reader=new EventModelReadExcel(2);
+        EventModelReadExcel reader=new EventModelReadExcel(1);
         try {
             reader.processOneSheet(file);
             List<List<Object>> res=reader.getAllValueList();
             String areaName=String.valueOf(res.get(0).get(3));
-            res=res.subList(2,res.size());
+            res=res.subList(1,res.size());
             for (List<Object> re : res) {
                 int col=0;
+                if(re.size()<3||re.get(2)==null||re.get(2).toString().length()!=18){
+                    continue;
+                }
+
                 EndowmentDto endowmentDto=new EndowmentDto();
                 for (Object o : re) {
                     if(col==3)
@@ -193,12 +202,15 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             Sheet sheet = workbook.getSheetAt(0);
             int rowLength=sheet.getLastRowNum();
 
-            for (int i = 3; i < rowLength; i++) {
+            for (int i = 1; i < rowLength; i++) {
                 Row row = sheet.getRow(i);
                 EndowmentDto endowmentDto=new EndowmentDto();
-                endowmentDto.setCid(row.getCell(6).toString());
-                endowmentDto.setName(row.getCell(3).toString());
-                endowmentDto.setOrgName(row.getCell(11).toString());
+                if(row.getCell(3)==null||row.getCell(4)==null){
+                    continue;
+                }
+                endowmentDto.setCid(row.getCell(3).toString().replaceAll("\"",""));
+                endowmentDto.setName(row.getCell(4).toString());
+                endowmentDto.setOrgName(row.getCell(2).toString());
                 EndowmentDtos.add(endowmentDto);
 
             }
@@ -235,13 +247,16 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             List<List<Object>> res=reader.getAllValueList();
             for (List<Object> re : res) {
                 int col=0;
+                if(re.size()<3||re.get(3)==null||re.get(3).toString().length()!=18){
+                    continue;
+                }
                 EndowmentDto endowmentDto=new EndowmentDto();
                 for (Object o : re) {
-                    if(col==3)
+                    if(col==4)
                         endowmentDto.setName(String.valueOf(o));
-                    else if(col==6)
+                    else if(col==3)
                         endowmentDto.setCid(String.valueOf(o));
-                    else if(col==11)
+                    else if(col==2)
                         endowmentDto.setOrgName(String.valueOf(o));
                     col++;
                 }
@@ -364,6 +379,12 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         List<AnalyseExcelUploadDto> list=new ArrayList<>();
         File[] files= FileUtil.getFilesInPath(endowmentUpload);
         int id=1;
+        if(files==null||files.length==0){
+            AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
+            temp.setFileName("没有数据!");
+            list.add(temp);
+            return list;
+        }
         for ( File file:files){
             String fileName=       file.getName();
             AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
@@ -375,11 +396,71 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             info.setId(id++);
             list.add(info);
         }
-        if(files.length==0){
-            AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
-            temp.setFileName("没有数据!");
-            list.add(temp);
-        }
+
         return list;
+    }
+
+    @Override
+    public String checkEndowmentDifExcelFile(ServletContext applications, String appType, String errType, String emptyType) {
+        Object all=applications.getAttribute(appType);
+        if(all==null){
+            return errType;
+        }
+        List<EndowmentDto> mapKeyList = (List<EndowmentDto> ) all;
+        List<EndowmentDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+        if(tempList.size()==0){
+            return emptyType;
+        }
+        return Constant.SUCCESS;
+    }
+
+    @Override
+    public int getListEndowmentDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle) {
+        Object all=applications.getAttribute(appType);
+
+        List<EndowmentDto> mapKeyList = (List<EndowmentDto> ) all;
+        List<EndowmentDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+
+        ServletOutputStream os =null;
+
+        try {
+            os = response.getOutputStream();// 取得输出流
+            response.setCharacterEncoding("UTF-8");
+
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Type", "application/msexcel");
+            String[] titles = new String[]{
+                    "序号","姓名","身份证号码","单位","重复次数"
+            };
+            List<String[]> tempData=new ArrayList<>();
+            int index=1;
+            for (EndowmentDto medicalDto : tempList) {
+                String[] item=new String[]{
+                        String.valueOf(index),
+                        medicalDto.getName(),
+                        medicalDto.getCid(),
+                        medicalDto.getOrgName(),
+                        String.valueOf(medicalDto.getRepeatTimes())  };
+                index++;
+                tempData.add(item);
+            }
+
+
+            ExcelUtil obj = new ExcelUtil();
+            obj.exportExcelFix("城镇、城乡养老保险重复数据",titles,tempData,os);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
     }
 }

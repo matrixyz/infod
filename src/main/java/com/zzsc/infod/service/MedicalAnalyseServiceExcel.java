@@ -4,6 +4,8 @@ import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.MedicalDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -21,4 +23,6 @@ public interface MedicalAnalyseServiceExcel {
     Map<String, MedicalDto> initMerge(String pathCity,String pathVallage);
     Map<String, MedicalDto> initMerge( Map<String, MedicalDto> city, Map<String, MedicalDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path  );
+    String checkMedicalDifExcelFile(ServletContext applications, String appType,String errType,String emptyType);
+    int getListMedicalDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle);
 }
