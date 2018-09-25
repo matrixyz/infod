@@ -25,6 +25,7 @@ public class FileUtil {
         File[] files=getFilesInPath(path);
         for (File file:files  ) {
             file.delete();
+
         }
     }
 
@@ -74,7 +75,7 @@ public class FileUtil {
     /**-----------------------------------------------------------------------
      *getAppPath需要一个当前程序使用的Java类的class属性参数，它可以返回打包过的
      *Java可执行文件（jar，war）所处的系统目录名或非打包Java程序所处的目录
-     *@param   acls为Class类型
+     *@param
      *@return 返回值为该类所在的Java程序运行的目录
     -------------------------------------------------------------------------*/
     public static String getAppPath(Class cls){

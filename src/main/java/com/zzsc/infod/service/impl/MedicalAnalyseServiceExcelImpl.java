@@ -120,10 +120,20 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
         List<MedicalDto> MedicalDtos=new ArrayList<>();
 
         Workbook workbook = null;
+        FileInputStream is=null;
         try {
-
+            try {
                 //2003
-           workbook = new HSSFWorkbook(new FileInputStream(file));
+                is=new FileInputStream(file);
+
+                workbook = new HSSFWorkbook(is);
+            } catch (Exception e) {
+                // TODO: handle exception
+                //2007
+                return analyseVallageExcelEventmode(file);
+            }finally {
+                is.close();
+            }
 
             List<String[]> cells=ExcelUtil.getWorkbookInfo(3,new int[]{2,3},workbook);
             String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
@@ -138,7 +148,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
         } catch (Exception e) {
             //e.printStackTrace();
-            return analyseCityExcelEventmode(file);
+
 
         }
         return MedicalDtos;
@@ -193,15 +203,19 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
         long startTime = System.currentTimeMillis();
         List<MedicalDto> MedicalDtos=new ArrayList<>();
         Workbook workbook = null;
+        FileInputStream is=null;
         try {
-            //workbook = WorkbookFactory.create(file);
             try {
                     //2003
-                workbook = new HSSFWorkbook(new FileInputStream(file));
+                is=new FileInputStream(file);
+
+                workbook = new HSSFWorkbook(is);
             } catch (Exception e) {
             // TODO: handle exception
             //2007
                 return analyseVallageExcelEventmode(file);
+            }finally {
+                is.close();
             }
 
             Sheet sheet = workbook.getSheetAt(0);

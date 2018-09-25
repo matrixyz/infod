@@ -123,12 +123,26 @@ public class PageBean<T> {
             }
         }
 
-        for(int j=0;j<currentPageNoList.size();j++ ){
-            if(pageNo>=currentPageNoList.get(j)){
-                navigatepageNums.clear();
-                for(int i=currentPageNoList.get(j);i<currentPageNoList.get((j==(currentPageNoList.size()-1)?j:(j+1)));i++){
-                    navigatepageNums.add(i);
+        for (int i = 0; i < currentPageNoList.size(); i++) {
+            int currentPageNoListNo = currentPageNoList.get(i);
+            int currentPageNoListNoNext=0;
+            if((i+1)>(currentPageNoList.size()-1)){
+                currentPageNoListNoNext=currentPageNoList.size()-1;
+            }else {
+                currentPageNoListNoNext=currentPageNoList.get(i+1);
+            }
+            if(pageNo>=currentPageNoListNo&&pageNo<currentPageNoListNoNext){
+                for (int j = currentPageNoListNo; j <=currentPageNoListNoNext ; j++) {
+                    navigatepageNums.add(j);
                 }
+                break;
+            }
+            if(pageNo==currentPageNoList.get(currentPageNoList.size()-1)){
+                for (int j = (totalPages-totalPages%pageListSize); j <=totalPages; j++) {
+                    if(j>0)
+                    navigatepageNums.add(j);
+                }
+                break;
             }
         }
 
@@ -219,11 +233,13 @@ public class PageBean<T> {
         PageBean pageInfo=new PageBean();
 
         pageInfo.setTotalCount(1233);
-        pageInfo.setPageNo(6);
-        List<Integer> i=pageInfo.getCurrentPageNoList();
+        pageInfo.setPageNo(83);
+       List<Integer> i= pageInfo.navigatepageNums;
+        // List<Integer> i= pageInfo.getCurrentPageNoList();
         for (int x : i ) {
             System.out.println(x);
         }
+
 
     }
 }

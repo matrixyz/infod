@@ -181,16 +181,16 @@ public class MedicalAnalyseController {
 
 
         if(type.equals(Constant.medicalCity)){
-            //applications.setAttribute(Constant.medicalCityApplication,res);
+           // applications.setAttribute(Constant.medicalCityApplication,null);
             applications.setAttribute(Constant.medicalCityFileApplication ,fileList);
 
         }
         if(type.equals(Constant.medicalVallage)){
-           // applications.setAttribute(Constant.medicalVallageApplication,res);
-            applications.setAttribute(Constant.medicalVallageFileApplication ,fileList);
+            //applications.setAttribute(Constant.medicalVallageApplication,null);
+             applications.setAttribute(Constant.medicalVallageFileApplication ,fileList);
 
         }
-
+       // applications.setAttribute(Constant.medicalAllApplication, null);
        // new MyThread2(files_,uploadPath).start();
 
         return Constant.SUCCESS;
