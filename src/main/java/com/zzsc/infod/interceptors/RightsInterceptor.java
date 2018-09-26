@@ -15,19 +15,18 @@ public class RightsInterceptor implements HandlerInterceptor {
                              HttpServletResponse response, Object o) throws Exception {
         response.setCharacterEncoding("utf-8");
         req.setAttribute("currUrl",req.getRequestURL());
-        System.out.println(req.getRequestURL());
 
             HttpSession session=req.getSession(false);
             if (session==null||session.getAttribute("user") == null) {
 
                 //一系列处理后发现session已经失效
                 if (req.getHeader("x-requested-with") != null && req.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest")){ //如果是ajax请求响应头会有x-requested-with
-                     //PrintWriter out = response.getWriter();
-                    // out.print("登录已失效，请重新登录!");//session失效
-                    // out.flush();
+                     PrintWriter out = response.getWriter();
+                    out.print("登录已失效，请重新登录!");//session失效
+                     out.flush();
                     return true;
                 }else{
-                  // response.sendRedirect("/index.html");
+                  response.sendRedirect("/index.html");
                     return  true;
                 }
             }

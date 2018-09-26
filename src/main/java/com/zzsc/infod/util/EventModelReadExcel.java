@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -39,7 +40,7 @@ public class EventModelReadExcel {
     public void processOneSheet(File file) throws Exception {
         InputStream sheet = null;
         try {
-            OPCPackage pkg = OPCPackage.open(file);
+            OPCPackage pkg = OPCPackage.open(file,  PackageAccess.READ);
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();
 
@@ -47,6 +48,7 @@ public class EventModelReadExcel {
             sheet = r.getSheet("rId1");
             InputSource sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
+            pkg.close();
         } catch (Exception e) {
             throw e;
         } finally {

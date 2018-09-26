@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="head :: copy"></div>
+
+<body class="no-skin">
+
+<div th:replace="navigation :: copy"></div>
+
+<!-- /section:basics/navbar.layout -->
+<div class="main-container" id="main-container">
+
+
+    <div th:replace="sidebar :: copy"></div>
+
+    <!-- /section:basics/sidebar -->
+    <div class="main-content">
+
+
+        <div class="page-content">
+            <!-- /section:settings.box -->
+            <div class="page-content-area">
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- search form title start-->
+                                <div class="table-header" th:text="${dataTitle}">
+                                    管理
+                                </div>
+                                <div class="space-4"> </div>
+
+                                <!-- 分割线-->
+                                <div class="space-4"> </div>
+
+                                <!--数据表格开始-->
+                                <div  id="table-container">
+
+                                    <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th class="center" colspan="2">
+                                                使用说明
+                                            </th>
+
+
+                                        </tr>
+                                        </thead>
+
+                                        <tbody   >
+
+                                        <tr ><td>上传城镇职工医疗保险文件</td> <td class="center"> <img src="/static/sys/help/1.png"/> </td> </tr>
+                                        <tr > <td>等待上传城镇职工医疗保险文件</td><td class="center"> <img src="/static/sys/help/2.png"/> </td> </tr>
+                                        <tr ><td>分析城镇职工医疗保险文件</td> <td class="center"> <img src="/static/sys/help/3.png"/> </td> </tr>
+                                        <tr ><td>导出或查看城镇职工医疗保险数据</td> <td class="center"> <img src="/static/sys/help/4.png"/> </td> </tr>
+                                        <tr ><td> 城乡职工医疗保险数据操作过程</td> <td class="center"> <img src="/static/sys/help/5.png"/> </td> </tr>
+                                        <tr ><td> 城乡职工医疗保险数据导出</td> <td class="center"> <img src="/static/sys/help/6.png"/> </td> </tr>
+                                        <tr > <td>城镇、 城乡职工医疗保险重复数据分析</td><td class="center"> <img src="/static/sys/help/7.png"/> </td> </tr>
+                                        <tr > <td>城镇、 城乡职工医疗保险重复数据导出</td> <td class="center"> <img src="/static/sys/help/8.png"/> </td> </tr>
+                                        <tr > <td>城镇、 城乡职工养老保险重复数据操作</td> <td class="center"> <img src="/static/sys/help/9.png"/> </td> </tr>
+                                        <tr > <td>注意事项</td> <td class="center"> <img src="/static/sys/help/10.png"/> </td> </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模态框（Modal） -->
+                        <div class="modal fade" id="postResWarning" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <h4 class="modal-title" id="myModalLabel">
+                                            <strong>消息</strong>
+
+                                        </h4>
+                                    </div>
+                                    <div class="modal-body" id="postResContent">
+                                        <h4 class="modal-title" > <strong>消息体</strong></h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                        </button>
+
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content-area -->
+        </div><!-- /.page-content -->
+    </div><!-- /.main-content -->
+
+
+
+    <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+        <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+    </a>
+</div><!-- /.main-container -->
+
+
+<!--[if !IE]> -->
+<script type="text/javascript" th:inline="javascript">
+    // <![CDATA[
+    window.jQuery || document.write("<script src='/static/assets/js/jquery.min.js'>"+"<"+"/script>");
+    // ]]>
+</script>
+<!-- <![endif]-->
+<!--[if IE]>
+<script type="text/javascript"  th:inline="javascript">
+    window.jQuery || document.write("<script src='/static/assets/js/jquery1x.min.js'>"+"<"+"/script>");
+</script>
+<![endif]-->
+<script type="text/javascript" th:inline="javascript">
+    // <![CDATA[
+    if('ontouchstart' in document.documentElement) document.write("<script src='/static/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+    // ]]>
+</script>
+<script src="/static/assets/js/bootstrap.min.js" th:inline="javascript"></script>
+
+
+<!--[if lte IE 8]>
+<script src="/static/assets/js/excanvas.min.js" th:inline="javascript"></script>
+<![endif]-->
+<script src="/static/assets/js/jquery-ui.custom.min.js" th:inline="javascript"></script>
+<script src="/static/assets/js/jquery.ui.touch-punch.min.js" th:inline="javascript"></script>.
+<script src="/static/assets/js/ace-extra.min.js"></script>
+<script src="/static/assets/js/ace-elements.min.js" th:inline="javascript"></script>
+<script src="/static/assets/js/ace.min.js" th:inline="javascript"></script>
+<script type="text/javascript">
+
+    jQuery(function($) {
+
+
+
+        function gotopage(pageNo) {
+            $("#page").val(pageNo);
+            $("#form-Endowment" ).submit();
+
+        }
+        window.gotopage=gotopage;
+        $( "#btn-export-excel" ).click(function () {
+            $.ajax({
+                url:"/MedicalAnalyse/[[${checkExportType}]]",
+                type: 'GET',
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(msg){
+                   if(msg=='SUCCESS'){
+                       var a = $("<a href='/MedicalAnalyse/[[${outPutExcelTypeUrl}]]' target='_blank'>excel</a>").get(0);
+
+                       var e = document.createEvent('MouseEvents');
+                       e.initEvent( 'click', true, true );
+                       a.dispatchEvent(e);
+                   }else{
+                       $('#postResWarning').modal('show');
+                       $('#postResContent').find("strong").html(msg);
+                   }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

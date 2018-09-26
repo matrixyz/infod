@@ -113,28 +113,34 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
         Workbook workbook = null;
         try {
+            int type=ExcelUtil.switchFileType(file);
+            if(type==2003) {//2003
+                InputStream is = new FileInputStream(file);
+                workbook = new HSSFWorkbook(is);
 
-            //2003
-            workbook = new HSSFWorkbook(new FileInputStream(file));
+                List<String[]> cells = ExcelUtil.getWorkbookInfo(1, new int[]{2, 3, 4}, workbook);
 
-            List<String[]> cells=ExcelUtil.getWorkbookInfo(1,new int[]{2,3,4},workbook);
-            //String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
-
-            for (String[] item:cells) {
-                EndowmentDto endowmentDto=new EndowmentDto();
-                endowmentDto.setCid(item[1]);
-                endowmentDto.setName(item[0]);
-                endowmentDto.setOrgName(item[2]);
-                EndowmentDtos.add(endowmentDto);
+                for (String[] item : cells) {
+                    EndowmentDto endowmentDto = new EndowmentDto();
+                    endowmentDto.setCid(item[1]);
+                    endowmentDto.setName(item[0]);
+                    endowmentDto.setOrgName(item[2]);
+                    EndowmentDtos.add(endowmentDto);
+                }
+                is.close();
+            }else{
+                return analyseCityExcelEventmode(file);
             }
-
-        } catch (OfficeXmlFileException e) {
+        } catch ( Exception e) {
             e.printStackTrace();
-            return analyseCityExcelEventmode(file);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
+        }finally {
+            try {
+                if(workbook!=null){
+                    workbook.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return EndowmentDtos;
     }
@@ -189,33 +195,30 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
         Workbook workbook = null;
         try {
-            //workbook = WorkbookFactory.create(file);
-            try {
-                //2003
-                workbook = new HSSFWorkbook(new FileInputStream(file));
-            } catch (Exception e) {
-                // TODO: handle exception
-                //2007
+            int type=ExcelUtil.switchFileType(file);
+            if(type==2003) {//2003
+                InputStream is = new FileInputStream(file);
+                workbook = new HSSFWorkbook(is);
+
+                Sheet sheet = workbook.getSheetAt(0);
+                int rowLength = sheet.getLastRowNum();
+
+                for (int i = 1; i < rowLength; i++) {
+                    Row row = sheet.getRow(i);
+                    EndowmentDto endowmentDto = new EndowmentDto();
+                    if (row.getCell(3) == null || row.getCell(4) == null) {
+                        continue;
+                    }
+                    endowmentDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
+                    endowmentDto.setName(row.getCell(4).toString());
+                    endowmentDto.setOrgName(row.getCell(2).toString());
+                    EndowmentDtos.add(endowmentDto);
+
+                }
+                is.close();
+            }else{
                 return analyseVallageExcelEventmode(file);
             }
-
-            Sheet sheet = workbook.getSheetAt(0);
-            int rowLength=sheet.getLastRowNum();
-
-            for (int i = 1; i < rowLength; i++) {
-                Row row = sheet.getRow(i);
-                EndowmentDto endowmentDto=new EndowmentDto();
-                if(row.getCell(3)==null||row.getCell(4)==null){
-                    continue;
-                }
-                endowmentDto.setCid(row.getCell(3).toString().replaceAll("\"",""));
-                endowmentDto.setName(row.getCell(4).toString());
-                endowmentDto.setOrgName(row.getCell(2).toString());
-                EndowmentDtos.add(endowmentDto);
-
-            }
-
-
 
         } catch (Exception e) {
             e.printStackTrace();

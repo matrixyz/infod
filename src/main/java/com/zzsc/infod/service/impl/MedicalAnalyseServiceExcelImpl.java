@@ -1,6 +1,5 @@
 package com.zzsc.infod.service.impl;
 
-import com.sun.deploy.net.HttpResponse;
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.MedicalDto;
@@ -118,41 +117,43 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
     @Override
     public List<MedicalDto> analyseCityExcel(File file) {
         List<MedicalDto> MedicalDtos=new ArrayList<>();
-
-        Workbook workbook = null;
-        FileInputStream is=null;
+        Workbook workbook =null;
         try {
-            try {
-                //2003
-                is=new FileInputStream(file);
-
+            int type=ExcelUtil.switchFileType(file);
+            if(type==2003){//2003
+                InputStream is=new FileInputStream(file);
                 workbook = new HSSFWorkbook(is);
-            } catch (Exception e) {
-                // TODO: handle exception
-                //2007
-                return analyseVallageExcelEventmode(file);
-            }finally {
+                List<String[]> cells=ExcelUtil.getWorkbookInfo(3,new int[]{2,3},workbook);
+                String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
+
+                for (String[] item:cells) {
+                    MedicalDto medicalDto=new MedicalDto();
+                    medicalDto.setCid(item[0]);
+                    medicalDto.setName(item[1]);
+                    medicalDto.setAreaName(area);
+                    MedicalDtos.add(medicalDto);
+                }
                 is.close();
+            }else{
+                return analyseCityExcelEventmode(file);
+
             }
-
-            List<String[]> cells=ExcelUtil.getWorkbookInfo(3,new int[]{2,3},workbook);
-            String area=ExcelUtil.getWorkbookInfo(1,3,workbook);
-
-            for (String[] item:cells) {
-                MedicalDto medicalDto=new MedicalDto();
-                medicalDto.setCid(item[0]);
-                medicalDto.setName(item[1]);
-                medicalDto.setAreaName(area);
-                MedicalDtos.add(medicalDto);
-            }
-
         } catch (Exception e) {
-            //e.printStackTrace();
-
-
+            e.printStackTrace();
+        }finally {
+            try {
+                if(workbook!=null){
+                    workbook.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return MedicalDtos;
     }
+
+
+
     public List<MedicalDto> analyseCityExcelEventmode(File file) {
 
 
@@ -167,7 +168,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             res=res.subList(2,res.size());
             for (List<Object> re : res) {
                 int col=0;
-                if(re.get(0)==null||re.get(1)==null){
+                if(re.get(0)==null){
                     continue;
                 }
                 MedicalDto medicalDto=new MedicalDto();
@@ -203,19 +204,17 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
         long startTime = System.currentTimeMillis();
         List<MedicalDto> MedicalDtos=new ArrayList<>();
         Workbook workbook = null;
-        FileInputStream is=null;
-        try {
-            try {
-                    //2003
-                is=new FileInputStream(file);
 
+        try {
+            int type=ExcelUtil.switchFileType(file);
+
+
+            if(type==2003){//2003
+                InputStream is=new FileInputStream(file);
                 workbook = new HSSFWorkbook(is);
-            } catch (Exception e) {
-            // TODO: handle exception
-            //2007
-                return analyseVallageExcelEventmode(file);
-            }finally {
                 is.close();
+            }else{
+                return analyseVallageExcelEventmode(file);
             }
 
             Sheet sheet = workbook.getSheetAt(0);

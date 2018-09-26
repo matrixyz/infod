@@ -57,6 +57,8 @@ public class Constant {
     public final static String dataTitleMedicalCity="城镇医疗保险数据重复查询";
     public final static String dataTitleMedicalVallage="城乡医疗保险数据重复查询";
 
+    public final static String HSSFWorkbook="HSSFWorkbook";
+
 
 
 }

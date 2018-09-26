@@ -270,9 +270,7 @@ public class EndowmentAnalyseController {
     @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
     public String  analyseAll(  HttpServletRequest request) throws IOException {
         Map<String, EndowmentDto> all=null;
-        if( applications.getAttribute(Constant.endowmentAllApplication)!=null){
-            return Constant.SUCCESS;
-        }else{
+        {
             Object targetVallage=applications.getAttribute(Constant.endowmentVallageApplicationMap);
             Object targetCity=applications.getAttribute(Constant.endowmentCityApplicationMap);
             if(targetVallage==null){

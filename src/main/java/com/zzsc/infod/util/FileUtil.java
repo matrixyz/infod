@@ -25,7 +25,7 @@ public class FileUtil {
         File[] files=getFilesInPath(path);
         for (File file:files  ) {
             file.delete();
-
+            System.out.println("sys had delete file "+path);
         }
     }
 

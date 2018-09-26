@@ -2,10 +2,14 @@ package com.zzsc.infod.util;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.*;
 
 import javax.servlet.ServletOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,6 +134,23 @@ public class ExcelUtil {
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+    }
+    public static int switchFileType(File file) throws IOException{
+        InputStream inp=new FileInputStream(file);
+
+        InputStream is = FileMagic.prepareToCheckMagic(inp);
+        FileMagic fm = FileMagic.valueOf(is);
+        switch(fm) {
+            case OLE2:
+                is.close();
+                return  2003;
+            case OOXML:
+                is.close();
+                return 2007;
+            default:
+                throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
 
     }

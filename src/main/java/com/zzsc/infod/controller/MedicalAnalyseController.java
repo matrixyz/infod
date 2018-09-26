@@ -247,11 +247,13 @@ public class MedicalAnalyseController {
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws IOException {
 
-        Object target=applications.getAttribute(Constant.medicalCityApplication);
+        /*Object target=applications.getAttribute(Constant.medicalCityApplication);
         if(target==null){
             target=medicalAnalyseServiceExcel.initByPath(medicalCityUpload,Constant.medicalCity);
             applications.setAttribute(Constant.medicalCityApplicationMap,target);
-        }
+        }*/
+        Object target=  medicalAnalyseServiceExcel.initByPath(medicalCityUpload,Constant.medicalCity);
+            applications.setAttribute(Constant.medicalCityApplicationMap,target);
 
         if (  target instanceof Map ){
             Map<String, MedicalDto> res=(Map<String, MedicalDto> )target;
@@ -292,9 +294,7 @@ public class MedicalAnalyseController {
     @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
     public String  analyseAll(  HttpServletRequest request) throws IOException {
         Map<String, MedicalDto> all=null;
-        if( applications.getAttribute(Constant.medicalAllApplication)!=null){
-            return Constant.SUCCESS;
-        }else{
+        {
             Object targetVallage=applications.getAttribute(Constant.medicalVallageApplicationMap);
             Object targetCity=applications.getAttribute(Constant.medicalCityApplicationMap);
             if(targetVallage==null){
