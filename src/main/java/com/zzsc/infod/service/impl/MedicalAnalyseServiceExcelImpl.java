@@ -7,7 +7,8 @@ import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExcel {
 
-    private static Logger logger = Logger.getLogger(MedicalAnalyseServiceExcelImpl.class);
+    private static Logger logger =LoggerFactory.getLogger(MedicalAnalyseServiceExcelImpl.class);
 
 
     public List<MedicalDto> analyseCityExcel(MultipartFile file) {
@@ -135,11 +136,13 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                 }
                 is.close();
             }else{
+                logger.warn("分析了医保 xlsx文件- -  "+file.getName());
                 return analyseCityExcelEventmode(file);
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error(e.getMessage());
         }finally {
             try {
                 if(workbook!=null){
@@ -186,9 +189,10 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
             }
 
-
+                    throw new Exception("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+
         }
 
 
@@ -237,7 +241,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("methodName = analyseVallageExcel\n"+e.getMessage());
         }finally {
             try {
                 if(workbook!=null){
@@ -285,7 +289,9 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("methodName = analyseVallageExcelEventmode\n"+e.getMessage());
+
+
         }
 
 

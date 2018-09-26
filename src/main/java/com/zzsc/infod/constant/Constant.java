@@ -21,9 +21,9 @@ public class Constant {
     public final static int maxFileSize=1000*1000*200;
     public final static String FILE_EXT_XLS="xls";
     public final static String FILE_EXT_XLSX="xlsx";
-    public final static String dataTitleEndowmentAll="城镇、城乡养老保险数据重复查询";
-    public final static String dataTitleEndowmentCity="城镇医养老险数据重复查询";
-    public final static String dataTitleEndowmentVallage="城乡养老保险数据重复查询";
+    public final static String dataTitleEndowmentAll="城镇、城乡养老保险数据重复查询,发现重复数据";
+    public final static String dataTitleEndowmentCity="城镇医养老险数据重复查询,发现重复数据";
+    public final static String dataTitleEndowmentVallage="城乡养老保险数据重复查询,发现重复数据";
 
     public final static String SESSION_MEDICAL_FILE_SAVE="SESSION_MEDICAL_FILE_SAVE";
 
@@ -53,9 +53,9 @@ public class Constant {
     public final static String EMPTY_ALL_ANALYSE_NOT_YET_ENDOWMENT="未发现重复数据!";
 
 
-    public final static String dataTitleMedicalAll="城镇、城乡医疗保险数据综合重复查询";
-    public final static String dataTitleMedicalCity="城镇医疗保险数据重复查询";
-    public final static String dataTitleMedicalVallage="城乡医疗保险数据重复查询";
+    public final static String dataTitleMedicalAll="城镇、城乡医疗保险数据综合重复查询,发现重复数据";
+    public final static String dataTitleMedicalCity="城镇医疗保险数据重复查询,发现重复数据";
+    public final static String dataTitleMedicalVallage="城乡医疗保险数据重复查询,发现重复数据";
 
     public final static String HSSFWorkbook="HSSFWorkbook";
 

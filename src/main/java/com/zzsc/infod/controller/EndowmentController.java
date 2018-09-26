@@ -46,21 +46,25 @@ public class EndowmentController {
             EndowmentDto.setPage("1");
         }
         String appDataName=null;
+        String dataTitle=null;
         if(type.equals(Constant.endowmentCity)){
             appDataName=Constant.endowmentCityApplication;
-            model.addAttribute("dataTitle",Constant.dataTitleEndowmentCity);
+
+            dataTitle=Constant.dataTitleEndowmentCity ;
             model.addAttribute("checkExportType","outPutExcelCheckCity");
             model.addAttribute("outPutExcelTypeUrl","outPutExcelCity");
 
         }  else if(type.equals(Constant.endowmentVallage)){
             appDataName=Constant.endowmentVallageApplication;
-            model.addAttribute("dataTitle",Constant.dataTitleEndowmentVallage);
+
+            dataTitle=Constant.dataTitleEndowmentVallage ;
             model.addAttribute("checkExportType","outPutExcelCheckVallage");
             model.addAttribute("outPutExcelTypeUrl","outPutExcelVallage");
 
         }else{
             appDataName=Constant.endowmentAllApplication;
-            model.addAttribute("dataTitle",Constant.dataTitleEndowmentAll);
+            dataTitle=Constant.dataTitleEndowmentAll ;
+
             model.addAttribute("checkExportType","outPutExcelCheckAll");
             model.addAttribute("outPutExcelTypeUrl","outPutExcelAll");
         }
@@ -71,12 +75,14 @@ public class EndowmentController {
                 flag=true;
             }else {
                 int pageNum= Integer.parseInt(EndowmentDto.getPage());
+                long targetCount=lists.stream().filter(x-> x.getRepeatTimes()>0).count();
+                model.addAttribute("dataTitle",dataTitle+targetCount+" 条");
                 PageBean pageInfo=new PageBean();
                 pageInfo.setTotalCount(lists.size());
                 pageInfo.setPageNo(pageNum);
                 model.addAttribute("pageInfo",pageInfo);
                model.addAttribute("EndowmentList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
-                //model.addAttribute("EndowmentList",lists );
+
 
                 model.addAttribute("queryParams",EndowmentDto);
                 model.addAttribute("type",type);

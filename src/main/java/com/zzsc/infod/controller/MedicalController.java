@@ -52,21 +52,23 @@ public class MedicalController {
             MedicalDto.setPage("1");
         }
         String appDataName=null;
+        String dataTitle=null;
+
         if(type.equals(Constant.medicalCity)){
             appDataName=Constant.medicalCityApplication;
-            model.addAttribute("dataTitle",Constant.dataTitleMedicalCity);
+            dataTitle=Constant.dataTitleMedicalCity ;
             model.addAttribute("checkExportType","outPutExcelCheckCity");
             model.addAttribute("outPutExcelTypeUrl","outPutExcelCity");
 
         }  else if(type.equals(Constant.medicalVallage)){
             appDataName=Constant.medicalVallageApplication;
-            model.addAttribute("dataTitle",Constant.dataTitleMedicalVallage);
+            dataTitle=Constant.dataTitleMedicalVallage ;
             model.addAttribute("checkExportType","outPutExcelCheckVallage");
             model.addAttribute("outPutExcelTypeUrl","outPutExcelVallage");
 
         }else{
             appDataName=Constant.medicalAllApplication;
-            model.addAttribute("dataTitle",Constant.dataTitleMedicalAll);
+            dataTitle=Constant.dataTitleMedicalAll ;
             model.addAttribute("checkExportType","outPutExcelCheckAll");
             model.addAttribute("outPutExcelTypeUrl","outPutExcelAll");
 
@@ -77,10 +79,13 @@ public class MedicalController {
             int pageNum= Integer.parseInt(MedicalDto.getPage());
             PageBean pageInfo=new PageBean();
             pageInfo.setTotalCount(lists.size());
+            long targetCount=lists.stream().filter(x-> x.getRepeatTimes()>0).count();
+            model.addAttribute("dataTitle",dataTitle+targetCount+" 条");
+
             pageInfo.setPageNo(pageNum);
+            model.addAttribute("targetCount",targetCount);
             model.addAttribute("pageInfo",pageInfo);
             model.addAttribute("MedicalList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
-
             model.addAttribute("queryParams",MedicalDto);
             model.addAttribute("type",type);
 

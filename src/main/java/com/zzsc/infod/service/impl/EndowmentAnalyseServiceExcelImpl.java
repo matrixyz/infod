@@ -7,12 +7,11 @@ import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.StringUtil;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseServiceExcel {
+
+    private static Logger logger = LoggerFactory.getLogger(EndowmentAnalyseServiceExcelImpl.class);
 
     public List<EndowmentDto> analyseCityExcel(MultipartFile file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
@@ -129,10 +130,12 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 }
                 is.close();
             }else{
+                logger.warn("分析了养老 xlsx文件- -  "+file.getName());
+
                 return analyseCityExcelEventmode(file);
             }
         } catch ( Exception e) {
-            e.printStackTrace();
+            logger.error("methodName = analyseCityExcel\n"+e.getMessage());
         }finally {
             try {
                 if(workbook!=null){
@@ -178,7 +181,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("methodName = analyseCityExcelEventmode\n"+e.getMessage());
         }
 
 
@@ -221,7 +224,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("methodName = analyseVallageExcel\n"+e.getMessage());
+
         }finally {
             try {
                 if(workbook!=null){
@@ -269,7 +273,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("methodName = analyseVallageExcelEventmode\n"+e.getMessage());
+
         }
 
 

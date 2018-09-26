@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration  scan="true" scanPeriod="60 seconds" debug="false">
+    <contextName>logback</contextName>
+    <property name="logging.file.err" value="log\\err\\logback.log" />
+    <property name="logging.file.warn" value="log\\warn\\logback.log" />
+    <property name="ERR_LOG_HOME" value="./log/err" />
+    <property name="WARN_LOG_HOME" value="./log/warn" />
+    <property name="AppName" value="infod" />
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+             <level>INFO</level>
+         </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件-->
+    <appender name="file_err" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logging.file.err}</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!--只在这类文件里输出ERROR信息-->
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <fileNamePattern>${ERR_LOG_HOME}/${AppName}.%d{yyyy-MM-dd_HH-mm}.%i.log</fileNamePattern>
+            <!--日志文件最大的大小-->
+            <MaxFileSize>1MB</MaxFileSize>
+            <!--日志文件保留天数-->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}-%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件-->
+    <appender name="file_warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logging.file.warn}</file>
+        <!--  在这类文件里不输出ERROR信息 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <fileNamePattern>${WARN_LOG_HOME}/${AppName}.%d{yyyy-MM-dd_HH-mm}.%i.log</fileNamePattern>
+            <!--日志文件最大的大小-->
+            <MaxFileSize>1MB</MaxFileSize>
+            <!--日志文件保留天数-->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}-%msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="info">
+        <appender-ref ref="console" />
+        <appender-ref ref="file_err" />
+        <appender-ref ref="file_warn" />
+    </root>
+
+   <!-- <logger name="com.zzsc.infod.service.impl.MedicalAnalyseServiceExcelImpl" level="ERROR">
+        <appender-ref ref="file"/>
+    </logger>
+    <logger name="com.zzsc.infod.service.impl.MedicalAnalyseServiceExcelImpl" level="INFO" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>-->
+</configuration>
