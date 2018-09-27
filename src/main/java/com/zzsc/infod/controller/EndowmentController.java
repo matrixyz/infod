@@ -25,20 +25,11 @@ import com.zzsc.infod.util.UuidUtil;
 @EnableAutoConfiguration
 @RequestMapping("/Endowment")
 public class EndowmentController {
-    @Autowired
-    private EndowmentService EndowmentService;
+
     @Autowired
     ServletContext applications;
 
-    @RequestMapping(value="",method= RequestMethod.GET )
-    public Endowment get(Model model,EndowmentDto endowment ){
-        Endowment endowmentTemp = EndowmentService.getCondition(endowment) ;
-        if (  endowmentTemp !=null){
-            return  endowmentTemp;
-        }
 
-        return null;
-    }
 
     @RequestMapping(value="/list",method= RequestMethod.GET)
     public String  getAnalyseRusultList( Model model, EndowmentDto EndowmentDto, @RequestParam(value = "type",required = true) String type  ) throws IOException {
@@ -110,35 +101,8 @@ public class EndowmentController {
         return  "adm/AnalyseExcelEndowmentResut-list";
     }
 
-    @RequestMapping(value="/addPrepared",method= RequestMethod.GET )
-    public String addPrepared(Model model,EndowmentDto endowmentDto ){
-       // endowmentDto.setEid(UuidUtil.get16UUID());
 
-        model.addAttribute("submitType", "POST");
-        model.addAttribute("EndowmentDto", endowmentDto);
-        return "adm/Endowment-form";
-    }
 
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.POST )
-    public String post(@RequestBody EndowmentDto endowment ){
-        int res=EndowmentService.insert(endowment);
-        if (res>0){
-            return "添加信息成功!";
-        }else {
-            return "添加信息失败!";
-        }
-    }
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.PUT )
-    public String put(@RequestBody EndowmentDto endowment ){
-        int res=EndowmentService.update(endowment);
-        if (res>0){
-        return "修改信息成功!";
-        }else {
-        return "修改信息失败!";
-        }
-    }
 
 
 

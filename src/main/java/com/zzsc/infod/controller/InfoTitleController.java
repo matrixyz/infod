@@ -21,60 +21,7 @@ import com.zzsc.infod.util.UuidUtil;
 @EnableAutoConfiguration
 @RequestMapping("/InfoTitle")
 public class InfoTitleController {
-    @Autowired
-    private InfoTitleService InfoTitleService;
 
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.GET )
-    public InfoTitle get(Model model,InfoTitleDto infoTitle ){
-        InfoTitle infoTitleTemp = InfoTitleService.getCondition(infoTitle) ;
-        if (  infoTitleTemp !=null){
-            return  infoTitleTemp;
-        }
-
-        return null;
-    }
-
-    @ResponseBody
-    @RequestMapping(value="/list",method= RequestMethod.GET )
-    public List<InfoTitleDto> getList( InfoTitleDto infoTitleDto  ){
-
-        if (infoTitleDto.getPage() == null||"".equals(infoTitleDto.getPage())) {
-            infoTitleDto.setPage("1");
-        }
-        List<InfoTitleDto> list=InfoTitleService.list(infoTitleDto);
-        return  list ;
-    }
-
-    @RequestMapping(value="/addPrepared",method= RequestMethod.GET )
-    public String addPrepared(Model model,InfoTitleDto infoTitleDto ){
-        infoTitleDto.setTid(UuidUtil.get16UUID());
-
-        model.addAttribute("submitType", "POST");
-        model.addAttribute("InfoTitleDto", infoTitleDto);
-        return "adm/InfoTitle-form";
-    }
-
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.POST )
-    public String post(@RequestBody InfoTitleDto infoTitle ){
-        int res=InfoTitleService.insert(infoTitle);
-        if (res>0){
-            return "添加信息成功!";
-        }else {
-            return "添加信息失败!";
-        }
-    }
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.PUT )
-    public String put(@RequestBody InfoTitleDto infoTitle ){
-        int res=InfoTitleService.update(infoTitle);
-        if (res>0){
-        return "修改信息成功!";
-        }else {
-        return "修改信息失败!";
-        }
-    }
 
 
 

@@ -27,22 +27,12 @@ import com.zzsc.infod.util.UuidUtil;
 @EnableAutoConfiguration
 @RequestMapping("/Medical")
 public class MedicalController {
-    @Autowired
-    private MedicalService MedicalService;
+
     @Autowired
     ServletContext applications;
     @Autowired
     HttpSession session;
 
-    @RequestMapping(value="",method= RequestMethod.GET )
-    public Medical get(Model model,MedicalDto medical ){
-        Medical medicalTemp = MedicalService.getCondition(medical) ;
-        if (  medicalTemp !=null){
-            return  medicalTemp;
-        }
-
-        return null;
-    }
 
 
 
@@ -108,34 +98,9 @@ public class MedicalController {
     }
 
 
-    @RequestMapping(value="/addPrepared",method= RequestMethod.GET )
-    public String addPrepared(Model model,MedicalDto medicalDto ){
 
-        model.addAttribute("submitType", "POST");
-        model.addAttribute("MedicalDto", medicalDto);
-        return "adm/Medical-form";
-    }
 
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.POST )
-    public String post(@RequestBody MedicalDto medical ){
-        int res=MedicalService.insert(medical);
-        if (res>0){
-            return "添加信息成功!";
-        }else {
-            return "添加信息失败!";
-        }
-    }
-    @ResponseBody
-    @RequestMapping(value="",method= RequestMethod.PUT )
-    public String put(@RequestBody MedicalDto medical ){
-        int res=MedicalService.update(medical);
-        if (res>0){
-        return "修改信息成功!";
-        }else {
-        return "修改信息失败!";
-        }
-    }
+
 
 
 
