@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration  scan="true" scanPeriod="60 seconds" debug="false">
     <contextName>logback</contextName>
-    <property name="logging.file.err" value="log\\err\\logback.log" />
-    <property name="logging.file.warn" value="log\\warn\\logback.log" />
+    <property name="logging.file.err" value="log/err/logback.log" />
+    <property name="logging.file.warn" value="log/warn/logback.log" />
     <property name="ERR_LOG_HOME" value="./log/err" />
     <property name="WARN_LOG_HOME" value="./log/warn" />
     <property name="AppName" value="infod" />

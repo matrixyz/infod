@@ -7,6 +7,8 @@ import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.*;
 import org.apache.tomcat.util.bcel.Const;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -53,6 +55,7 @@ public class MedicalAnalyseController {
     @Autowired
     HttpSession session;
 
+    private Logger logger =   LoggerFactory.getLogger(this.getClass());
 
 
 
@@ -155,9 +158,8 @@ public class MedicalAnalyseController {
             if (file.getSize()<Constant.maxFileSize){
                 //medicalAnalyseServiceExcel.init(res,file,type);
 
-                File file_=new File(uploadPath + "\\" + fileName);
+                File file_=new File(uploadPath + "/" + fileName);
                 file.transferTo(file_);
-                System.out.println(res.size());
                 progress++;
                 session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
 
@@ -245,7 +247,7 @@ public class MedicalAnalyseController {
     }
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
-    public String  analyseCity(  HttpServletRequest request) throws IOException {
+    public String  analyseCity(  HttpServletRequest request) throws Exception {
 
         /*Object target=applications.getAttribute(Constant.medicalCityApplication);
         if(target==null){
@@ -266,7 +268,8 @@ public class MedicalAnalyseController {
         }else if(  target instanceof List ){
             return Constant.SUCCESS;
         }
-        return  Constant.ERR;
+        logger.error("未找到有效的EXCLE文件");
+        return  Constant.ERR_UPLOAD_FILE_FORMAT;
     }
 
     @ResponseBody

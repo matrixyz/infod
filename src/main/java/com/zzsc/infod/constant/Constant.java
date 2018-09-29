@@ -18,6 +18,7 @@ public class Constant {
     public final static String ERR_CITY_ANALYSE_NOT_YET="请先分析城镇养老险数据";
     public final static String ERR_VALLAGE_ANALYSE_NOT_YET="请先分析城乡养老保险数据";
     public final static String ERR_UPLOAD_FILE_TYPE="系统只支持xls  和 xlsx  格式的文件";
+    public final static String ERR_UPLOAD_FILE_FORMAT="上传的EXCEL格式不正确!";
     public final static int maxFileSize=1000*1000*200;
     public final static String FILE_EXT_XLS="xls";
     public final static String FILE_EXT_XLSX="xlsx";
