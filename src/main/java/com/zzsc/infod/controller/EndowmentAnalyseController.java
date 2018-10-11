@@ -141,7 +141,7 @@ public class EndowmentAnalyseController {
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
             if (file.getSize()<Constant.maxFileSize){
-                File file_=new File(uploadPath + "\\" + fileName);
+                File file_=new File(uploadPath + "/" + fileName);
                 file.transferTo(file_);
                 progress++;
                 session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
