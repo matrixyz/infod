@@ -132,6 +132,8 @@ public class EndowmentAnalyseController {
                 uploadPath=endowmentVallageUpload;
 
             }
+            FileUtil.createPath(uploadPath);
+
             FileUtil.emptyPath(uploadPath);
         }
         int progress=0;
@@ -230,6 +232,9 @@ public class EndowmentAnalyseController {
         Object target=applications.getAttribute(Constant.endowmentCityApplication);
         if(target==null){
             target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUpload,Constant.endowmentCity);
+            if(target==null)
+                return Constant.ERR_NO_ENDOWMENT_CITY_FILE;
+
             applications.setAttribute(Constant.endowmentCityApplicationMap,target);
         }
 
@@ -253,6 +258,8 @@ public class EndowmentAnalyseController {
         Object target=applications.getAttribute(Constant.endowmentVallageApplication);
         if(target==null){
             target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUpload,Constant.endowmentVallage);
+            if(target==null)
+                return Constant.ERR_NO_ENDOWMENT_VALLAGE_FILE;
             applications.setAttribute(Constant.endowmentVallageApplicationMap,target);
         }
         if( target instanceof Map ){
@@ -276,10 +283,10 @@ public class EndowmentAnalyseController {
             Object targetVallage=applications.getAttribute(Constant.endowmentVallageApplicationMap);
             Object targetCity=applications.getAttribute(Constant.endowmentCityApplicationMap);
             if(targetVallage==null){
-                return Constant.ERR_VALLAGE_ANALYSE_NOT_YET;
+                return Constant.ERR_VALLAGE_ANALYSE_NOT_YET_ENDOWMENT;
             }
             if(targetCity==null){
-                return Constant.ERR_CITY_ANALYSE_NOT_YET;
+                return Constant.ERR_CITY_ANALYSE_NOT_YET_ENDOWMENT;
             }
             Map<String, EndowmentDto> resVallage=(Map<String, EndowmentDto> )targetVallage;
             Map<String, EndowmentDto> resCity=(Map<String, EndowmentDto> )targetCity;

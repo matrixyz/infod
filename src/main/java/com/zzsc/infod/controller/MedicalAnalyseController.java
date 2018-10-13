@@ -144,6 +144,8 @@ public class MedicalAnalyseController {
                 uploadPath=medicalVallageUpload;
 
             }
+            FileUtil.createPath(uploadPath);
+
             FileUtil.emptyPath(uploadPath);
 
         }
@@ -255,6 +257,9 @@ public class MedicalAnalyseController {
             applications.setAttribute(Constant.medicalCityApplicationMap,target);
         }*/
         Object target=  medicalAnalyseServiceExcel.initByPath(medicalCityUpload,Constant.medicalCity);
+        if(target==null)
+            return Constant.ERR_NO_MEDICAL_CITY_FILE;
+
             applications.setAttribute(Constant.medicalCityApplicationMap,target);
 
         if (  target instanceof Map ){
@@ -278,6 +283,8 @@ public class MedicalAnalyseController {
         Object target=applications.getAttribute(Constant.medicalVallageApplication);
         if(target==null){
             target=medicalAnalyseServiceExcel.initByPath(medicalVallageUpload,Constant.medicalVallage);
+            if(target==null)
+                return Constant.ERR_NO_MEDICAL_VALLAGE_FILE;
             applications.setAttribute(Constant.medicalVallageApplicationMap,target);
         }
         if( target instanceof Map ){
@@ -301,10 +308,10 @@ public class MedicalAnalyseController {
             Object targetVallage=applications.getAttribute(Constant.medicalVallageApplicationMap);
             Object targetCity=applications.getAttribute(Constant.medicalCityApplicationMap);
             if(targetVallage==null){
-                return Constant.ERR_VALLAGE_ANALYSE_NOT_YET;
+                return Constant.ERR_VALLAGE_ANALYSE_NOT_YET_MEDICAL;
             }
             if(targetCity==null){
-                return Constant.ERR_CITY_ANALYSE_NOT_YET;
+                return Constant.ERR_CITY_ANALYSE_NOT_YET_MEDICAL;
             }
             Map<String, MedicalDto> resVallage=(Map<String, MedicalDto> )targetVallage;
             Map<String, MedicalDto> resCity=(Map<String, MedicalDto> )targetCity;

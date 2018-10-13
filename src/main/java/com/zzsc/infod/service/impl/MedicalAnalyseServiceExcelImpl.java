@@ -369,7 +369,10 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
     }
     @Override
     public Map<String, MedicalDto> initByPath(String path,String type){
-        return getMedicalFromRow(  type,getFiles(path));
+        File[] files=getFiles(path);
+        if(files==null||files.length==0)
+            return null;
+        return getMedicalFromRow(  type,files);
     }
     /**
      * 将城市、城镇医疗保险数据合并到一个map里

@@ -31,8 +31,8 @@
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
-                                <form id="form-Endowment"   role="form" th:action="${actionUrl}" METHOD="get">
-                                  <!--  <div class="row">
+                                <form id="form-FinanceFeed"   role="form" th:action="${actionUrl}" METHOD="get">
+                                   <!-- <div class="row">
                                         <label class="col-sm-1 control-label no-padding-right" for="custAddr"> 文件名：</label>
                                         <div class="col-sm-3">
                                             <input   type="text" id="custAddr" name="custAddr" placeholder=" 文件名" class="col-sm-12"   maxlength="50"/>
@@ -275,7 +275,7 @@
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS'){
-                        location.href="/Medical/list?type=[[${type}]]";
+                        location.href="/FinanceFeed/list?type=[[${type}]]";
                         $('#postResWarning').modal('hide');
                     }else{
                         $('#postResContent').find("strong").html(msg);
@@ -291,14 +291,15 @@
             $('#processBar').css("display","");
             $(".progress-bar").css("width","100%");
             $.ajax({
-                url: '/MedicalAnalyse/analyseAll',
+                url: '/FinanceFeedAnalyse/analyseAll',
                 type: 'GET',
                 cache: false,
                 processData: false,
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS'){
-                        location.href="/Medical/list?type=medicalAllApplication";
+                        //alert(msg);
+                       location.href="/FinanceFeed/list?type=financeFeedAllApplication";
 
                     }else{
                         $('#postResContent').find("strong").html(msg);
@@ -312,7 +313,7 @@
         });
         function gotopage(pageNo) {
             $("#page").val(pageNo);
-            $("#form-Endowment" ).submit();
+            $("#form-FinanceFeed" ).submit();
 
         }
         window.gotopage=gotopage;
@@ -328,7 +329,7 @@
             $('#postResWarning').modal('show');
             processBar=setInterval(function (args) {
                 $.ajax({
-                    url:"/MedicalAnalyse/getProgress",
+                    url:"/FinanceFeedAnalyse/getProgress",
                     type: 'GET',
                     cache: false,
                     processData: false,
@@ -364,6 +365,7 @@
                             $('#postResContent').find("strong").html('文件太大,请重新上传！');
                             $('#processBar').css("display","none");
                             $('#closeMsg').css("display","");
+
 
                         }else {
                             $('#postResWarning').modal('show');

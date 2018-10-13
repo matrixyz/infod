@@ -2,14 +2,16 @@ package com.zzsc.infod.service.impl;
 
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
-import com.zzsc.infod.model.EndowmentDto;
-import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
+import com.zzsc.infod.model.FinanceFeedDto;
+import com.zzsc.infod.service.FinanceFeedAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,17 +20,20 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseServiceExcel {
+public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseServiceExcel {
 
-    private static Logger logger = LoggerFactory.getLogger(EndowmentAnalyseServiceExcelImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(FinanceFeedAnalyseServiceExcelImpl.class);
 
-    public List<EndowmentDto> analyseCityExcel(MultipartFile file) {
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+    public List<FinanceFeedDto> analyseCityExcel(MultipartFile file) {
+        List<FinanceFeedDto> FinanceFeedDtos=new ArrayList<>();
 
         Workbook workbook = null;
         try {
@@ -38,11 +43,11 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             workbook = WorkbookFactory.create(is);
             List<String[]> cells= ExcelUtil.getWorkbookInfo(2,new int[]{0,1,2},workbook);
             for (String[] item:cells) {
-                EndowmentDto endowmentDto=new EndowmentDto();
-                endowmentDto.setCid(item[1]);
-                endowmentDto.setName(item[0]);
-                endowmentDto.setOrgName(item[2]);
-                EndowmentDtos.add(endowmentDto);
+                FinanceFeedDto FinanceFeedDto=new FinanceFeedDto();
+                FinanceFeedDto.setCid(item[1]);
+                FinanceFeedDto.setName(item[0]);
+                FinanceFeedDto.setOrgName(item[2]);
+                FinanceFeedDtos.add(FinanceFeedDto);
 
             }
 
@@ -55,15 +60,15 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 e.printStackTrace();
             }
         }
-        return EndowmentDtos;
+        return FinanceFeedDtos;
     }
 
     @Override
-    public List<EndowmentDto> analyseVallageExcel(MultipartFile file) {
+    public List<FinanceFeedDto> analyseVallageExcel(MultipartFile file) {
 
 
 
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+        List<FinanceFeedDto> FinanceFeedDtos=new ArrayList<>();
 
         Workbook workbook = null;
         try {
@@ -80,11 +85,11 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
             for (int i = 3; i < rowLength; i++) {
                 Row row = sheet.getRow(i);
-                EndowmentDto endowmentDto=new EndowmentDto();
-                endowmentDto.setCid(row.getCell(6).toString());
-                endowmentDto.setName(row.getCell(3).toString());
-                endowmentDto.setOrgName(row.getCell(11).toString());
-                EndowmentDtos.add(endowmentDto);
+                FinanceFeedDto FinanceFeedDto=new FinanceFeedDto();
+                FinanceFeedDto.setCid(row.getCell(6).toString());
+                FinanceFeedDto.setName(row.getCell(3).toString());
+                FinanceFeedDto.setOrgName(row.getCell(11).toString());
+                FinanceFeedDtos.add(FinanceFeedDto);
 
             }
 
@@ -105,12 +110,12 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
 
-        return EndowmentDtos;
+        return FinanceFeedDtos;
     }
 
     @Override
-    public List<EndowmentDto> analyseCityExcel(File file) {
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+    public List<FinanceFeedDto> analyseCityExcel(File file) {
+        List<FinanceFeedDto> FinanceFeedDtos=new ArrayList<>();
 
         Workbook workbook = null;
         try {
@@ -122,11 +127,11 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 List<String[]> cells = ExcelUtil.getWorkbookInfo(1, new int[]{2, 3, 4}, workbook);
 
                 for (String[] item : cells) {
-                    EndowmentDto endowmentDto = new EndowmentDto();
-                    endowmentDto.setCid(item[1]);
-                    endowmentDto.setName(item[0]);
-                    endowmentDto.setOrgName(item[2]);
-                    EndowmentDtos.add(endowmentDto);
+                    FinanceFeedDto FinanceFeedDto = new FinanceFeedDto();
+                    FinanceFeedDto.setName(item[0]);
+                    FinanceFeedDto.setCid(item[1]);
+                    FinanceFeedDto.setOrgName(item[2]);
+                    FinanceFeedDtos.add(FinanceFeedDto);
                 }
                 is.close();
             }else{
@@ -145,13 +150,13 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 e.printStackTrace();
             }
         }
-        return EndowmentDtos;
+        return FinanceFeedDtos;
     }
-    public List<EndowmentDto> analyseCityExcelEventmode(File file) {
+    public List<FinanceFeedDto> analyseCityExcelEventmode(File file) {
 
 
         long startTime = System.currentTimeMillis();
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+        List<FinanceFeedDto> FinanceFeedDtos=new ArrayList<>();
 
         EventModelReadExcel reader=new EventModelReadExcel(1);
         try {
@@ -165,17 +170,17 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                     continue;
                 }
 
-                EndowmentDto endowmentDto=new EndowmentDto();
+                FinanceFeedDto FinanceFeedDto=new FinanceFeedDto();
                 for (Object o : re) {
                     if(col==3)
-                        endowmentDto.setName(String.valueOf(o));
+                        FinanceFeedDto.setName(String.valueOf(o));
                     else if(col==2)
-                        endowmentDto.setCid(String.valueOf(o));
+                        FinanceFeedDto.setCid(String.valueOf(o));
 
-                    endowmentDto.setOrgName(areaName);
+                    FinanceFeedDto.setOrgName(areaName);
                     col++;
                 }
-                EndowmentDtos.add(endowmentDto);
+                FinanceFeedDtos.add(FinanceFeedDto);
 
             }
 
@@ -190,12 +195,12 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
 
-        return EndowmentDtos;
+        return FinanceFeedDtos;
     }
     @Override
-    public List<EndowmentDto> analyseVallageExcel(File file) {
+    public List<FinanceFeedDto> analyseVallageExcel(File file) {
         long startTime = System.currentTimeMillis();
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+        List<FinanceFeedDto> FinanceFeedDtos=new ArrayList<>();
         Workbook workbook = null;
         try {
             int type=ExcelUtil.switchFileType(file);
@@ -208,14 +213,14 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
                 for (int i = 1; i < rowLength; i++) {
                     Row row = sheet.getRow(i);
-                    EndowmentDto endowmentDto = new EndowmentDto();
+                    FinanceFeedDto FinanceFeedDto = new FinanceFeedDto();
                     if (row.getCell(3) == null || row.getCell(4) == null) {
                         continue;
                     }
-                    endowmentDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
-                    endowmentDto.setName(row.getCell(4).toString());
-                    endowmentDto.setOrgName(row.getCell(2).toString());
-                    EndowmentDtos.add(endowmentDto);
+                    FinanceFeedDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
+                    FinanceFeedDto.setName(row.getCell(4).toString());
+                    FinanceFeedDto.setOrgName(row.getCell(2).toString());
+                    FinanceFeedDtos.add(FinanceFeedDto);
 
                 }
                 is.close();
@@ -240,13 +245,13 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
 
-        return EndowmentDtos;
+        return FinanceFeedDtos;
     }
-    public List<EndowmentDto> analyseVallageExcelEventmode(File file) {
+    public List<FinanceFeedDto> analyseVallageExcelEventmode(File file) {
 
 
         long startTime = System.currentTimeMillis();
-        List<EndowmentDto> EndowmentDtos=new ArrayList<>();
+        List<FinanceFeedDto> FinanceFeedDtos=new ArrayList<>();
 
         EventModelReadExcel reader=new EventModelReadExcel(2);
         try {
@@ -257,17 +262,17 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 if(re.size()<3||re.get(3)==null||re.get(3).toString().length()!=18){
                     continue;
                 }
-                EndowmentDto endowmentDto=new EndowmentDto();
+                FinanceFeedDto FinanceFeedDto=new FinanceFeedDto();
                 for (Object o : re) {
                     if(col==4)
-                        endowmentDto.setName(String.valueOf(o));
+                        FinanceFeedDto.setName(String.valueOf(o));
                     else if(col==3)
-                        endowmentDto.setCid(String.valueOf(o));
+                        FinanceFeedDto.setCid(String.valueOf(o));
                     else if(col==2)
-                        endowmentDto.setOrgName(String.valueOf(o));
+                        FinanceFeedDto.setOrgName(String.valueOf(o));
                     col++;
                 }
-                EndowmentDtos.add(endowmentDto);
+                FinanceFeedDtos.add(FinanceFeedDto);
 
             }
 
@@ -283,7 +288,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
 
-        return EndowmentDtos;
+        return FinanceFeedDtos;
     }
 
     @Override
@@ -292,44 +297,44 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
     }
 
     @Override
-    public Map<String, EndowmentDto> getEndowmentFromRow(Map<String,EndowmentDto> endowmentDtoMap, MultipartFile file,String type) {
+    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(Map<String,FinanceFeedDto> FinanceFeedDtoMap, MultipartFile file,String type) {
 
 
-        List<EndowmentDto> EndowmentDtos =null;
-        if(type.equals(Constant.endowmentCity)){
-            EndowmentDtos= analyseCityExcel(file);
+        List<FinanceFeedDto> FinanceFeedDtos =null;
+        if(type.equals(Constant.financeFeedCity)){
+            FinanceFeedDtos= analyseCityExcel(file);
         }
-        if(type.equals(Constant.endowmentVallage)){
-            EndowmentDtos= analyseVallageExcel(file);
+        if(type.equals(Constant.financeFeedVallage)){
+            FinanceFeedDtos= analyseVallageExcel(file);
         }
-        for (EndowmentDto one:EndowmentDtos  ) {
+        for (FinanceFeedDto one:FinanceFeedDtos  ) {
             if(one.getCid()==null)
                 continue;
             String key=one.getName()+one.getCid();
-            if(endowmentDtoMap.containsKey(key)){
-                endowmentDtoMap.get(key).setRepeatTimesAdd();
+            if(FinanceFeedDtoMap.containsKey(key)){
+                FinanceFeedDtoMap.get(key).setRepeatTimesAdd();
             }else {
-                endowmentDtoMap.put(key, one);
+                FinanceFeedDtoMap.put(key, one);
             }
 
         }
 
-        return endowmentDtoMap;
+        return FinanceFeedDtoMap;
     }
 
     @Override
-    public Map<String, EndowmentDto> getEndowmentFromRow(String type,File[] files) {
+    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(String type,File[] files) {
 
-        Map<String, EndowmentDto> res=new HashMap<>();
+        Map<String, FinanceFeedDto> res=new HashMap<>();
         for (File file: files) {
-            List<EndowmentDto> EndowmentDtos =null;
-            if(type.equals(Constant.endowmentCity)){
-                EndowmentDtos= analyseCityExcel(file);
+            List<FinanceFeedDto> FinanceFeedDtos =null;
+            if(type.equals(Constant.financeFeedCity)){
+                FinanceFeedDtos= analyseCityExcel(file);
             }
-            if(type.equals(Constant.endowmentVallage)){
-                EndowmentDtos= analyseVallageExcel(file);
+            if(type.equals(Constant.financeFeedVallage)){
+                FinanceFeedDtos= analyseVallageExcel(file);
             }
-            for (EndowmentDto one:EndowmentDtos  ) {
+            for (FinanceFeedDto one:FinanceFeedDtos  ) {
                 if(one.getCid()==null)
                     continue;
                 StringBuilder key=new StringBuilder().append(one.getName()).append(one.getCid());
@@ -346,23 +351,24 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         return res;
     }
     @Override
-    public Map<String, EndowmentDto> init(Map<String, EndowmentDto> res,MultipartFile file,String type){
+    public Map<String, FinanceFeedDto> init(Map<String, FinanceFeedDto> res,MultipartFile file,String type){
 
-        return getEndowmentFromRow(res,  file,type);
+        return getFinanceFeedFromRow(res,  file,type);
     }
     @Override
-    public Map<String, EndowmentDto> initByPath(String path,String type){
+    public Map<String, FinanceFeedDto> initByPath(String path,String type){
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
-        return getEndowmentFromRow(  type,files);
+
+        return getFinanceFeedFromRow(  type,files);
     }
     /**
      * 将城市、城镇医疗保险数据合并到一个map里
      */
-    public Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage){
-        Map<String, EndowmentDto> city=getEndowmentFromRow(   Constant.endowmentCity,getFiles(pathCity));
-        Map<String, EndowmentDto> vallage=getEndowmentFromRow( Constant.endowmentVallage,getFiles(pathVallage));
+    public Map<String, FinanceFeedDto> initMerge(String pathCity,String pathVallage){
+        Map<String, FinanceFeedDto> city=getFinanceFeedFromRow(   Constant.financeFeedCity,getFiles(pathCity));
+        Map<String, FinanceFeedDto> vallage=getFinanceFeedFromRow( Constant.financeFeedVallage,getFiles(pathVallage));
 
         for (String key:city.keySet()  ) {
             if(vallage.containsKey(key)){
@@ -373,7 +379,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         }
         return vallage;
     }
-    public Map<String, EndowmentDto> initMerge( Map<String, EndowmentDto> city, Map<String, EndowmentDto> vallage){
+    public Map<String, FinanceFeedDto> initMerge( Map<String, FinanceFeedDto> city, Map<String, FinanceFeedDto> vallage){
 
 
         for (String key:city.keySet()  ) {
@@ -386,9 +392,9 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         return vallage;
     }
     @Override
-    public List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String endowmentUpload) {
+    public List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String FinanceFeedUpload) {
         List<AnalyseExcelUploadDto> list=new ArrayList<>();
-        File[] files= FileUtil.getFilesInPath(endowmentUpload);
+        File[] files= FileUtil.getFilesInPath(FinanceFeedUpload);
         int id=1;
         if(files==null||files.length==0){
             AnalyseExcelUploadDto temp=new AnalyseExcelUploadDto();
@@ -412,14 +418,14 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
     }
 
     @Override
-    public String checkEndowmentDifExcelFile(ServletContext applications, String appType, String errType, String emptyType) {
+    public String checkFinanceFeedDifExcelFile(ServletContext applications, String appType, String errType, String emptyType) {
         Object all=applications.getAttribute(appType);
         if(all==null){
             return errType;
         }
-        List<EndowmentDto> mapKeyList = (List<EndowmentDto> ) all;
-        List<EndowmentDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
-        tempList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+        List<FinanceFeedDto> mapKeyList = (List<FinanceFeedDto> ) all;
+        List<FinanceFeedDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
         if(tempList.size()==0){
             return emptyType;
         }
@@ -427,12 +433,12 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
     }
 
     @Override
-    public int getListEndowmentDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle) {
+    public int getListFinanceFeedDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle) {
         Object all=applications.getAttribute(appType);
 
-        List<EndowmentDto> mapKeyList = (List<EndowmentDto> ) all;
-        List<EndowmentDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
-        tempList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
+        List<FinanceFeedDto> mapKeyList = (List<FinanceFeedDto> ) all;
+        List<FinanceFeedDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
 
         ServletOutputStream os =null;
 
@@ -448,7 +454,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
-            for (EndowmentDto medicalDto : tempList) {
+            for (FinanceFeedDto medicalDto : tempList) {
                 String[] item=new String[]{
                         String.valueOf(index),
                         medicalDto.getName(),

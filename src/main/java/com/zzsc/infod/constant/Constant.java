@@ -15,8 +15,7 @@ public class Constant {
     public final static String SUCCESS="SUCCESS";
     public final static String ERR="ERR";
     public final static String ERR_FILE_MAX_SIZE="ERR_FILE_MAX_SIZE";
-    public final static String ERR_CITY_ANALYSE_NOT_YET="请先分析城镇养老险数据";
-    public final static String ERR_VALLAGE_ANALYSE_NOT_YET="请先分析城乡养老保险数据";
+
     public final static String ERR_UPLOAD_FILE_TYPE="系统只支持xls  和 xlsx  格式的文件";
     public final static String ERR_UPLOAD_FILE_FORMAT="上传的EXCEL格式不正确!";
     public final static int maxFileSize=1000*1000*200;
@@ -41,6 +40,27 @@ public class Constant {
     public final static String medicalVallageFileApplication="medicalVallageFileApplication";//上传的文件信息
     public final static String medicalAllApplication="medicalAllApplication";
 
+
+    public final static String FinanceFeedAnalyse="FinanceFeedAnalyse";
+
+    public final static String financeFeedCity="FinanceFeedCity";
+    public final static String financeFeedVallage="FinanceFeedVallage";
+    public final static String financeFeedCityApplication="FinanceFeedCityApplication";
+    public final static String financeFeedCityApplicationMap="financeFeedCityApplicationMap";
+    public final static String financeFeedVallageApplication="FinanceFeedVallageApplication";
+    public final static String financeFeedVallageApplicationMap="financeFeedVallageApplicationMap";
+    public final static String financeFeedCityFileApplication="financeFeedCityFileApplication";//上传的文件信息
+    public final static String financeFeedVallageFileApplication="financeFeedVallageFileApplication";//上传的文件信息
+    public final static String financeFeedAllApplication="financeFeedAllApplication";
+
+    public final static String SomeXlsAnalyse="SomeXlsAnalyse";
+
+    public final static String someXls="SomeXls";
+    public final static String someXlsApplication="SomeXlsApplication";
+    public final static String someXlsApplicationMap="someXlsApplicationMap";
+    public final static String someXlsFileApplication="someXlsFileApplication";//上传的文件信息
+    public final static String someXlsAllApplication="someXlsAllApplication";
+
     public final static String ERR_CITY_ANALYSE_NOT_YET_MEDICAL="请先分析城镇医疗保险数据";
     public final static String ERR_VALLAGE_ANALYSE_NOT_YET_MEDICAL="请先分析城乡医疗保险数据";
 
@@ -53,12 +73,38 @@ public class Constant {
     public final static String ERR_ALL_ANALYSE_NOT_YET_ENDOWMENT="请先合并分析城镇、城乡养老保险数据";
     public final static String EMPTY_ALL_ANALYSE_NOT_YET_ENDOWMENT="未发现重复数据!";
 
+    public final static String ERR_CITY_ANALYSE_NOT_YET_FINANCEFEED="请先分析县直供数据";
+    public final static String ERR_VALLAGE_ANALYSE_NOT_YET_FINANCEFEED="请先分析乡镇直供数据";
+
+    public final static String ERR_ALL_ANALYSE_NOT_YET_FINANCEFEED="请先合并分析县直、乡镇 供养数据";
+    public final static String EMPTY_ALL_ANALYSE_NOT_YET_FINANCEFEED="未发现重复数据!";
+
+    public final static String ERR_ANALYSE_NOT_YET_SOMEXLS="请先分析县直供数据";
+    public final static String EMPTY_ALL_ANALYSE_NOT_YET_SOMEXLS="未发现重复数据";
+
+
+    public final static String ERR_NO_FINANCEFEED_CITY_FILE="请先上传县直财政供养人员excel 文件!";
+    public final static String ERR_NO_FINANCEFEED_VALLAGE_FILE="请先上传乡镇财政供养人员excel 文件!";
+
+    public final static String ERR_NO_ENDOWMENT_CITY_FILE="请先上传城镇养老保险  excel 文件!";
+    public final static String ERR_NO_ENDOWMENT_VALLAGE_FILE="请先上传城乡养老保险  excel 文件!";
+
+    public final static String ERR_NO_MEDICAL_CITY_FILE="请先上传城镇医疗保险excel 文件!";
+    public final static String ERR_NO_MEDICAL_VALLAGE_FILE="请先上传城乡村医疗保险excel 文件!";
+
+    public final static String ERR_NO_SOMEXLS_FILE="请先上传城镇养老保险  excel 文件!";
+
 
     public final static String dataTitleMedicalAll="城镇、城乡医疗保险数据综合重复查询,发现重复数据";
     public final static String dataTitleMedicalCity="城镇医疗保险数据重复查询,发现重复数据";
     public final static String dataTitleMedicalVallage="城乡医疗保险数据重复查询,发现重复数据";
 
-    public final static String HSSFWorkbook="HSSFWorkbook";
+    public final static String dataTitleFinanceFeedAll="县直、乡镇财政供养数据综合重复查询,发现重复数据";
+    public final static String dataTitleFinanceFeedCity="县直财政供养数据重复查询,发现重复数据";
+    public final static String dataTitleFinanceFeedVallage="乡镇财政供养数据重复查询,发现重复数据";
+
+    public final static String dataTitleSomeXlsAll="其他数据综合重复查询,发现重复数据";
+
 
 
 

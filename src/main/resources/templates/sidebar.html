@@ -50,7 +50,7 @@
                     <b class="arrow"></b>
                 </li>
 
-                <li   >
+
                 <li  th:class="${type=='EndowmentCity'?'active':''}" >
                     <a href="/Endowment/list?type=EndowmentCity">
                         机关事业养老保险查询
@@ -74,6 +74,39 @@
 
                     <b class="arrow"></b>
                 </li>
+
+                <li  th:class="${type=='FinanceFeedCity'?'active':''}" >
+                    <a href="/FinanceFeed/list?type=FinanceFeedCity">
+                        县直财供人员重复查询
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li  th:class="${type=='FinanceFeedVallage'?'active':''}" >
+                    <a href="/FinanceFeed/list?type=FinanceFeedVallage">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        乡镇财供人员重复查询
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li  th:class="${type=='FinanceFeedAllApplication'?'active':''}">
+                    <a href="/FinanceFeed/list?type=financeFeedAllApplication">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        综合财供人员重复查询
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li  th:class="${type=='SomeXlsAllApplication'?'active':''}">
+                    <a href="/SomeXls/list?type=someXlsAllApplication">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        其他重复查询
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+
             </ul>
         </li>
         <li  th:class="${#strings.contains( currUrl,'Analyse')?'active open hsub':''}"  >
@@ -120,6 +153,33 @@
 
                     <b class="arrow"></b>
                 </li>
+
+                <li   th:class="${#strings.contains( currUrl,'FinanceFeedAnalyse/CityListview')?'active':''}"   >
+                    <a href="/FinanceFeedAnalyse/CityListview">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                       县直财供人员上传
+
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li    th:class="${#strings.contains( currUrl,'FinanceFeedAnalyse/VallageListview')?'active':''}"  >
+                    <a href="/FinanceFeedAnalyse/VallageListview">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        乡镇财供人员上传
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li    th:class="${#strings.contains( currUrl,'SomeXlsAnalyse/Listview')?'active':''}"  >
+                    <a href="/SomeXlsAnalyse/Listview">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        其他数据上传
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+
             </ul>
         </li>
 
