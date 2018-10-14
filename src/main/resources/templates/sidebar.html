@@ -24,7 +24,7 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
-                <li  th:class="${type=='MedicalCity'?'active':''}" >
+                <li  th:class="${type=='MedicalCity'?'active':''}" th:if="${session.user.userName=='管理员'}">
                     <a href="/Medical/list?type=MedicalCity">
 
                         <i class="menu-icon fa fa-caret-right"></i>
@@ -33,7 +33,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='MedicalVallage'?'active':''}">
+                <li  th:class="${type=='MedicalVallage'?'active':''}" th:if="${session.user.userName=='管理员'}">
                     <a href="/Medical/list?type=MedicalVallage">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民医疗保险查询
@@ -41,7 +41,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='medicalAllApplication'?'active':''}">
+                <li  th:class="${type=='medicalAllApplication'?'active':''}" th:if="${session.user.userName=='管理员'}">
                     <a href="/Medical/list?type=medicalAllApplication">
                         <i class="menu-icon fa fa-caret-right"></i>
                         医疗保险重复查询
@@ -51,14 +51,14 @@
                 </li>
 
 
-                <li  th:class="${type=='EndowmentCity'?'active':''}" >
+                <li  th:class="${type=='EndowmentCity'?'active':''}"  th:if="${session.user.userName=='管理员'}">
                     <a href="/Endowment/list?type=EndowmentCity">
                         机关事业养老保险查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='EndowmentVallage'?'active':''}" >
+                <li  th:class="${type=='EndowmentVallage'?'active':''}"  th:if="${session.user.userName=='管理员'}">
                     <a href="/Endowment/list?type=EndowmentVallage">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民养老保险查询
@@ -66,7 +66,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='endowmentAllApplication'?'active':''}">
+                <li  th:class="${type=='endowmentAllApplication'?'active':''}" th:if="${session.user.userName=='管理员'}">
                     <a href="/Endowment/list?type=endowmentAllApplication">
                         <i class="menu-icon fa fa-caret-right"></i>
                         养老保险重复查询
@@ -75,14 +75,14 @@
                     <b class="arrow"></b>
                 </li>
 
-                <li  th:class="${type=='FinanceFeedCity'?'active':''}" >
+                <li  th:class="${type=='FinanceFeedCity'?'active':''}"  th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }">
                     <a href="/FinanceFeed/list?type=FinanceFeedCity">
                         县直财供人员重复查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='FinanceFeedVallage'?'active':''}" >
+                <li  th:class="${type=='FinanceFeedVallage'?'active':''}"  th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }">
                     <a href="/FinanceFeed/list?type=FinanceFeedVallage">
                         <i class="menu-icon fa fa-caret-right"></i>
                         乡镇财供人员重复查询
@@ -90,7 +90,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='FinanceFeedAllApplication'?'active':''}">
+                <li  th:class="${type=='financeFeedAllApplication'?'active':''}" th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }">
                     <a href="/FinanceFeed/list?type=financeFeedAllApplication">
                         <i class="menu-icon fa fa-caret-right"></i>
                         综合财供人员重复查询
@@ -98,15 +98,22 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li  th:class="${type=='SomeXlsAllApplication'?'active':''}">
-                    <a href="/SomeXls/list?type=someXlsAllApplication">
+                <li  th:class="${type=='SomeXls'?'active':''}" th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }">
+                    <a href="/SomeXls/list?type=SomeXls">
                         <i class="menu-icon fa fa-caret-right"></i>
                         其他重复查询
                     </a>
 
                     <b class="arrow"></b>
                 </li>
+                <li  th:class="${type=='someXlsAllApplication'?'active':''}" th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }">
+                    <a href="/SomeXls/list?type=someXlsAllApplication">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        其他与财政重复查询
+                    </a>
 
+                    <b class="arrow"></b>
+                </li>
             </ul>
         </li>
         <li  th:class="${#strings.contains( currUrl,'Analyse')?'active open hsub':''}"  >
@@ -120,7 +127,7 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
-                <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/CityListview')?'active':''}">
+                <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/CityListview')?'active':''}" th:if="${session.user.userName=='管理员'   }">
                     <a href="/MedicalAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城镇职工医疗保险上传
@@ -128,7 +135,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/VallageListview')?'active':''}" >
+                <li   th:class="${#strings.contains( currUrl,'MedicalAnalyse/VallageListview')?'active':''}"  th:if="${session.user.userName=='管理员'   }">
                     <a href="/MedicalAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民医疗保险上传
@@ -136,7 +143,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li   th:class="${#strings.contains( currUrl,'EndowmentAnalyse/CityListview')?'active':''}"   >
+                <li   th:class="${#strings.contains( currUrl,'EndowmentAnalyse/CityListview')?'active':''}"  th:if="${session.user.userName=='管理员'   }"  >
                     <a href="/EndowmentAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         机关事业养老保险上传
@@ -145,7 +152,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li    th:class="${#strings.contains( currUrl,'EndowmentAnalyse/VallageListview')?'active':''}"  >
+                <li    th:class="${#strings.contains( currUrl,'EndowmentAnalyse/VallageListview')?'active':''}"  th:if="${session.user.userName=='管理员'   }" >
                     <a href="/EndowmentAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         城乡居民养老保险上传
@@ -154,7 +161,7 @@
                     <b class="arrow"></b>
                 </li>
 
-                <li   th:class="${#strings.contains( currUrl,'FinanceFeedAnalyse/CityListview')?'active':''}"   >
+                <li   th:class="${#strings.contains( currUrl,'FinanceFeedAnalyse/CityListview')?'active':''}"   th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }" >
                     <a href="/FinanceFeedAnalyse/CityListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                        县直财供人员上传
@@ -163,7 +170,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li    th:class="${#strings.contains( currUrl,'FinanceFeedAnalyse/VallageListview')?'active':''}"  >
+                <li    th:class="${#strings.contains( currUrl,'FinanceFeedAnalyse/VallageListview')?'active':''}"   th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }">
                     <a href="/FinanceFeedAnalyse/VallageListview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         乡镇财供人员上传
@@ -171,7 +178,7 @@
 
                     <b class="arrow"></b>
                 </li>
-                <li    th:class="${#strings.contains( currUrl,'SomeXlsAnalyse/Listview')?'active':''}"  >
+                <li    th:class="${#strings.contains( currUrl,'SomeXlsAnalyse/Listview')?'active':''}"  th:if="${session.user.userName=='管理员' or session.user.userName=='财政管理' }" >
                     <a href="/SomeXlsAnalyse/Listview">
                         <i class="menu-icon fa fa-caret-right"></i>
                         其他数据上传

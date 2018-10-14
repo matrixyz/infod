@@ -1,6 +1,6 @@
 package com.zzsc.infod.model;
 
-public class SomeXlsDto extends SomeXls{
+public class SomeXlsDto extends FinanceFeedDto{
 
     String page;
     String beginDate;

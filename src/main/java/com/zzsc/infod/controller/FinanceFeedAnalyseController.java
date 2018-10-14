@@ -48,7 +48,7 @@ public class FinanceFeedAnalyseController {
     private Logger logger =   LoggerFactory.getLogger(this.getClass());
 
 
-/*    @RequestMapping(value="/CityListview",method= RequestMethod.GET )
+   @RequestMapping(value="/CityListview",method= RequestMethod.GET )
     public String getCityListview(Model model, AnalyseExcelUploadDto analyseExcelUploadDto  ){
         model.addAttribute("getFileListUrl","/FinanceFeedAnalyse/CityList");
         model.addAttribute("analyseType","/FinanceFeedAnalyse/analyseCity");
@@ -100,7 +100,7 @@ public class FinanceFeedAnalyseController {
         model.addAttribute("FileList",list.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
 
         return "adm/AnalyseExcelFinanceFeedUpload-list";
-    }*/
+    }
 
     @ResponseBody
     @RequestMapping("/getProgress")
@@ -243,7 +243,7 @@ public class FinanceFeedAnalyseController {
             Map<String, FinanceFeedDto> resVallage=(Map<String, FinanceFeedDto> )targetVallage;
             Map<String, FinanceFeedDto> resCity=(Map<String, FinanceFeedDto> )targetCity;
             all=financeFeedAnalyseServiceExcel.initMerge(resCity,resVallage);
-
+            applications.setAttribute(Constant.financeFeedAllApplicationMap,all);
         }
 
 

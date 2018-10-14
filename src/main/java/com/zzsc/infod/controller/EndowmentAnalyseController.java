@@ -180,51 +180,7 @@ public class EndowmentAnalyseController {
 
 
     }
-    /**
-     * 将上传的文件异步的写入文件
-     */
-    class MyThread2 extends Thread {
-        private Map<String,InputStream>  files_;
-        private String finalUploadPath;
 
-        public MyThread2( Map<String,InputStream>  files,String finalUploadPath) {
-            this.files_ = files;
-            this.finalUploadPath = finalUploadPath;
-
-        }
-
-        public void run() {
-
-
-            for (String key : files_.keySet()) {
-                String fileName = key;
-                try {
-                    OutputStream outputStream =new FileOutputStream(new File(finalUploadPath + "\\" + fileName));
-
-                    int bytesWritten = 0;
-                    int byteCount = 0;
-                    byte[] bytes = new byte[1024*1000*10];
-                    while ((byteCount = files_.get(key).read(bytes)) != -1)
-                    {
-                        outputStream.write(bytes, bytesWritten, byteCount);
-                        bytesWritten += byteCount;
-                    }
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }finally {
-                    try {
-                        files_.get(key).close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-
-    }
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws IOException {

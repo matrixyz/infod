@@ -440,8 +440,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             os = response.getOutputStream();// 取得输出流
             response.setCharacterEncoding("UTF-8");
 
-            response.setHeader("Content-Disposition", "attachment; filename="
-                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Disposition", "attachment; filename=\""
+                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
                     "序号","姓名","身份证号码","单位","重复次数"

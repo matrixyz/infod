@@ -10,9 +10,7 @@
 <div class="main-container" id="main-container">
 
 
-    <div th:replace="sidebar :: copy"></div>
 
-    <!-- /section:basics/sidebar -->
     <div class="main-content">
         <!-- #section:basics/content.breadcrumbs -->
 
@@ -25,57 +23,35 @@
                         <!-- PAGE CONTENT BEGINS -->
                         <form id="form-InfoTitle" class="form-horizontal" role="form"   >
                             <div class="form-group" >
-                                <label class="col-sm-2 control-label no-padding-right" for="tid"> 数据标题主键：</label>
+                                <label class="col-sm-2 control-label no-padding-right" for="userName"> 新密码：</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="tid" name="tid"
-                                           placeholder="" class="col-xs-10 col-sm-5" th:value="${InfoTitleDto.tid}"/>
+                                    <input type="text" id="userName" name="userName"
+                                           placeholder="" class="col-xs-10 col-sm-5"  />
                                 </div>
                             </div>
                             <div class="space-4"></div>
                             <div class="form-group" >
-                                <label class="col-sm-2 control-label no-padding-right" for="title"> 信息标题：</label>
+                                <label class="col-sm-2 control-label no-padding-right" for="userPwd"> 重复输入：</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="title" name="title"
-                                           placeholder="" class="col-xs-10 col-sm-5" th:value="${InfoTitleDto.title}"/>
+                                    <input type="text" id="userPwd" name="userPwd"
+                                           placeholder="" class="col-xs-10 col-sm-5"  />
                                 </div>
                             </div>
                             <div class="space-4"></div>
-                            <div class="form-group" >
-                                <label class="col-sm-2 control-label no-padding-right" for="des"> 相关信息描述：</label>
-                                <div class="col-sm-10">
-                                    <input type="text" id="des" name="des"
-                                           placeholder="" class="col-xs-10 col-sm-5" th:value="${InfoTitleDto.des}"/>
-                                </div>
-                            </div>
-                            <div class="space-4"></div>
-                            <div class="form-group" >
-                                <label class="col-sm-2 control-label no-padding-right" for="creTime"> 数据标题创建时间：</label>
-                                <div class="col-sm-10">
-                                    <input type="text" id="creTime" name="creTime"
-                                           placeholder="" class="col-xs-10 col-sm-5" th:value="${InfoTitleDto.creTime}"/>
-                                </div>
-                            </div>
-                            <div class="space-4"></div>
-                            <div class="form-group" >
-                                <label class="col-sm-2 control-label no-padding-right" for="creator"> 创建数据用户标识：</label>
-                                <div class="col-sm-10">
-                                    <input type="text" id="creator" name="creator"
-                                           placeholder="" class="col-xs-10 col-sm-5" th:value="${InfoTitleDto.creator}"/>
-                                </div>
-                            </div>
-                            <div class="space-4"></div>
+
+
                             <div class="clearfix form-actions">
                                 <div class="col-md-offset-3 col-md-9">
                                     <button id="btn-submit" class="btn btn-info" type="button">
                                         <i class="ace-icon fa fa-check bigger-110"></i>
-                                        <span th:text="${InfoTitleDto.==null?'添加':'修改'}"></span>
+                                        <span  >修改</span>
                                     </button>
-
                                     &nbsp; &nbsp; &nbsp;
                                     <button id="btn-backup" class="btn" type="reset">
                                         <i class="ace-icon fa fa-undo bigger-110"></i>
                                         返回
                                     </button>
+
                                 </div>
                             </div>
 
@@ -160,7 +136,7 @@
             window.history.back();  //返回上一页
         });
 
-        var submitType=[[${InfoTitleDto.tid==null?'POST':'PUT'}]];
+
         $( "#btn-submit" ).click(function () {
 
 
@@ -169,10 +145,20 @@
             $.each(t, function() {
                 d[this.name] = this.value;
             });
+            if(d.userName.length<6){
+                $("#postResWarning").modal('show');
+                $("#postResContent").html("密码长度最少为6位!");
+                return false;
+            }
+            if(d.userName!=d.userPwd){
+                $("#postResWarning").modal('show');
+                $("#postResContent").html("两次密码输入不一致!");
+                return false;
+            }
 
             $.ajax({
-                url :  "/InfoTitle",
-                type :submitType,
+                url :  "/PubService/users",
+                type :"PUT",
                 data : JSON.stringify(d)  , //转JSON字符串
                 contentType:'application/json;charset=UTF-8', //contentType很重要
                 success: function (msg) {

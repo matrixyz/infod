@@ -2,15 +2,19 @@ package com.zzsc.infod.controller;
 
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
+import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.model.SomeXlsDto;
 import com.zzsc.infod.service.SomeXlsAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.NumUtil;
+import com.zzsc.infod.util.PageBean;
+import com.zzsc.infod.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,7 +48,32 @@ public class SomeXlsAnalyseController {
     HttpSession session;
 
     private Logger logger =   LoggerFactory.getLogger(this.getClass());
+    @RequestMapping(value="/Listview",method= RequestMethod.GET )
+    public String getListview(Model model, AnalyseExcelUploadDto analyseExcelUploadDto  ){
+        model.addAttribute("getFileListUrl","/SomeXlsAnalyse/List");
+        model.addAttribute("analyseType","/SomeXlsAnalyse/analyse");
+        model.addAttribute("actionUrl","/SomeXlsAnalyse/Listview");
+        model.addAttribute("type",Constant.someXls);
+        model.addAttribute("uploadType",Constant.SomeXlsAnalyse);
 
+        List<AnalyseExcelUploadDto> list=null;
+        if(applications.getAttribute(Constant.someXlsFileApplication)==null){
+            list=someXlsAnalyseServiceExcel.getAnalyseExcelUploadDtoList(someXlsUpload);
+        }else{
+            list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.someXlsFileApplication);
+        }
+        if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
+            analyseExcelUploadDto.setPage("1");
+        }
+        int pageNum= Integer.parseInt(analyseExcelUploadDto.getPage());
+        PageBean pageInfo=new PageBean();
+        pageInfo.setTotalCount(list.size());
+        pageInfo.setPageNo(pageNum);
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("FileList",list.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
+
+        return "adm/AnalyseExcelSomeXlsUpload-list";
+    }
 
     @ResponseBody
     @RequestMapping("/getProgress")
@@ -152,24 +181,27 @@ public class SomeXlsAnalyseController {
     @ResponseBody
     @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
     public String  analyseAll(  HttpServletRequest request) throws IOException {
-        Map<String, SomeXlsDto> all=null;
+        Map<String, FinanceFeedDto> all=null;
         {
-            Object target=applications.getAttribute(Constant.someXlsApplicationMap);
-            if(target==null){
+            Object financeFeedAllApplicationMap=applications.getAttribute(Constant.financeFeedAllApplicationMap);
+            Object someXlsApplicationMap=applications.getAttribute(Constant.someXlsApplicationMap);
+            if(financeFeedAllApplicationMap==null){
+                return Constant.ERR_ALL_ANALYSE_NOT_YET_FINANCEFEED;
+            }
+            if(someXlsApplicationMap==null){
                 return Constant.ERR_ANALYSE_NOT_YET_SOMEXLS;
             }
 
-            Map<String, SomeXlsDto> res=(Map<String, SomeXlsDto> )target;
-
-            all=someXlsAnalyseServiceExcel.initMerge(res,res);
-
+            Map<String, FinanceFeedDto> financeFeed=(Map<String, FinanceFeedDto> )financeFeedAllApplicationMap;
+            Map<String, SomeXlsDto> someXls=(Map<String, SomeXlsDto> )someXlsApplicationMap;
+            all=someXlsAnalyseServiceExcel.initMerge(financeFeed,someXls);
         }
 
 
         if(!all.isEmpty()){
-            List<SomeXlsDto> mapKeyList = new ArrayList<SomeXlsDto>(all.values());
+            List<FinanceFeedDto> mapKeyList = new ArrayList<FinanceFeedDto>(all.values());
             mapKeyList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
-            mapKeyList.sort(Comparator.comparingInt(SomeXlsDto::getRepeatTimes).reversed());
+            mapKeyList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
             applications.setAttribute(Constant.someXlsAllApplication,mapKeyList);
             return Constant.SUCCESS;
         }

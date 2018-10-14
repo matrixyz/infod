@@ -2,6 +2,8 @@ package com.zzsc.infod.service.impl;
 
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
+import com.zzsc.infod.model.FinanceFeed;
+import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.model.SomeXlsDto;
 import com.zzsc.infod.service.SomeXlsAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
@@ -135,7 +137,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
         Map<String, SomeXlsDto> res=new HashMap<>();
         for (File file: files) {
             List<SomeXlsDto> SomeXlsDtos =null;
-            if(type.equals(Constant.endowmentCity)){
+            if(type.equals(Constant.someXls)){
                 SomeXlsDtos= analyseSomeExcel(file);
             }
             
@@ -145,7 +147,10 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                 StringBuilder key=new StringBuilder().append(one.getName()).append(one.getCid());
 
                 if(res.containsKey(key.toString())){
-                    res.get(key.toString()).setRepeatTimesAdd();
+                    FinanceFeedDto o=res.get(key.toString());
+                    o.setRepeatTimesAdd();
+                    o.setOrgName(o.getOrgName()+"<br>"+one.getOrgName());
+                    //res.get(key.toString()).setRepeatTimesAdd();
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -166,30 +171,21 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     /**
      * 将城市、城镇医疗保险数据合并到一个map里
      */
-    public Map<String, SomeXlsDto> initMerge(String pathCity,String pathVallage){
-        Map<String, SomeXlsDto> city=getSomeXlsFromRow(   Constant.endowmentCity,getFiles(pathCity));
-        Map<String, SomeXlsDto> vallage=getSomeXlsFromRow( Constant.endowmentVallage,getFiles(pathVallage));
 
-        for (String key:city.keySet()  ) {
-            if(vallage.containsKey(key)){
-                vallage.get(key).setRepeatTimesAdd(city.get(key).getRepeatTimes());
+    public Map<String, FinanceFeedDto> initMerge(Map<String, FinanceFeedDto> financeFeed, Map<String, SomeXlsDto> someXls){
+
+        Set<String> set=someXls.keySet();
+        for (String key:set ) {
+            if(financeFeed.containsKey(key)){
+                FinanceFeedDto o=financeFeed.get(key.toString());
+                o.setRepeatTimesAdd();
+                o.setOrgName(o.getOrgName()+"<br>"+someXls.get(key).getOrgName());
+
             }else {
-                vallage.put(key,city.get(key));
+                financeFeed.put(key,someXls.get(key));
             }
         }
-        return vallage;
-    }
-    public Map<String, SomeXlsDto> initMerge( Map<String, SomeXlsDto> city, Map<String, SomeXlsDto> vallage){
-
-
-        for (String key:city.keySet()  ) {
-            if(vallage.containsKey(key)){
-                vallage.get(key).setRepeatTimesAdd(city.get(key).getRepeatTimes());
-            }else {
-                vallage.put(key,city.get(key));
-            }
-        }
-        return vallage;
+        return financeFeed;
     }
     @Override
     public List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String endowmentUpload) {
@@ -246,8 +242,8 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             os = response.getOutputStream();// 取得输出流
             response.setCharacterEncoding("UTF-8");
 
-            response.setHeader("Content-Disposition", "attachment; filename="
-                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Disposition", "attachment; filename=\""
+                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
                     "序号","姓名","身份证号码","单位","重复次数"

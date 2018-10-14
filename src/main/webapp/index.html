@@ -56,7 +56,10 @@
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input id="userPhoneL" name="userPhoneL" type="text" class="form-control" placeholder="用户名(手机号)" />
+															<!--<input id="userPhoneL" name="userPhoneL" type="text" class="form-control" placeholder="用户名(手机号)" />-->
+															<select class="form-control" id="userPhoneL" name="userPhoneL"  >
+
+                                            				</select>
 															<i class="ace-icon fa fa-user"></i>
 														</span>
 													</label>
@@ -96,134 +99,11 @@
 
 										</div><!-- /.widget-main -->
 
-										<div class="toolbar clearfix">
-											<div>
-												<a href="#" data-target="#forgot-box" class="forgot-password-link">
-													<i class="ace-icon fa fa-arrow-left"></i>
-													忘记密码
-												</a>
-											</div>
 
-											<div>
-												<a href="#" data-target="#signup-box" class="user-signup-link">
-													用户注册
-													<i class="ace-icon fa fa-arrow-right"></i>
-												</a>
-											</div>
-										</div>
 									</div><!-- /.widget-body -->
 								</div><!-- /.login-box -->
 
-								<div id="forgot-box" class="forgot-box widget-box no-border">
-									<div class="widget-body">
-										<div class="widget-main">
-											<h4 class="header red lighter bigger">
-												<i class="ace-icon fa fa-key"></i>
-												重置密码
-											</h4>
 
-											<div class="space-6"></div>
-											<p>
-												输入您注册时候的email，用以接收密码重置信息
-											</p>
-
-											<form>
-												<fieldset>
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="email" class="form-control" placeholder="Email" />
-															<i class="ace-icon fa fa-envelope"></i>
-														</span>
-													</label>
-
-													<div class="clearfix">
-														<button type="button" class="width-35 pull-right btn btn-sm btn-danger">
-															<i class="ace-icon fa fa-lightbulb-o"></i>
-															<span class="bigger-110">发送!</span>
-														</button>
-													</div>
-												</fieldset>
-											</form>
-										</div><!-- /.widget-main -->
-
-										<div class="toolbar center">
-											<a href="#" data-target="#login-box" class="back-to-login-link">
-												返回登录
-												<i class="ace-icon fa fa-arrow-right"></i>
-											</a>
-										</div>
-									</div><!-- /.widget-body -->
-								</div><!-- /.forgot-box -->
-
-								<div id="signup-box" class="signup-box widget-box no-border">
-									<div class="widget-body">
-										<div class="widget-main">
-											<h4 class="header green lighter bigger">
-												<i class="ace-icon fa fa-users blue"></i>
-												新用户注册
-											</h4>
-
-											<div class="space-6"></div>
-											<p> 输入详细信息: </p>
-
-											<form id="UserReg">
-												<fieldset>
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input name="userPhone" id="userPhone" type="text" class="form-control" placeholder="手机号" />
-															<i class="ace-icon fa fa-phone"></i>
-														</span>
-													</label>
-
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input name="userName" id="userName"  type="text" class="form-control" placeholder="姓名" />
-															<i class="ace-icon fa fa-user"></i>
-														</span>
-													</label>
-
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input  name="userPwd" id="userPwd" type="password" class="form-control" placeholder="密码" />
-															<i class="ace-icon fa fa-lock"></i>
-														</span>
-													</label>
-
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input name="rePwd" id="rePwd" type="password" class="form-control" placeholder="确认密码" />
-															<i class="ace-icon fa fa-retweet"></i>
-														</span>
-													</label>
-
-
-
-													<div class="space-24"></div>
-
-													<div class="clearfix">
-														<button type="reset" class="width-30 pull-left btn btn-sm">
-															<i class="ace-icon fa fa-refresh"></i>
-															<span class="bigger-110">重置</span>
-														</button>
-
-														<button id="btn-UserReg" type="button" class="width-65 pull-right btn btn-sm btn-success">
-															<span class="bigger-110">注册</span>
-
-															<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
-														</button>
-													</div>
-												</fieldset>
-											</form>
-										</div>
-
-										<div class="toolbar center">
-											<a href="#" data-target="#login-box" class="back-to-login-link">
-												<i class="ace-icon fa fa-arrow-left"></i>
-												返回登录
-											</a>
-										</div>
-									</div><!-- /.widget-body -->
-								</div><!-- /.signup-box -->
 							</div><!-- /.position-relative -->
 
 						</div>
@@ -341,7 +221,10 @@
                                     saveUserInfo();
                                     document.location.href = "/MedicalAnalyse/CityListview"; //如果登录成功则跳到主页
 
-                                }
+                                }else if(msg == "success1"){
+                                    saveUserInfo();
+                                    document.location.href = "/FinanceFeedAnalyse/CityListview"; //如果登录成功则跳到主页
+								}
                                 if (msg == "fail") {
                                     document.getElementById("img_check").src="/PubService/check?"+Math.random();
 
@@ -370,7 +253,30 @@
                     }
 
                 });
+                function getUsers()   {
+                        $.ajax({
+                            type: "GET",
+                            url: "/PubService/users",
+                            data:{},
+                            //data: "userPhone=1&password=1"  ,
+                            beforeSend: function () {
+                                //点击登录后显示loading，隐藏输入框
+                                // $("#btn-login").css("display", "none");
+                            },
+                            success: function (data) {
+                                $.each(data,function(n,value){
+                                    $('#userPhoneL').append('<option    value=\"'+value+'\"    >'+value+'</option>');
+                                });
 
+                            },
+                            error: function (XMLHttpRequest, textStatus, thrownError) {
+                                $("#postResWarning").modal('show');
+                                $("#postResContent").html(thrownError);
+                            }
+                        });
+                    }
+
+                getUsers();
 
 
                 $('#check').bind('keypress',function(event){

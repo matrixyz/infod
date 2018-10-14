@@ -52,6 +52,7 @@ public class Constant {
     public final static String financeFeedCityFileApplication="financeFeedCityFileApplication";//上传的文件信息
     public final static String financeFeedVallageFileApplication="financeFeedVallageFileApplication";//上传的文件信息
     public final static String financeFeedAllApplication="financeFeedAllApplication";
+    public final static String financeFeedAllApplicationMap="financeFeedAllApplicationMap";
 
     public final static String SomeXlsAnalyse="SomeXlsAnalyse";
 
@@ -76,10 +77,10 @@ public class Constant {
     public final static String ERR_CITY_ANALYSE_NOT_YET_FINANCEFEED="请先分析县直供数据";
     public final static String ERR_VALLAGE_ANALYSE_NOT_YET_FINANCEFEED="请先分析乡镇直供数据";
 
-    public final static String ERR_ALL_ANALYSE_NOT_YET_FINANCEFEED="请先合并分析县直、乡镇 供养数据";
+    public final static String ERR_ALL_ANALYSE_NOT_YET_FINANCEFEED="请先合并分析县直、乡镇 财政供养数据";
     public final static String EMPTY_ALL_ANALYSE_NOT_YET_FINANCEFEED="未发现重复数据!";
 
-    public final static String ERR_ANALYSE_NOT_YET_SOMEXLS="请先分析县直供数据";
+    public final static String ERR_ANALYSE_NOT_YET_SOMEXLS="请先分析其他类数据";
     public final static String EMPTY_ALL_ANALYSE_NOT_YET_SOMEXLS="未发现重复数据";
 
 
@@ -92,7 +93,7 @@ public class Constant {
     public final static String ERR_NO_MEDICAL_CITY_FILE="请先上传城镇医疗保险excel 文件!";
     public final static String ERR_NO_MEDICAL_VALLAGE_FILE="请先上传城乡村医疗保险excel 文件!";
 
-    public final static String ERR_NO_SOMEXLS_FILE="请先上传城镇养老保险  excel 文件!";
+    public final static String ERR_NO_SOMEXLS_FILE="请先上传其他类型  excel 文件!";
 
 
     public final static String dataTitleMedicalAll="城镇、城乡医疗保险数据综合重复查询,发现重复数据";
@@ -103,7 +104,8 @@ public class Constant {
     public final static String dataTitleFinanceFeedCity="县直财政供养数据重复查询,发现重复数据";
     public final static String dataTitleFinanceFeedVallage="乡镇财政供养数据重复查询,发现重复数据";
 
-    public final static String dataTitleSomeXlsAll="其他数据综合重复查询,发现重复数据";
+    public final static String dataTitleSomeXlsAll="其他与财政综合重复查询,发现重复数据";
+    public final static String dataTitleSomeXls="其他数据重复查询,发现重复数据";
 
 
 

@@ -1,8 +1,10 @@
 package com.zzsc.infod.controller;
 
  
+import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.SysUser;
 import com.zzsc.infod.util.MD5Util;
+import com.zzsc.infod.util.PropertiesUtil;
 import com.zzsc.infod.util.StringUtil;
 import com.zzsc.infod.util.VerifyCodeUtil;
 import org.mybatis.spring.annotation.MapperScan;
@@ -13,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,17 +23,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Properties;
 
 @Controller
 @EnableAutoConfiguration
 @RequestMapping("/PubService")
 public class PubServiceController {
 
-    @Value( "${sys.user.username}")
-    private String username;
-    @Value( "${sys.user.pwd}")
-    private String pwd;
 
+
+    @Autowired
+    ServletContext applications;
 
     @ResponseBody
     @RequestMapping(value="",method= RequestMethod.POST )
@@ -51,6 +55,38 @@ public class PubServiceController {
             return "注册失败!";
         }
     }
+    @ResponseBody
+    @RequestMapping(value="users",method= RequestMethod.GET )
+    public List<String> getUsers(   ) throws UnsupportedEncodingException {
+        Properties p =PropertiesUtil.getCommonCgf("user");
+        applications.setAttribute("usersKeyPwd",PropertiesUtil.getValuesAll(p));
+        return PropertiesUtil.getValuesByKeyPatten(p,"name");
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value="users",method= RequestMethod.PUT )
+    public  String  SetUsers(@RequestBody SysUser sysUser, HttpServletRequest request ) throws UnsupportedEncodingException {
+        Properties p =PropertiesUtil.getCommonCgf("user");
+        HttpSession session = request.getSession(true);
+        Object u=session.getAttribute("user");
+        if(u!=null){
+            SysUser ux=(SysUser)u;
+            PropertiesUtil.setSomeValue(ux.getUserName(), sysUser.getUserPwd(), p);
+            return Constant.SUCCESS;
+        }
+
+
+        return Constant.ERR;
+
+    }
+
+    @RequestMapping(value="getUserspwdForm",method= RequestMethod.GET )
+    public  String  getUserspwdForm( ) throws  Exception {
+
+        return "adm/chg-pwd-form";
+
+    }
 
     @ResponseBody
     @RequestMapping(value="/login",method= RequestMethod.GET )
@@ -66,11 +102,17 @@ public class PubServiceController {
         if (session.getAttribute("rand")==null||session.getAttribute("rand").equals(check)==false) {
             return "err_check";
         }
+        Object obj=applications.getAttribute("usersKeyPwd");
+        List<String> keypwds=(List<String>)obj;
 
-        if (pwd.equals(password)&&username.equals(userPhone)){
-
-            session.setAttribute("user",new SysUser());
+        if ( keypwds.contains(userPhone+password) ){
+            SysUser u=new SysUser();
+            u.setUserName(userPhone);
+            session.setAttribute("user",u);
+            if(u.getUserName().equals("管理员"))
             return "success";
+            else
+                return "success1";
         }else {
 
             return "fail";

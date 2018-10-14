@@ -21,7 +21,7 @@ public interface FinanceFeedAnalyseServiceExcel {
     Map<String,FinanceFeedDto> getFinanceFeedFromRow(String type, File[] files);
     Map<String, FinanceFeedDto> init(Map<String, FinanceFeedDto> res, MultipartFile file, String type);
     Map<String, FinanceFeedDto> initByPath(String path, String type);
-    Map<String, FinanceFeedDto> initMerge(String pathCity, String pathVallage);
+    //Map<String, FinanceFeedDto> initMerge(String pathCity, String pathVallage);
     Map<String, FinanceFeedDto> initMerge(Map<String, FinanceFeedDto> city, Map<String, FinanceFeedDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path);
     String checkFinanceFeedDifExcelFile(ServletContext applications, String appType, String errType, String emptyType);

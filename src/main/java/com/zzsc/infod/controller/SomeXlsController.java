@@ -1,6 +1,7 @@
 package com.zzsc.infod.controller;
 
 import com.zzsc.infod.constant.Constant;
+import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.model.SomeXlsDto;
 import com.zzsc.infod.util.PageBean;
 import com.zzsc.infod.util.StringUtil;
@@ -37,6 +38,12 @@ public class SomeXlsController {
         String dataTitle=null;
         if(type.equals(Constant.someXls)){
 
+            appDataName=Constant.someXlsApplication;
+            dataTitle=Constant.dataTitleSomeXls ;
+
+            model.addAttribute("checkExportType","outPutExcelCheck");
+            model.addAttribute("outPutExcelTypeUrl","outPutExcel");
+        }else if(type.equals(Constant.someXlsAllApplication)){
             appDataName=Constant.someXlsAllApplication;
             dataTitle=Constant.dataTitleSomeXlsAll ;
 
@@ -45,7 +52,7 @@ public class SomeXlsController {
         }
         boolean flag=false;
         if(applications.getAttribute(appDataName)!=null){
-            List<SomeXlsDto> lists=( List<SomeXlsDto>)applications.getAttribute(appDataName);
+            List<FinanceFeedDto> lists=( List<FinanceFeedDto>)applications.getAttribute(appDataName);
             if(lists.size()==0){
                 flag=true;
             }else {

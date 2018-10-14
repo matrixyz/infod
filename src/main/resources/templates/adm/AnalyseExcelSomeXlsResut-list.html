@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
-                                <form id="form-FinanceFeed"   role="form" action="/FinanceFeed/list" METHOD="get">
+                                <form id="form-SomeXls"   role="form" action="/SomeXls/list" METHOD="get">
 
                                     <div class="space-4"><input type="hidden" name="page" id="page"/>
                                     <input type="hidden" name="type" th:value="${type}"/></div>
@@ -80,7 +80,7 @@
 
                                         <tbody  class="tbody_td_padding_5">
 
-                                        <tr th:each="item:${FinanceFeedList}">
+                                        <tr th:each="item:${SomeXlsList}">
                                             <!--复选框-->
                                             <td class="center">
                                                 <label class="position-relative">
@@ -205,20 +205,20 @@
 
         function gotopage(pageNo) {
             $("#page").val(pageNo);
-            $("#form-FinanceFeed" ).submit();
+            $("#form-SomeXls" ).submit();
 
         }
         window.gotopage=gotopage;
         $( "#btn-export-excel" ).click(function () {
             $.ajax({
-                url:"/FinanceFeedAnalyse/[[${checkExportType}]]",
+                url:"/SomeXlsAnalyse/[[${checkExportType}]]",
                 type: 'GET',
                 cache: false,
                 processData: false,
                 contentType: false,
                 success: function(msg){
                     if(msg=='SUCCESS'){
-                        var a = $("<a href='/FinanceFeedAnalyse/[[${outPutExcelTypeUrl}]]' target='_blank'>excel</a>").get(0);
+                        var a = $("<a href='/SomeXlsAnalyse/[[${outPutExcelTypeUrl}]]' target='_blank'>excel</a>").get(0);
 
                         var e = document.createEvent('MouseEvents');
                         e.initEvent( 'click', true, true );

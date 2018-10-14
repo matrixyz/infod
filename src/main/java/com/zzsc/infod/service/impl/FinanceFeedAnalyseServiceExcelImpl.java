@@ -218,8 +218,8 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                         continue;
                     }
                     FinanceFeedDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
-                    FinanceFeedDto.setName(row.getCell(4).toString());
-                    FinanceFeedDto.setOrgName(row.getCell(2).toString());
+                    FinanceFeedDto.setName(row.getCell(2).toString());
+                    FinanceFeedDto.setOrgName(row.getCell(4).toString());
                     FinanceFeedDtos.add(FinanceFeedDto);
 
                 }
@@ -259,16 +259,16 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
             List<List<Object>> res=reader.getAllValueList();
             for (List<Object> re : res) {
                 int col=0;
-                if(re.size()<3||re.get(3)==null||re.get(3).toString().length()!=18){
+                if(re.size()<3||re.get(3)==null||re.get(3).toString().length()<15){
                     continue;
                 }
                 FinanceFeedDto FinanceFeedDto=new FinanceFeedDto();
                 for (Object o : re) {
-                    if(col==4)
+                    if(col==2)
                         FinanceFeedDto.setName(String.valueOf(o));
                     else if(col==3)
                         FinanceFeedDto.setCid(String.valueOf(o));
-                    else if(col==2)
+                    else if(col==4)
                         FinanceFeedDto.setOrgName(String.valueOf(o));
                     col++;
                 }
@@ -340,7 +340,10 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                 StringBuilder key=new StringBuilder().append(one.getName()).append(one.getCid());
 
                 if(res.containsKey(key.toString())){
-                    res.get(key.toString()).setRepeatTimesAdd();
+                    FinanceFeedDto o=res.get(key.toString());
+                    o.setRepeatTimesAdd();
+                    o.setOrgName(o.getOrgName()+"<br>"+one.getOrgName());
+
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -363,28 +366,33 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
 
         return getFinanceFeedFromRow(  type,files);
     }
-    /**
-     * 将城市、城镇医疗保险数据合并到一个map里
-     */
-    public Map<String, FinanceFeedDto> initMerge(String pathCity,String pathVallage){
+
+    /*public Map<String, FinanceFeedDto> initMerge(String pathCity,String pathVallage){
         Map<String, FinanceFeedDto> city=getFinanceFeedFromRow(   Constant.financeFeedCity,getFiles(pathCity));
         Map<String, FinanceFeedDto> vallage=getFinanceFeedFromRow( Constant.financeFeedVallage,getFiles(pathVallage));
-
-        for (String key:city.keySet()  ) {
+        Set<String> set=city.keySet();
+        for (String key:set ) {
             if(vallage.containsKey(key)){
                 vallage.get(key).setRepeatTimesAdd(city.get(key).getRepeatTimes());
+
             }else {
                 vallage.put(key,city.get(key));
             }
         }
         return vallage;
-    }
+    }*/
+    /**
+     * 将城市、城镇 财政供养数据合并到一个map里
+     */
     public Map<String, FinanceFeedDto> initMerge( Map<String, FinanceFeedDto> city, Map<String, FinanceFeedDto> vallage){
 
-
-        for (String key:city.keySet()  ) {
+        Set<String> set=city.keySet();
+        for (String key:set  ) {
             if(vallage.containsKey(key)){
-                vallage.get(key).setRepeatTimesAdd(city.get(key).getRepeatTimes());
+
+                FinanceFeedDto o=vallage.get(key );
+                o.setRepeatTimesAdd();
+                o.setOrgName(o.getOrgName()+"<br>"+city.get(key).getOrgName());
             }else {
                 vallage.put(key,city.get(key));
             }
@@ -446,8 +454,8 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
             os = response.getOutputStream();// 取得输出流
             response.setCharacterEncoding("UTF-8");
 
-            response.setHeader("Content-Disposition", "attachment; filename="
-                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Disposition", "attachment; filename=\""
+                    + new String(excelFileTitle.getBytes("gb2312") , "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
                     "序号","姓名","身份证号码","单位","重复次数"

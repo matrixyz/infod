@@ -40,6 +40,15 @@ public class SysService {
     private String endowmentCityUpload;
     @Value( "${endowment.vallage.upload.path}")
     private String endowmentVallageUpload;
+    @Value( "${financeFeed.city.upload.path}")
+    private String financeFeedCityUpload;
+    @Value( "${financeFeed.vallage.upload.path}")
+    private String financeFeedVallageUpload;
+    @Value( "${someXls.upload.path}")
+    private String someXlsUpload;
+
+
+
     @Value( "${sys.err.path}")
     private String sysErrPath;
     @Autowired
@@ -63,7 +72,9 @@ public class SysService {
         FileUtil.emptyPath(medicalVallageUpload);
         FileUtil.emptyPath(endowmentCityUpload);
         FileUtil.emptyPath(endowmentVallageUpload);
-
+        FileUtil.emptyPath(financeFeedCityUpload);
+        FileUtil.emptyPath(financeFeedVallageUpload);
+        FileUtil.emptyPath(someXlsUpload);
 
         applications.setAttribute(Constant.medicalAllApplication,null);
         applications.setAttribute(Constant.medicalCityApplication,null);
@@ -75,6 +86,17 @@ public class SysService {
         applications.setAttribute(Constant.medicalVallageFileApplication,null);
         applications.setAttribute(Constant.endowmentCityFileApplication,null);
         applications.setAttribute(Constant.endowmentVallageFileApplication,null);
+
+        applications.setAttribute(Constant.financeFeedAllApplication,null);
+        applications.setAttribute(Constant.financeFeedCityApplication,null);
+        applications.setAttribute(Constant.financeFeedVallageApplication,null);
+        applications.setAttribute(Constant.financeFeedCityFileApplication,null);
+        applications.setAttribute(Constant.financeFeedVallageFileApplication,null);
+
+        applications.setAttribute(Constant.someXlsAllApplication,null);
+        applications.setAttribute(Constant.someXlsApplication,null);
+        applications.setAttribute(Constant.someXlsFileApplication,null);
+
 
         return "redirect:/MedicalAnalyse/CityListview";
 
