@@ -1,9 +1,11 @@
 package com.zzsc.infod.controller;
 
+import com.ApplicationContextProvider;
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
+import com.zzsc.infod.service.ServiceFactory;
 import com.zzsc.infod.util.*;
 
 
@@ -31,6 +33,9 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/EndowmentAnalyse")
 public class EndowmentAnalyseController {
+
+    Map<String, ServiceFactory> map = ApplicationContextProvider.getApplicationContext().getBeansOfType(ServiceFactory.class);
+
 
     @Autowired
     private EndowmentAnalyseServiceExcel endowmentAnalyseServiceExcel;
@@ -184,7 +189,10 @@ public class EndowmentAnalyseController {
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws IOException {
-
+        for (String key : map.keySet()) {
+            System.out.println(key);
+            System.out.println(map.get(key));
+        }
         Object target=applications.getAttribute(Constant.endowmentCityApplication);
         if(target==null){
             target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUpload,Constant.endowmentCity);
