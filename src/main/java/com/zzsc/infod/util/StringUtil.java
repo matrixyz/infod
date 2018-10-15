@@ -136,7 +136,36 @@ public class StringUtil {
         }
     }
 
+    //中文姓名验证
+    public static boolean isChineseName(String str){
+        Pattern pattern=Pattern.compile("^([\\u4e00-\\u9fa5]{2,5})$");
+        Matcher match=pattern.matcher(str);
+        return match.matches();
+
+    }
+    //中国身份证号码验证
+    public static boolean isChineseUid(String str){
+        Pattern pattern=Pattern.compile("^([0-9xX]{15,18})$");
+        Matcher match=pattern.matcher(str);
+        return match.matches();
+
+    }
+    public static boolean aa(String str) throws Exception {
+
+        for (int i = 0; i < 100; i++) {
+            System.out.println("aaa"+i);
+            if(i==10)
+                throw new Exception("跑出异常");
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        System.out.println(isDecimal("15000"));
+        try {
+            aa("a");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

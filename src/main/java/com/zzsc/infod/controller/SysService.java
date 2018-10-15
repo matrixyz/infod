@@ -57,13 +57,7 @@ public class SysService {
     @Autowired
     private MedicalAnalyseServiceExcel medicalAnalyseServiceExcel;
 
-    @RequestMapping(value="/loginOut",method= RequestMethod.GET )
-    public String login(HttpServletRequest request){
-        request.getSession().invalidate();
 
-        return "redirect:/index.html";
-
-    }
     @RequestMapping(value="/clearAll",method= RequestMethod.GET )
     public String clearAll(HttpServletRequest request){
 

@@ -184,7 +184,12 @@ public class FinanceFeedAnalyseController {
 
         Object target=applications.getAttribute(Constant.financeFeedCityApplication);
         if(target==null){
-            target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUpload,Constant.financeFeedCity);
+            try {
+                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUpload,Constant.financeFeedCity);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
             if(target==null)
                 return Constant.ERR_NO_FINANCEFEED_CITY_FILE;
             applications.setAttribute(Constant.financeFeedCityApplicationMap,target);
@@ -209,7 +214,12 @@ public class FinanceFeedAnalyseController {
     public String  analyseVallage(  HttpServletRequest request) throws IOException {
         Object target=applications.getAttribute(Constant.financeFeedVallageApplication);
         if(target==null){
-            target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUpload,Constant.financeFeedVallage);
+            try {
+                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUpload,Constant.financeFeedVallage);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
             if(target==null)
                 return Constant.ERR_NO_FINANCEFEED_VALLAGE_FILE;
             applications.setAttribute(Constant.financeFeedVallageApplicationMap,target);

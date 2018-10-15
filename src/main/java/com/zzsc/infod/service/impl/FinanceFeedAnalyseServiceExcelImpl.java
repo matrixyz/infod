@@ -7,6 +7,7 @@ import com.zzsc.infod.service.FinanceFeedAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
+import com.zzsc.infod.util.StringUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -323,7 +324,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
     }
 
     @Override
-    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(String type,File[] files) {
+    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(String type,File[] files) throws Exception {
 
         Map<String, FinanceFeedDto> res=new HashMap<>();
         for (File file: files) {
@@ -333,6 +334,12 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
             }
             if(type.equals(Constant.financeFeedVallage)){
                 FinanceFeedDtos= analyseVallageExcel(file);
+            }
+            if(StringUtil.isChineseName(FinanceFeedDtos.get(0).getName())==false){
+                throw new Exception(Constant.ERR_FINANCE_FEED_FILE_FORMAT+"["+file.getName()+"]");
+            }
+            if(StringUtil.isChineseUid(FinanceFeedDtos.get(0).getCid())==false){
+                throw new Exception(Constant.ERR_FINANCE_FEED_FILE_FORMAT+"["+file.getName()+"]");
             }
             for (FinanceFeedDto one:FinanceFeedDtos  ) {
                 if(one.getCid()==null)
@@ -359,7 +366,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
         return getFinanceFeedFromRow(res,  file,type);
     }
     @Override
-    public Map<String, FinanceFeedDto> initByPath(String path,String type){
+    public Map<String, FinanceFeedDto> initByPath(String path,String type) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;

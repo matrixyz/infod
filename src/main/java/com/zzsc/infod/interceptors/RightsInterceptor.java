@@ -24,10 +24,10 @@ public class RightsInterceptor implements HandlerInterceptor {
                      PrintWriter out = response.getWriter();
                     out.print("登录已失效，请重新登录!");//session失效
                      out.flush();
-                    return true;
+                    return false;
                 }else{
                   response.sendRedirect("/index.html");
-                    return  true;
+                    return  false;
                 }
             }
        // }

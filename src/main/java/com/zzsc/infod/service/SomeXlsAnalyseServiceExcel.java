@@ -18,9 +18,9 @@ public interface SomeXlsAnalyseServiceExcel {
     List<SomeXlsDto> analyseSomeExcelEventmode(File file);
     File[] getFiles(String path);
 
-    Map<String,SomeXlsDto> getSomeXlsFromRow(String type, File[] files);
+    Map<String,SomeXlsDto> getSomeXlsFromRow(String type, File[] files) throws Exception;
 
-    Map<String, SomeXlsDto> initByPath(String path, String type);
+    Map<String, SomeXlsDto> initByPath(String path, String type) throws Exception;
     //Map<String, SomeXlsDto> initMerge(String pathCity, String pathVallage);
     Map<String, FinanceFeedDto> initMerge(Map<String, FinanceFeedDto> city, Map<String, SomeXlsDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path);

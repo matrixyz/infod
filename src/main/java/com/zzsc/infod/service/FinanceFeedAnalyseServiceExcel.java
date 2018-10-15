@@ -18,9 +18,9 @@ public interface FinanceFeedAnalyseServiceExcel {
     List<FinanceFeedDto> analyseVallageExcel(File file);
     File[] getFiles(String path);
     Map<String,FinanceFeedDto> getFinanceFeedFromRow(Map<String, FinanceFeedDto> FinanceFeedDtoMap, MultipartFile file, String type);
-    Map<String,FinanceFeedDto> getFinanceFeedFromRow(String type, File[] files);
+    Map<String,FinanceFeedDto> getFinanceFeedFromRow(String type, File[] files) throws Exception;
     Map<String, FinanceFeedDto> init(Map<String, FinanceFeedDto> res, MultipartFile file, String type);
-    Map<String, FinanceFeedDto> initByPath(String path, String type);
+    Map<String, FinanceFeedDto> initByPath(String path, String type) throws Exception;
     //Map<String, FinanceFeedDto> initMerge(String pathCity, String pathVallage);
     Map<String, FinanceFeedDto> initMerge(Map<String, FinanceFeedDto> city, Map<String, FinanceFeedDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path);

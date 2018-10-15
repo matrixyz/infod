@@ -9,6 +9,7 @@ import com.zzsc.infod.service.SomeXlsAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
+import com.zzsc.infod.util.StringUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -132,7 +133,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     
 
     @Override
-    public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files) {
+    public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files) throws Exception {
 
         Map<String, SomeXlsDto> res=new HashMap<>();
         for (File file: files) {
@@ -140,7 +141,12 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             if(type.equals(Constant.someXls)){
                 SomeXlsDtos= analyseSomeExcel(file);
             }
-            
+            if(StringUtil.isChineseName(SomeXlsDtos.get(0).getName())==false){
+                throw new Exception(Constant.ERR_SOME_XLS_FILE_FORMAT+"["+file.getName()+"]");
+            }
+            if(StringUtil.isChineseUid(SomeXlsDtos.get(0).getCid())==false){
+                throw new Exception(Constant.ERR_SOME_XLS_FILE_FORMAT+"["+file.getName()+"]");
+            }
             for (SomeXlsDto one:SomeXlsDtos  ) {
                 if(one.getCid()==null)
                     continue;
@@ -150,7 +156,6 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                     FinanceFeedDto o=res.get(key.toString());
                     o.setRepeatTimesAdd();
                     o.setOrgName(o.getOrgName()+"<br>"+one.getOrgName());
-                    //res.get(key.toString()).setRepeatTimesAdd();
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -162,7 +167,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     }
    
     @Override
-    public Map<String, SomeXlsDto> initByPath(String path,String type){
+    public Map<String, SomeXlsDto> initByPath(String path,String type) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;

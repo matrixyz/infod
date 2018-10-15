@@ -26,7 +26,7 @@
                             <img class="nav-user-photo" src="/static/assets/avatars/user.jpg" alt="Jason's Photo" />
                             <span class="user-info">
 									欢迎您<br/>
-
+                                <span th:text="${session.user.userName}"></span>
 								</span>
 
                             <i class="ace-icon fa fa-caret-down"></i>
@@ -48,16 +48,16 @@
                             </li>
                             <li>
                                 <a href="/PubService/getUserspwdForm"  >
-                                    <i class="ace-icon fa fa-trash-o"></i>
+                                    <i class="ace-icon fa glyphicon-pencil"></i>
                                     修改密码
                                 </a>
                             </li>
                             <li class="divider"></li>
 
                             <li>
-                                <a href="/SysService/loginOut">
+                                <a href="/PubService/loginOut">
                                     <i class="ace-icon fa fa-power-off"></i>
-                                    登出
+                                    退出系统
                                 </a>
                             </li>
                         </ul>

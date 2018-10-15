@@ -119,7 +119,16 @@ public class PubServiceController {
         }
 
     }
+    @RequestMapping(value="/loginOut",method= RequestMethod.GET )
+    public String login(HttpServletRequest request){
+        HttpSession session = request.getSession(true);
+        if (session.getAttribute("user")!=null ) {
+            request.getSession().invalidate();
+        }
 
+        return "redirect:/index.html";
+
+    }
 
     @RequestMapping("/check")
     public void getCheckCode( HttpServletRequest request, HttpServletResponse response) throws IOException {
