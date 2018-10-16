@@ -34,22 +34,25 @@ import static org.apache.poi.hssf.record.ExtendedFormatRecord.VERTICAL_TOP;
  */
 public class POIExcelToHtmlA {
 
-	public static String excelToHtml(String SourcePath,String targetPath , boolean isWithStyle) {
+	public static void main(String[] args) {
+
+	}
+
+	public static String excelToHtml(File sourcefile) {
 
 		InputStream is = null;
 		String htmlExcel = null;
 		try {
-			File sourcefile = new File(SourcePath);
 			is = new FileInputStream(sourcefile);
 			Workbook wb = WorkbookFactory.create(is);
 			if (wb instanceof XSSFWorkbook) {
 				XSSFWorkbook xWb = (XSSFWorkbook) wb;
-				htmlExcel = POIExcelToHtmlA.getExcelInfo(xWb, isWithStyle);
-				FileUtils.writeFile(htmlExcel, targetPath);
+				htmlExcel = POIExcelToHtmlA.getExcelInfo(xWb, false);
+				//FileUtils.writeFile(htmlExcel, targetPath);
 			} else if (wb instanceof HSSFWorkbook) {
 				HSSFWorkbook hWb = (HSSFWorkbook) wb;
-				htmlExcel = POIExcelToHtmlA.getExcelInfo(hWb, isWithStyle);
-				FileUtils.writeFile(htmlExcel, targetPath);
+				htmlExcel = POIExcelToHtmlA.getExcelInfo(hWb, false);
+				//FileUtils.writeFile(htmlExcel, targetPath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,9 +76,14 @@ public class POIExcelToHtmlA {
 			Map<String, String> map[] = getRowSpanColSpanMap(sheet);
 			sb.append("<br><br>");
 			sb.append(sheet.getSheetName());
-			sb.append("<table style='border-collapse:collapse;' width='100%'>");
+			sb.append("<table border=\"1\" width='100%'>");
 			Row row = null; // 兼容
 			Cell cell = null; // 兼容
+			if(lastRowNum>300)
+				lastRowNum=100;
+
+
+
 			for (int rowNum = sheet.getFirstRowNum(); rowNum <= lastRowNum; rowNum++) {
 				row = sheet.getRow(rowNum);
 				if (row == null) {
@@ -231,7 +239,7 @@ public class POIExcelToHtmlA {
 
 
 
-				short boldWeight =0;// xf.getBoldweight();
+				short boldWeight = 1;
 				sb.append("style='");
 				sb.append("font-weight:" + boldWeight + ";"); // 字体加粗
 				sb.append("font-size: " + xf.getFontHeight() / 2 + "%;"); // 字体大小
@@ -284,7 +292,7 @@ public class POIExcelToHtmlA {
 
 
 
-				short boldWeight =0;// hf.getBoldweight();
+				short boldWeight =1;// hf.getBoldweight();
 				short fontColor = hf.getColor();
 				sb.append("style='");
 				HSSFPalette palette = ((HSSFWorkbook) wb).getCustomPalette(); // 类HSSFPalette用于求的颜色的国际标准形式

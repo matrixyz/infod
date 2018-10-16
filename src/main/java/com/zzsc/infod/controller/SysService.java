@@ -3,10 +3,7 @@ package com.zzsc.infod.controller;
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.PageBean;
-import com.zzsc.infod.util.PoiExcelToHtml;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +157,7 @@ public class SysService {
             out = res.getWriter();
             if(file.exists()){
 
-                String html=PoiExcelToHtml.getHtml(file);
+                String html= POIExcelToHtmlA.excelToHtml(file);
                     out.print(html);
             }else {
                 out.print("文件不存在或已被删除!"+"<a href=\"javascript:window.opener=null;window.close();\">点击关闭</a>");
@@ -168,10 +165,6 @@ public class SysService {
             out.flush();
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
             e.printStackTrace();
         }
 
