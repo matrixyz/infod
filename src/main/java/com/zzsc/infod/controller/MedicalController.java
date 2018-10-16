@@ -64,7 +64,7 @@ public class MedicalController {
 
         }
 
-        if(applications.getAttribute(appDataName)!=null){
+        if(applications.getAttribute(appDataName)!=null&&(( List<MedicalDto>)applications.getAttribute(appDataName)).size()>0){
             List<MedicalDto> lists=( List<MedicalDto>)applications.getAttribute(appDataName);
             int pageNum= Integer.parseInt(MedicalDto.getPage());
             PageBean pageInfo=new PageBean();
