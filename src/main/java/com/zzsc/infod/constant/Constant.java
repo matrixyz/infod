@@ -107,8 +107,15 @@ public class Constant {
     public final static String dataTitleSomeXlsAll="其他与财政综合重复查询,发现重复数据";
     public final static String dataTitleSomeXls="其他数据重复查询,发现重复数据";
 
-    public final static String ERR_FINANCE_FEED_FILE_FORMAT="财政Excel 文件工作表 必须 符合  C列 为姓名、D列为 身份证号码、E列为 单位名称，第一行为列名称，数据从第二行开始!";
-    public final static String ERR_SOME_XLS_FILE_FORMAT="其他类型 Excel 文件工作表 必须 符合  C列 为姓名、D列为 身份证号码、E列为 单位名称，第一行为列名称，数据从第二行开始!文件名为-";
+    public final static String ERR_ENDOWMENT_CITY_FILE_FORMAT="城镇养老保险  Excel 文件工作表 必须 符合  C列 为姓名、D列为 身份证号码、E列为 单位名称，第一行为列名称，数据从第二行开始!当前格式错误的文件名为-";
+    public final static String ERR_ENDOWMENT_VALLAGE_FILE_FORMAT="城乡养老保险  Excel 文件工作表 必须 符合  E列 为姓名、D列为 身份证号码、C列为 地址名称，第一行为列名称，数据从第二行开始!当前格式错误的文件名为-";
+    public final static String ERR_MEDICAL_CITY_FILE_FORMAT="城镇医疗保险 Excel 文件工作表 必须 符合  D列 为姓名、C列为 身份证号码， 第一行为列名称，数据从第四行开始!当前格式错误的文件名为-";
+    public final static String ERR_MEDICAL_VALLAGE_FILE_FORMAT="城乡医疗保险 Excel 文件工作表 必须 符合  D列 为姓名、G列为 身份证号码 ，第一行为列名称，数据从第二行开始! 当前格式错误的文件名为-";
+
+
+
+    public final static String ERR_FINANCE_FEED_FILE_FORMAT="财政Excel 文件工作表 必须 符合  C列 为姓名、D列为 身份证号码、E列为 单位名称，第一行为列名称，数据从第二行开始!当前格式错误的文件名为-";
+    public final static String ERR_SOME_XLS_FILE_FORMAT="其他类型 Excel 文件工作表 必须 符合  C列 为姓名、D列为 身份证号码、E列为 单位名称，第一行为列名称，数据从第二行开始!当前格式错误的文件名为-";
 
 
     public final static String medicalCityUploadLock="城镇医疗保险文件";

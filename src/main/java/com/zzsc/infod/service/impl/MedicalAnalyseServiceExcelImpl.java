@@ -7,6 +7,7 @@ import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
+import com.zzsc.infod.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -335,24 +336,41 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
     }
 
     @Override
-    public Map<String, MedicalDto> getMedicalFromRow(String type,File[] files) {
+    public Map<String, MedicalDto> getMedicalFromRow(String type,File[] files) throws Exception {
 
         Map<String, MedicalDto> res=new HashMap<>();
         for (File file: files) {
             List<MedicalDto> MedicalDtos =null;
+
+            String err_info=null;
             if(type.equals(Constant.medicalCity)){
                 MedicalDtos= analyseCityExcel(file);
+                err_info=Constant.ERR_MEDICAL_CITY_FILE_FORMAT;
             }
             if(type.equals(Constant.medicalVallage)){
                 MedicalDtos= analyseVallageExcel(file);
+                err_info=Constant.ERR_MEDICAL_VALLAGE_FILE_FORMAT;
             }
+
+            if(StringUtil.isChineseName(MedicalDtos.get(0).getName())==false){
+                throw new Exception(err_info+"["+file.getName()+"]");
+            }
+            if(StringUtil.isChineseUid(MedicalDtos.get(0).getCid())==false){
+                throw new Exception(err_info+"["+file.getName()+"]");
+            }
+
+
+
+
             for (MedicalDto one:MedicalDtos  ) {
                 if(one.getCid()==null)
                     continue;
                 StringBuilder key=new StringBuilder().append(one.getName()).append(one.getCid());
 
                 if(res.containsKey(key.toString())){
-                    res.get(key.toString()).setRepeatTimesAdd();
+                    MedicalDto medicalDto=res.get(key.toString());
+                    medicalDto.setRepeatTimesAdd();
+                    medicalDto.setAreaName(medicalDto.getAreaName()+"<br>"+one.getAreaName());
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -368,7 +386,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
         return getMedicalFromRow(res,  file,type);
     }
     @Override
-    public Map<String, MedicalDto> initByPath(String path,String type){
+    public Map<String, MedicalDto> initByPath(String path,String type) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
@@ -378,8 +396,14 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
      * 将城市、城镇医疗保险数据合并到一个map里
      */
     public Map<String, MedicalDto> initMerge(String pathCity,String pathVallage){
-        Map<String, MedicalDto> city=getMedicalFromRow(   Constant.medicalCity,getFiles(pathCity));
-        Map<String, MedicalDto> vallage=getMedicalFromRow( Constant.medicalVallage,getFiles(pathVallage));
+        Map<String, MedicalDto> city= null;
+        Map<String, MedicalDto> vallage= null;
+        try {
+            city = getMedicalFromRow(   Constant.medicalCity,getFiles(pathCity));
+            vallage=getMedicalFromRow( Constant.medicalVallage,getFiles(pathVallage));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         for (String key:city.keySet()  ) {
             if(vallage.containsKey(key)){

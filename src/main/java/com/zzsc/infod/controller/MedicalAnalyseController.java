@@ -22,6 +22,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +47,18 @@ public class MedicalAnalyseController {
     private MedicalAnalyseServiceExcel medicalAnalyseServiceExcel;
 
     @Value( "${medical.city.upload.path}")
-    private String medicalCityUpload;
+    private String medicalCityUpload ;
     @Value( "${medical.vallage.upload.path}")
-    private String medicalVallageUpload;
+    private String medicalVallageUpload ;
+
+    private String medicalCityUploadRealPath ;
+    private String medicalVallageUploadRealPath ;
+    @PostConstruct
+    public void setPath(){
+        medicalCityUploadRealPath =FileUtil.getBaseJarPath()+"/"+medicalCityUpload ;
+        medicalVallageUploadRealPath =FileUtil.getBaseJarPath()+"/"+medicalVallageUpload ;
+    }
+
 
     @Autowired
     ServletContext applications;
@@ -66,10 +76,11 @@ public class MedicalAnalyseController {
         model.addAttribute("actionUrl","/MedicalAnalyse/CityListview");
         model.addAttribute("type",Constant.medicalCity);
         model.addAttribute("uploadType",Constant.MedicalAnalyse);
+        model.addAttribute("filePath", medicalCityUpload);
 
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.medicalCityFileApplication)==null){
-            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalCityUpload);
+            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalCityUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.medicalCityFileApplication);
         }
@@ -93,10 +104,11 @@ public class MedicalAnalyseController {
         model.addAttribute("actionUrl","/MedicalAnalyse/VallageListview");
         model.addAttribute("type",Constant.medicalVallage);
         model.addAttribute("uploadType",Constant.MedicalAnalyse);
+        model.addAttribute("filePath", medicalVallageUpload);
 
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.medicalVallageFileApplication)==null){
-            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalVallageUpload);
+            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(medicalVallageUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.medicalVallageFileApplication);
         }
@@ -139,9 +151,9 @@ public class MedicalAnalyseController {
         files_ = new HashMap<>();
         if(files.length>0){
             if(type.equals(Constant.medicalCity)){
-                uploadPath=medicalCityUpload;
+                uploadPath=medicalCityUploadRealPath;
             }else if(type.equals(Constant.medicalVallage)){
-                uploadPath=medicalVallageUpload;
+                uploadPath=medicalVallageUploadRealPath;
 
             }
             FileUtil.createPath(uploadPath);
@@ -253,10 +265,17 @@ public class MedicalAnalyseController {
 
         /*Object target=applications.getAttribute(Constant.medicalCityApplication);
         if(target==null){
-            target=medicalAnalyseServiceExcel.initByPath(medicalCityUpload,Constant.medicalCity);
+            target=medicalAnalyseServiceExcel.initByPath(medicalCityUploadRealPath,Constant.medicalCity);
             applications.setAttribute(Constant.medicalCityApplicationMap,target);
         }*/
-        Object target=  medicalAnalyseServiceExcel.initByPath(medicalCityUpload,Constant.medicalCity);
+        Object target=  null;
+        try {
+            target=  medicalAnalyseServiceExcel.initByPath(medicalCityUploadRealPath,Constant.medicalCity);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return e.getMessage();
+        }
+
         if(target==null)
             return Constant.ERR_NO_MEDICAL_CITY_FILE;
 
@@ -282,7 +301,14 @@ public class MedicalAnalyseController {
     public String  analyseVallage(  HttpServletRequest request) throws IOException {
         Object target=applications.getAttribute(Constant.medicalVallageApplication);
         if(target==null){
-            target=medicalAnalyseServiceExcel.initByPath(medicalVallageUpload,Constant.medicalVallage);
+
+            try {
+                target=medicalAnalyseServiceExcel.initByPath(medicalVallageUploadRealPath,Constant.medicalVallage);
+            } catch (Exception e) {//说明该文件格式异常，姓名身份证号不在对应要求的列
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
+
             if(target==null)
                 return Constant.ERR_NO_MEDICAL_VALLAGE_FILE;
             applications.setAttribute(Constant.medicalVallageApplicationMap,target);
@@ -319,7 +345,7 @@ public class MedicalAnalyseController {
 
         }
 
-        //Map<String, MedicalDto> all=medicalAnalyseServiceExcel.initMerge(medicalCityUpload,medicalVallageUpload);
+        //Map<String, MedicalDto> all=medicalAnalyseServiceExcel.initMerge(medicalCityUploadRealPath,medicalVallageUploadRealPath);
 
         if(!all.isEmpty()){
             List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(all.values());

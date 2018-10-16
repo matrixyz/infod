@@ -25,6 +25,8 @@ public class ExcelLockAspect {
 
     @Pointcut("execution(public * com.zzsc.infod.controller.MedicalAnalyseController.analyseVallage(..))")
     public void fileLock(){}
+    @Pointcut("execution(public * com.zzsc.infod.controller.SysService.clearAll(..))")
+    public void fileLock1(){}
 
     @Before("fileLock()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
@@ -35,7 +37,7 @@ public class ExcelLockAspect {
 
 
     }
-    @Around("fileLock()")
+    @Around("fileLock()||fileLock1()")
     public Object around(ProceedingJoinPoint pjp) throws   ExceptionFileLocked{
 
 
@@ -72,7 +74,7 @@ public class ExcelLockAspect {
             return ret;
 
     }
-    @AfterReturning(returning = "ret", pointcut = "fileLock()")
+    @AfterReturning(returning = "ret", pointcut = "fileLock()||fileLock1()")
     public void doAfterReturning(Object ret) throws Throwable {
         // 处理完请求，返回内容
         System.out.println("上传"+Constant.medicalVallageUploadLock+"结束!=================================");

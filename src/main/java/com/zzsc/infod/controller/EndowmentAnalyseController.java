@@ -18,6 +18,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -41,10 +42,18 @@ public class EndowmentAnalyseController {
     private EndowmentAnalyseServiceExcel endowmentAnalyseServiceExcel;
 
     @Value( "${endowment.city.upload.path}")
-    private String endowmentCityUpload;
+    private String endowmentCityUpload ;
     @Value( "${endowment.vallage.upload.path}")
-    private String endowmentVallageUpload;
+    private String endowmentVallageUpload ;
 
+    private String endowmentCityUploadRealPath ;
+    private String endowmentVallageUploadRealPath ;
+    @PostConstruct
+    public void setPath(){
+        endowmentCityUploadRealPath =FileUtil.getBaseJarPath()+"/"+endowmentCityUpload ;
+        endowmentVallageUploadRealPath =FileUtil.getBaseJarPath()+"/"+endowmentVallageUpload ;
+    }
+    
     @Autowired
     ServletContext applications;
     @Autowired
@@ -60,10 +69,10 @@ public class EndowmentAnalyseController {
         model.addAttribute("actionUrl","/EndowmentAnalyse/CityListview");
         model.addAttribute("type",Constant.endowmentCity);
         model.addAttribute("uploadType",Constant.EndowmentAnalyse);
-
+        model.addAttribute("filePath", endowmentCityUpload);
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.endowmentCityFileApplication)==null){
-            list=endowmentAnalyseServiceExcel.getAnalyseExcelUploadDtoList(endowmentCityUpload);
+            list=endowmentAnalyseServiceExcel.getAnalyseExcelUploadDtoList(endowmentCityUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.endowmentCityFileApplication);
         }
@@ -87,10 +96,11 @@ public class EndowmentAnalyseController {
         model.addAttribute("actionUrl","/EndowmentAnalyse/VallageListview");
         model.addAttribute("type",Constant.endowmentVallage);
         model.addAttribute("uploadType",Constant.EndowmentAnalyse);
+        model.addAttribute("filePath", endowmentVallageUpload);
 
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.endowmentVallageFileApplication)==null){
-            list=endowmentAnalyseServiceExcel.getAnalyseExcelUploadDtoList(endowmentVallageUpload);
+            list=endowmentAnalyseServiceExcel.getAnalyseExcelUploadDtoList(endowmentVallageUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.endowmentVallageFileApplication);
         }
@@ -132,9 +142,9 @@ public class EndowmentAnalyseController {
         files_ = new HashMap<>();
         if(files.length>0){
             if(type.equals(Constant.endowmentCity)){
-                uploadPath=endowmentCityUpload;
+                uploadPath=endowmentCityUploadRealPath;
             }else if(type.equals(Constant.endowmentVallage)){
-                uploadPath=endowmentVallageUpload;
+                uploadPath=endowmentVallageUploadRealPath;
 
             }
             FileUtil.createPath(uploadPath);
@@ -195,7 +205,13 @@ public class EndowmentAnalyseController {
         }
         Object target=applications.getAttribute(Constant.endowmentCityApplication);
         if(target==null){
-            target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUpload,Constant.endowmentCity);
+            try {
+                target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUploadRealPath,Constant.endowmentCity);
+
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
             if(target==null)
                 return Constant.ERR_NO_ENDOWMENT_CITY_FILE;
 
@@ -221,7 +237,13 @@ public class EndowmentAnalyseController {
     public String  analyseVallage(  HttpServletRequest request) throws IOException {
         Object target=applications.getAttribute(Constant.endowmentVallageApplication);
         if(target==null){
-            target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUpload,Constant.endowmentVallage);
+            try {
+                target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUploadRealPath,Constant.endowmentVallage);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
+
             if(target==null)
                 return Constant.ERR_NO_ENDOWMENT_VALLAGE_FILE;
             applications.setAttribute(Constant.endowmentVallageApplicationMap,target);
@@ -258,7 +280,7 @@ public class EndowmentAnalyseController {
 
         }
 
-        //Map<String, EndowmentDto> all=endowmentAnalyseServiceExcel.initMerge(endowmentCityUpload,endowmentVallageUpload);
+        //Map<String, EndowmentDto> all=endowmentAnalyseServiceExcel.initMerge(endowmentCityUploadRealPath,endowmentVallageUploadRealPath);
 
         if(!all.isEmpty()){
             List<EndowmentDto> mapKeyList = new ArrayList<EndowmentDto>(all.values());

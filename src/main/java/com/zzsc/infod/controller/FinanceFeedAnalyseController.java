@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,9 +37,17 @@ public class FinanceFeedAnalyseController {
     private FinanceFeedAnalyseServiceExcel financeFeedAnalyseServiceExcel;
 
     @Value( "${financeFeed.city.upload.path}")
-    private String financeFeedCityUpload;
+    private String financeFeedCityUpload ;
     @Value( "${financeFeed.vallage.upload.path}")
-    private String financeFeedVallageUpload;
+    private String financeFeedVallageUpload ;
+
+    private String  financeFeedCityUploadRealPath ;
+    private String financeFeedVallageUploadRealPath ;
+    @PostConstruct
+    public void setPath(){
+        financeFeedCityUploadRealPath =FileUtil.getBaseJarPath()+"/"+financeFeedCityUpload ;
+        financeFeedVallageUploadRealPath =FileUtil.getBaseJarPath()+"/"+financeFeedVallageUpload ;
+    }
 
     @Autowired
     ServletContext applications;
@@ -55,10 +64,11 @@ public class FinanceFeedAnalyseController {
         model.addAttribute("actionUrl","/FinanceFeedAnalyse/CityListview");
         model.addAttribute("type",Constant.financeFeedCity);
         model.addAttribute("uploadType",Constant.FinanceFeedAnalyse);
+       model.addAttribute("filePath", financeFeedCityUpload);
 
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.financeFeedCityFileApplication)==null){
-            list=financeFeedAnalyseServiceExcel.getAnalyseExcelUploadDtoList(financeFeedCityUpload);
+            list=financeFeedAnalyseServiceExcel.getAnalyseExcelUploadDtoList(financeFeedCityUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.financeFeedCityFileApplication);
         }
@@ -82,10 +92,11 @@ public class FinanceFeedAnalyseController {
         model.addAttribute("actionUrl","/FinanceFeedAnalyse/VallageListview");
         model.addAttribute("type",Constant.financeFeedVallage);
         model.addAttribute("uploadType",Constant.FinanceFeedAnalyse);
+        model.addAttribute("filePath", financeFeedVallageUpload);
 
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.financeFeedVallageFileApplication)==null){
-            list=financeFeedAnalyseServiceExcel.getAnalyseExcelUploadDtoList(financeFeedVallageUpload);
+            list=financeFeedAnalyseServiceExcel.getAnalyseExcelUploadDtoList(financeFeedVallageUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.financeFeedVallageFileApplication);
         }
@@ -127,9 +138,9 @@ public class FinanceFeedAnalyseController {
         files_ = new HashMap<>();
         if(files.length>0){
             if(type.equals(Constant.financeFeedCity)){
-                uploadPath=financeFeedCityUpload;
+                uploadPath=financeFeedCityUploadRealPath;
             }else if(type.equals(Constant.financeFeedVallage)){
-                uploadPath=financeFeedVallageUpload;
+                uploadPath=financeFeedVallageUploadRealPath;
 
             }
             FileUtil.createPath(uploadPath);
@@ -185,7 +196,7 @@ public class FinanceFeedAnalyseController {
         Object target=applications.getAttribute(Constant.financeFeedCityApplication);
         if(target==null){
             try {
-                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUpload,Constant.financeFeedCity);
+                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUploadRealPath,Constant.financeFeedCity);
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 return e.getMessage();
@@ -215,7 +226,7 @@ public class FinanceFeedAnalyseController {
         Object target=applications.getAttribute(Constant.financeFeedVallageApplication);
         if(target==null){
             try {
-                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUpload,Constant.financeFeedVallage);
+                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUploadRealPath,Constant.financeFeedVallage);
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 return e.getMessage();

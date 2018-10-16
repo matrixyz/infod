@@ -5,6 +5,7 @@ import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.FileUtil;
 import com.zzsc.infod.util.PageBean;
+import com.zzsc.infod.util.PoiExcelToHtml;
 import com.zzsc.infod.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +58,15 @@ public class SysService {
 
     @Value( "${sys.err.path}")
     private String sysErrPath;
+
+    String sysErrPathRealPath;
+    
+    @PostConstruct
+    public void setPath(){
+        sysErrPathRealPath =FileUtil.getBaseJarPath()+"/"+sysErrPath ;
+       
+    }
+    
     @Autowired
     ServletContext applications;
 
@@ -62,13 +78,13 @@ public class SysService {
     public String clearAll(HttpServletRequest request){
 
 
-        FileUtil.emptyPath(medicalCityUpload);
-        FileUtil.emptyPath(medicalVallageUpload);
-        FileUtil.emptyPath(endowmentCityUpload);
-        FileUtil.emptyPath(endowmentVallageUpload);
-        FileUtil.emptyPath(financeFeedCityUpload);
-        FileUtil.emptyPath(financeFeedVallageUpload);
-        FileUtil.emptyPath(someXlsUpload);
+        FileUtil.emptyPath( FileUtil.fixRealPath(medicalCityUpload));
+        FileUtil.emptyPath( FileUtil.fixRealPath(medicalVallageUpload));
+        FileUtil.emptyPath( FileUtil.fixRealPath(endowmentCityUpload));
+        FileUtil.emptyPath( FileUtil.fixRealPath(endowmentVallageUpload));
+        FileUtil.emptyPath( FileUtil.fixRealPath(financeFeedCityUpload));
+        FileUtil.emptyPath( FileUtil.fixRealPath(financeFeedVallageUpload));
+        FileUtil.emptyPath( FileUtil.fixRealPath(someXlsUpload));
 
         applications.setAttribute(Constant.medicalAllApplication,null);
         applications.setAttribute(Constant.medicalCityApplication,null);
@@ -106,8 +122,8 @@ public class SysService {
     }
 
     @RequestMapping(value="/errLs",method= RequestMethod.GET )
-    public String getVallageListview(Model model,AnalyseExcelUploadDto analyseExcelUploadDto,
-                                     @RequestParam(value = "type",required = false) String type ){
+    public String getErrLs(Model model,AnalyseExcelUploadDto analyseExcelUploadDto,
+                           @RequestParam(value = "type",required = false) String type ){
 
 
         model.addAttribute("actionUrl","/SysService/errLs");
@@ -130,5 +146,37 @@ public class SysService {
 
         return "adm/AnalyseSysLog-list";
     }
+    //将excel 文件转换为html  内容并在网页中显示出来
+    @RequestMapping(value="/showExcelContent",method= RequestMethod.GET )
+    public String showExcelContent(@RequestParam(value = "filePath",required = false) String filePath, HttpServletResponse res){
 
+        String path=FileUtil.getBaseJarPath()+"/"+filePath;
+        File file = new File(path);
+        res.setContentType("text/html;charset=utf-8");
+
+
+        try {
+            PrintWriter out = null;
+            out = res.getWriter();
+            if(file.exists()){
+
+                String html=PoiExcelToHtml.getHtml(file);
+                    out.print(html);
+            }else {
+                out.print("文件不存在或已被删除!"+"<a href=\"javascript:window.opener=null;window.close();\">点击关闭</a>");
+            }
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return null;
+    }
 }

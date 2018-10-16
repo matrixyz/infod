@@ -22,13 +22,24 @@ public class FileUtil {
     }
     //清空某个目录
     public static void emptyPath(String path){
-        File[] files=getFilesInPath(path);
-        for (File file:files  ) {
-            file.delete();
-            System.out.println("sys had delete file "+path);
-        }
-    }
 
+
+        File[] files=getFilesInPath(path);
+        if(files!=null&&files.length>0){
+            for (File file:files  ) {
+                file.delete();
+                System.out.println("sys had delete file "+path);
+            }
+        }
+
+    }
+    //在相对路径前加入物理路径
+    public static String fixRealPath(String path){
+
+
+       return getBaseJarPath()+"/"+path;
+
+    }
     public static String[] getFileList( ) {
         String path=PropertiesUtil.get("app.static.html.path")+"upload/thumb/";
         File newFile = new File(path);

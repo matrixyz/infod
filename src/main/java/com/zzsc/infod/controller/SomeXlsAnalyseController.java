@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +40,15 @@ public class SomeXlsAnalyseController {
     private SomeXlsAnalyseServiceExcel someXlsAnalyseServiceExcel;
 
     @Value( "${someXls.upload.path}")
-    private String someXlsUpload;
-   
+    private String someXlsUpload ;
+
+    private String someXlsUploadRealPath ;
+
+    @PostConstruct
+    public void setPath(){
+        someXlsUploadRealPath =FileUtil.getBaseJarPath()+"/"+someXlsUpload ;
+
+    }
 
     @Autowired
     ServletContext applications;
@@ -55,10 +63,11 @@ public class SomeXlsAnalyseController {
         model.addAttribute("actionUrl","/SomeXlsAnalyse/Listview");
         model.addAttribute("type",Constant.someXls);
         model.addAttribute("uploadType",Constant.SomeXlsAnalyse);
+        model.addAttribute("filePath",someXlsUpload);
 
         List<AnalyseExcelUploadDto> list=null;
         if(applications.getAttribute(Constant.someXlsFileApplication)==null){
-            list=someXlsAnalyseServiceExcel.getAnalyseExcelUploadDtoList(someXlsUpload);
+            list=someXlsAnalyseServiceExcel.getAnalyseExcelUploadDtoList(someXlsUploadRealPath);
         }else{
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.someXlsFileApplication);
         }
@@ -100,9 +109,9 @@ public class SomeXlsAnalyseController {
         files_ = new HashMap<>();
         if(files.length>0){
             if(type.equals(Constant.someXls)){
-                uploadPath=someXlsUpload;
+                uploadPath=someXlsUploadRealPath;
             }else if(type.equals(Constant.someXls)){
-                uploadPath=someXlsUpload;
+                uploadPath=someXlsUploadRealPath;
 
             }
             FileUtil.createPath(uploadPath);
@@ -158,7 +167,7 @@ public class SomeXlsAnalyseController {
         Object target=applications.getAttribute(Constant.someXlsApplication);
         if(target==null){
             try {
-                target=someXlsAnalyseServiceExcel.initByPath(someXlsUpload,Constant.someXls);
+                target=someXlsAnalyseServiceExcel.initByPath(someXlsUploadRealPath,Constant.someXls);
 
             } catch (Exception e) {
                 logger.error(e.getMessage());

@@ -3,11 +3,13 @@ package com.zzsc.infod.service.impl;
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
+import com.zzsc.infod.model.MedicalDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
 import com.zzsc.infod.util.EventModelReadExcel;
 import com.zzsc.infod.util.ExcelUtil;
 import com.zzsc.infod.util.FileUtil;
 
+import com.zzsc.infod.util.StringUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -27,7 +29,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
     private static Logger logger = LoggerFactory.getLogger(EndowmentAnalyseServiceExcelImpl.class);
 
-    public List<EndowmentDto> analyseCityExcel(MultipartFile file) {
+   /* public List<EndowmentDto> analyseCityExcel(MultipartFile file) {
         List<EndowmentDto> EndowmentDtos=new ArrayList<>();
 
         Workbook workbook = null;
@@ -106,7 +108,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
 
 
         return EndowmentDtos;
-    }
+    }*/
 
     @Override
     public List<EndowmentDto> analyseCityExcel(File file) {
@@ -291,7 +293,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         return FileUtil.getFilesInPath(path);
     }
 
-    @Override
+   /* @Override
     public Map<String, EndowmentDto> getEndowmentFromRow(Map<String,EndowmentDto> endowmentDtoMap, MultipartFile file,String type) {
 
 
@@ -315,27 +317,42 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         }
 
         return endowmentDtoMap;
-    }
+    }*/
 
     @Override
-    public Map<String, EndowmentDto> getEndowmentFromRow(String type,File[] files) {
+    public Map<String, EndowmentDto> getEndowmentFromRow(String type,File[] files) throws Exception {
 
         Map<String, EndowmentDto> res=new HashMap<>();
         for (File file: files) {
             List<EndowmentDto> EndowmentDtos =null;
+            String err_info=null;
             if(type.equals(Constant.endowmentCity)){
                 EndowmentDtos= analyseCityExcel(file);
+                err_info=Constant.ERR_ENDOWMENT_CITY_FILE_FORMAT;
             }
             if(type.equals(Constant.endowmentVallage)){
                 EndowmentDtos= analyseVallageExcel(file);
+                err_info=Constant.ERR_ENDOWMENT_VALLAGE_FILE_FORMAT;
             }
+
+            if(StringUtil.isChineseName(EndowmentDtos.get(0).getName())==false){
+                throw new Exception(err_info+"["+file.getName()+"]");
+            }
+            if(StringUtil.isChineseUid(EndowmentDtos.get(0).getCid())==false){
+                throw new Exception(err_info+"["+file.getName()+"]");
+            }
+
+
+
             for (EndowmentDto one:EndowmentDtos  ) {
                 if(one.getCid()==null)
                     continue;
                 StringBuilder key=new StringBuilder().append(one.getName()).append(one.getCid());
 
                 if(res.containsKey(key.toString())){
-                    res.get(key.toString()).setRepeatTimesAdd();
+                    EndowmentDto endowmentDto=res.get(key.toString());
+                    endowmentDto.setRepeatTimesAdd();
+                    endowmentDto.setOrgName(endowmentDto.getOrgName()+"<br>"+one.getOrgName());
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -345,13 +362,13 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         }
         return res;
     }
-    @Override
+   /* @Override
     public Map<String, EndowmentDto> init(Map<String, EndowmentDto> res,MultipartFile file,String type){
 
         return getEndowmentFromRow(res,  file,type);
-    }
+    }*/
     @Override
-    public Map<String, EndowmentDto> initByPath(String path,String type){
+    public Map<String, EndowmentDto> initByPath(String path,String type) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
@@ -361,8 +378,16 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
      * 将城市、城镇医疗保险数据合并到一个map里
      */
     public Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage){
-        Map<String, EndowmentDto> city=getEndowmentFromRow(   Constant.endowmentCity,getFiles(pathCity));
-        Map<String, EndowmentDto> vallage=getEndowmentFromRow( Constant.endowmentVallage,getFiles(pathVallage));
+        Map<String, EndowmentDto> city= null;
+        Map<String, EndowmentDto> vallage= null;
+
+        try {
+            city = getEndowmentFromRow(   Constant.endowmentCity,getFiles(pathCity));
+            vallage = getEndowmentFromRow( Constant.endowmentVallage,getFiles(pathVallage));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         for (String key:city.keySet()  ) {
             if(vallage.containsKey(key)){
