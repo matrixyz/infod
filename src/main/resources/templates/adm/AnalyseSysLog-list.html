@@ -60,6 +60,7 @@
                                             <th>文件名称</th>
                                             <th>文件类型</th>
                                             <th>文件大小</th>
+                                            <th>查看内容</th>
 
                                             <th>上传状态</th>
 
@@ -82,6 +83,7 @@
                                                 <td   th:text="${item.fileName}"> </td>
                                                 <td   th:text="${item.fileType}"> </td>
                                                 <td   th:text="${item.fileSize}"> </td>
+                                                <td    ><a target="_blank" class="btn    btn-sm" style="padding:0px 9px;" th:href="${'/SysService/showLogInfoContent?filePath='+filePath+'/'+item.fileName}">查看</a> </td>
 
                                                 <td   th:text="${item.result}"> </td>
                                                <!-- <td  > <a th:href="'javascript:delFile('+${item.id}+')'">删除</a></td>-->

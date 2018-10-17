@@ -26,7 +26,7 @@ public class ExcelUtil {
         Sheet sheet = workbook.getSheetAt(0);
         int rowLength=sheet.getLastRowNum();
 
-        for (int i = rowStartIndex; i < rowLength; i++) {
+        for (int i = rowStartIndex; i <= rowLength; i++) {
             Row row = sheet.getRow(i);
 
 

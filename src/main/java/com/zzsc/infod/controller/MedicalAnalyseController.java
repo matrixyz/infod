@@ -197,12 +197,12 @@ public class MedicalAnalyseController {
 
 
         if(type.equals(Constant.medicalCity)){
-           // applications.setAttribute(Constant.medicalCityApplication,null);
+           applications.setAttribute(Constant.medicalCityApplication,null);
             applications.setAttribute(Constant.medicalCityFileApplication ,fileList);
 
         }
         if(type.equals(Constant.medicalVallage)){
-            //applications.setAttribute(Constant.medicalVallageApplication,null);
+            applications.setAttribute(Constant.medicalVallageApplication,null);
              applications.setAttribute(Constant.medicalVallageFileApplication ,fileList);
 
         }
@@ -272,7 +272,7 @@ public class MedicalAnalyseController {
         try {
             target=  medicalAnalyseServiceExcel.initByPath(medicalCityUploadRealPath,Constant.medicalCity);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(ExceptionUtil.getStackTraceInfo(e));
             return e.getMessage();
         }
 
@@ -305,7 +305,7 @@ public class MedicalAnalyseController {
             try {
                 target=medicalAnalyseServiceExcel.initByPath(medicalVallageUploadRealPath,Constant.medicalVallage);
             } catch (Exception e) {//说明该文件格式异常，姓名身份证号不在对应要求的列
-                logger.error(e.getMessage());
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
             }
 

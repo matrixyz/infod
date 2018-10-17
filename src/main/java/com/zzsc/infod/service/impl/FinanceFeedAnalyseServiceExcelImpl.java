@@ -167,18 +167,19 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
             res=res.subList(1,res.size());
             for (List<Object> re : res) {
                 int col=0;
-                if(re.size()<3||re.get(2)==null||re.get(2).toString().length()!=18){
+                if(re.size()<3||re.get(2)==null ){
                     continue;
                 }
 
                 FinanceFeedDto FinanceFeedDto=new FinanceFeedDto();
                 for (Object o : re) {
-                    if(col==3)
+                    if(col==2)
                         FinanceFeedDto.setName(String.valueOf(o));
-                    else if(col==2)
+                    else if(col==3)
                         FinanceFeedDto.setCid(String.valueOf(o));
+                    else if(col==4)
+                        FinanceFeedDto.setOrgName(String.valueOf(o));
 
-                    FinanceFeedDto.setOrgName(areaName);
                     col++;
                 }
                 FinanceFeedDtos.add(FinanceFeedDto);
@@ -212,12 +213,10 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                 Sheet sheet = workbook.getSheetAt(0);
                 int rowLength = sheet.getLastRowNum();
 
-                for (int i = 1; i < rowLength; i++) {
+                for (int i = 1; i <= rowLength; i++) {
                     Row row = sheet.getRow(i);
                     FinanceFeedDto FinanceFeedDto = new FinanceFeedDto();
-                    if (row.getCell(3) == null || row.getCell(4) == null) {
-                        continue;
-                    }
+
                     FinanceFeedDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
                     FinanceFeedDto.setName(row.getCell(2).toString());
                     FinanceFeedDto.setOrgName(row.getCell(4).toString());
@@ -335,14 +334,14 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
             if(type.equals(Constant.financeFeedVallage)){
                 FinanceFeedDtos= analyseVallageExcel(file);
             }
-            if(StringUtil.isChineseName(FinanceFeedDtos.get(0).getName())==false){
+            if(  FinanceFeedDtos==null|| FinanceFeedDtos.size()==0||StringUtil.isChineseName(FinanceFeedDtos.get(0).getName())==false){
                 throw new Exception(Constant.ERR_FINANCE_FEED_FILE_FORMAT+"["+file.getName()+"]");
             }
-            if(StringUtil.isChineseUid(FinanceFeedDtos.get(0).getCid())==false){
+            if(FinanceFeedDtos==null|| FinanceFeedDtos.size()==0||StringUtil.isChineseUid(FinanceFeedDtos.get(0).getCid())==false){
                 throw new Exception(Constant.ERR_FINANCE_FEED_FILE_FORMAT+"["+file.getName()+"]");
             }
             for (FinanceFeedDto one:FinanceFeedDtos  ) {
-                if(one.getCid()==null)
+                if(one.getCid()==null&&one.getName()==null)
                     continue;
                 StringBuilder key=new StringBuilder().append(one.getName()).append(one.getCid());
 

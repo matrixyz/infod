@@ -4,10 +4,7 @@ import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.service.FinanceFeedAnalyseServiceExcel;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.NumUtil;
-import com.zzsc.infod.util.PageBean;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +144,7 @@ public class FinanceFeedAnalyseController {
             FileUtil.emptyPath(uploadPath);
         }
         int progress=0;
-        Map<String, FinanceFeedDto> res =new HashMap<>();
+
         List<AnalyseExcelUploadDto> fileList=new ArrayList<>();
         int id=1;
         for ( MultipartFile file:files){
@@ -173,11 +170,12 @@ public class FinanceFeedAnalyseController {
 
 
         if(type.equals(Constant.financeFeedCity)){
-            //applications.setAttribute(Constant.financeFeedCityApplication,res);
+            applications.setAttribute(Constant.financeFeedCityApplication,null);
             applications.setAttribute(Constant.financeFeedCityFileApplication ,fileList);
 
         }
         if(type.equals(Constant.financeFeedVallage)){
+            applications.setAttribute(Constant.financeFeedVallageApplication,null);
             applications.setAttribute(Constant.financeFeedVallageFileApplication ,fileList);
 
         }
@@ -198,7 +196,8 @@ public class FinanceFeedAnalyseController {
             try {
                 target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUploadRealPath,Constant.financeFeedCity);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
+                
                 return e.getMessage();
             }
             if(target==null)
@@ -228,7 +227,7 @@ public class FinanceFeedAnalyseController {
             try {
                 target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUploadRealPath,Constant.financeFeedVallage);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
             }
             if(target==null)

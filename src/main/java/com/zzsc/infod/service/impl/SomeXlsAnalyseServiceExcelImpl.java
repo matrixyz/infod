@@ -91,18 +91,18 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             res=res.subList(1,res.size());
             for (List<Object> re : res) {
                 int col=0;
-                if(re.size()<3||re.get(2)==null||re.get(2).toString().length()!=18){
-                    continue;
-                }
+
 
                 SomeXlsDto SomeXlsDto=new SomeXlsDto();
                 for (Object o : re) {
-                    if(col==3)
+                    if(col==2)
                         SomeXlsDto.setName(String.valueOf(o));
-                    else if(col==2)
+                    else if(col==3)
                         SomeXlsDto.setCid(String.valueOf(o));
+                    else if(col==4)
+                        SomeXlsDto.setOrgName(String.valueOf(o));
 
-                    SomeXlsDto.setOrgName(areaName);
+
                     col++;
                 }
                 SomeXlsDtos.add(SomeXlsDto);
@@ -232,7 +232,20 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
         }
         return Constant.SUCCESS;
     }
-
+    @Override
+    public String checkSomeXlsDifExcelFileAll(ServletContext applications, String appType, String errType, String emptyType) {
+        Object all=applications.getAttribute(appType);
+        if(all==null){
+            return errType;
+        }
+        List<FinanceFeedDto> mapKeyList = (List<FinanceFeedDto> ) all;
+        List<FinanceFeedDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
+        if(tempList.size()==0){
+            return emptyType;
+        }
+        return Constant.SUCCESS;
+    }
     @Override
     public int getListSomeXlsDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle) {
         Object all=applications.getAttribute(appType);
@@ -268,7 +281,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
 
 
             ExcelUtil obj = new ExcelUtil();
-            obj.exportExcelFix("城镇、城乡养老保险重复数据",titles,tempData,os);
+            obj.exportExcelFix(excelFileTitle,titles,tempData,os);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -281,4 +294,54 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
         }
         return 0;
     }
+
+    @Override
+    public int getListSomeXlsDifExcelFileAll(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle) {
+        Object all=applications.getAttribute(appType);
+
+        List<FinanceFeedDto> mapKeyList = (List<FinanceFeedDto> ) all;
+        List<FinanceFeedDto> tempList=  mapKeyList.stream().filter(x-> x.getRepeatTimes()>0).collect(Collectors.toList());
+        tempList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
+
+        ServletOutputStream os =null;
+
+        try {
+            os = response.getOutputStream();// 取得输出流
+            response.setCharacterEncoding("UTF-8");
+
+            response.setHeader("Content-Disposition", "attachment; filename=\""
+                    + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
+            response.setHeader("Content-Type", "application/msexcel");
+            String[] titles = new String[]{
+                    "序号","姓名","身份证号码","单位","重复次数"
+            };
+            List<String[]> tempData=new ArrayList<>();
+            int index=1;
+            for (FinanceFeedDto financeFeedDto : tempList) {
+                String[] item=new String[]{
+                        String.valueOf(index),
+                        financeFeedDto.getName(),
+                        financeFeedDto.getCid(),
+                        financeFeedDto.getOrgName(),
+                        String.valueOf(financeFeedDto.getRepeatTimes())  };
+                index++;
+                tempData.add(item);
+            }
+
+
+            ExcelUtil obj = new ExcelUtil();
+            obj.exportExcelFix(excelFileTitle,titles,tempData,os);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
 }

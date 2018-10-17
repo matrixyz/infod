@@ -225,12 +225,9 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             Sheet sheet = workbook.getSheetAt(0);
             int rowLength=sheet.getLastRowNum();
 
-            for (int i = 1; i < rowLength; i++) {
+            for (int i = 1; i <=rowLength; i++) {
                 Row row = sheet.getRow(i);
-                if(row.getCell(6)==null||row.getCell(3)==null){
 
-                    continue;
-                }
                 MedicalDto medicalDto=new MedicalDto();
                 medicalDto.setCid(row.getCell(6).toString());
                 medicalDto.setName(row.getCell(3).toString());
@@ -271,9 +268,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             List<List<Object>> res=reader.getAllValueList();
             for (List<Object> re : res) {
                 int col=0;
-                if(re.get(0)==null||re.get(1)==null){
-                    continue;
-                }
+
                 MedicalDto medicalDto=new MedicalDto();
                 for (Object o : re) {
                     if(col==3)

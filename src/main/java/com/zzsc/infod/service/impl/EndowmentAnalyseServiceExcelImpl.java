@@ -163,9 +163,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             res=res.subList(1,res.size());
             for (List<Object> re : res) {
                 int col=0;
-                if(re.size()<3||re.get(2)==null||re.get(2).toString().length()!=18){
-                    continue;
-                }
+
 
                 EndowmentDto endowmentDto=new EndowmentDto();
                 for (Object o : re) {
@@ -208,12 +206,10 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 Sheet sheet = workbook.getSheetAt(0);
                 int rowLength = sheet.getLastRowNum();
 
-                for (int i = 1; i < rowLength; i++) {
+                for (int i = 1; i <=rowLength; i++) {
                     Row row = sheet.getRow(i);
                     EndowmentDto endowmentDto = new EndowmentDto();
-                    if (row.getCell(3) == null || row.getCell(4) == null) {
-                        continue;
-                    }
+
                     endowmentDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
                     endowmentDto.setName(row.getCell(4).toString());
                     endowmentDto.setOrgName(row.getCell(2).toString());
@@ -256,9 +252,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             List<List<Object>> res=reader.getAllValueList();
             for (List<Object> re : res) {
                 int col=0;
-                if(re.size()<3||re.get(3)==null||re.get(3).toString().length()!=18){
-                    continue;
-                }
+
                 EndowmentDto endowmentDto=new EndowmentDto();
                 for (Object o : re) {
                     if(col==4)

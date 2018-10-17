@@ -1,12 +1,6 @@
 package com.zzsc.infod.util;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 public class FileUtils {
 	private static final String ENCODING = "GB2312";// UTF-8
@@ -67,6 +61,20 @@ public class FileUtils {
 				ie.printStackTrace();
 			}
 		}
+	}
+	public static String readTxt(File file){
+		StringBuilder result = new StringBuilder();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+			String s = null;
+			while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+				result.append(System.lineSeparator()+s);
+			}
+			br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return result.toString();
 	}
 
 }

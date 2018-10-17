@@ -101,7 +101,8 @@ public class StringUtil {
      * 匹配是否包含中文 str 要匹配的字符串 如果包含返回true 否则返回false
      */
     public static boolean isContainChinese(String str) {
-
+        if(StringUtil.isEmpty(str))
+            return false;
         Pattern p=Pattern.compile("[\u4e00-\u9fa5]");
         Matcher m=p.matcher(str);
         if(m.find())
@@ -115,7 +116,7 @@ public class StringUtil {
      */
     public static boolean isNumInt(String str) {
 
-        if(null==str)
+        if(StringUtil.isEmpty(str))
             return false;
         Pattern p=Pattern.compile("[0-9]+");
         Matcher m=p.matcher(str);
@@ -127,6 +128,8 @@ public class StringUtil {
     }
     //金额验证
     public static boolean isDecimal(String str){
+        if(StringUtil.isEmpty(str))
+            return false;
         Pattern pattern=Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$"); // 判断小数点后2位的数字的正则表达式
         Matcher match=pattern.matcher(str);
         if(match.matches()==false){
@@ -138,6 +141,8 @@ public class StringUtil {
 
     //中文姓名验证
     public static boolean isChineseName(String str){
+        if(StringUtil.isEmpty(str))
+            return false;
         Pattern pattern=Pattern.compile("^([\\u4e00-\\u9fa5]{2,5})$");
         Matcher match=pattern.matcher(str);
         return match.matches();
@@ -145,6 +150,8 @@ public class StringUtil {
     }
     //中国身份证号码验证
     public static boolean isChineseUid(String str){
+        if(StringUtil.isEmpty(str))
+            return false;
         Pattern pattern=Pattern.compile("^([0-9xX]{15,18})$");
         Matcher match=pattern.matcher(str);
         return match.matches();
@@ -155,7 +162,7 @@ public class StringUtil {
         for (int i = 0; i < 100; i++) {
             System.out.println("aaa"+i);
             if(i==10)
-                throw new Exception("跑出异常");
+                throw new Exception("出异常");
         }
         return false;
     }

@@ -25,6 +25,8 @@ public interface SomeXlsAnalyseServiceExcel {
     Map<String, FinanceFeedDto> initMerge(Map<String, FinanceFeedDto> city, Map<String, SomeXlsDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path);
     String checkSomeXlsDifExcelFile(ServletContext applications, String appType, String errType, String emptyType);
+    String checkSomeXlsDifExcelFileAll(ServletContext applications, String appType, String errType, String emptyType);
     int getListSomeXlsDifExcelFile(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle);
+    int getListSomeXlsDifExcelFileAll(ServletContext applications, HttpServletResponse response, String appType, String excelFileTitle);
 
 }

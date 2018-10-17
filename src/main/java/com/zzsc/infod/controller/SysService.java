@@ -2,6 +2,7 @@ package com.zzsc.infod.controller;
 
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
+import com.zzsc.infod.model.SysUser;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.*;
 import org.slf4j.Logger;
@@ -11,10 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -55,13 +53,16 @@ public class SysService {
 
     @Value( "${sys.err.path}")
     private String sysErrPath;
+    @Value( "${sys.info.path}")
+    private String sysInfoPath;
 
     String sysErrPathRealPath;
-    
+    String sysInfoPathRealPath;
+
     @PostConstruct
     public void setPath(){
         sysErrPathRealPath =FileUtil.getBaseJarPath()+"/"+sysErrPath ;
-       
+        sysInfoPathRealPath=FileUtil.getBaseJarPath()+"/"+sysInfoPath ;
     }
     
     @Autowired
@@ -103,9 +104,16 @@ public class SysService {
         applications.setAttribute(Constant.someXlsAllApplication,null);
         applications.setAttribute(Constant.someXlsApplication,null);
         applications.setAttribute(Constant.someXlsFileApplication,null);
+        HttpSession session = request.getSession(true);
 
+        Object u=session.getAttribute("user");
+        if(u!=null){
+            SysUser ux=(SysUser)u;
+            if(ux.getUserName().equals("管理员"))
+                return "redirect:/MedicalAnalyse/CityListview";
+        }
 
-        return "redirect:/MedicalAnalyse/CityListview";
+        return "redirect:/FinanceFeedAnalyse/CityListview";
 
     }
 
@@ -117,19 +125,19 @@ public class SysService {
         return "adm/help";
 
     }
+    //查看日志信息
+    @RequestMapping(value="/log/{type}",method= RequestMethod.GET )
+    public String getErrLs(Model model, @PathVariable String type,AnalyseExcelUploadDto analyseExcelUploadDto){
 
-    @RequestMapping(value="/errLs",method= RequestMethod.GET )
-    public String getErrLs(Model model,AnalyseExcelUploadDto analyseExcelUploadDto,
-                           @RequestParam(value = "type",required = false) String type ){
 
-
-        model.addAttribute("actionUrl","/SysService/errLs");
-
+        model.addAttribute("actionUrl","/SysService/log/"+type);
         List<AnalyseExcelUploadDto> list=null;
         if("err".equals(type)){
-            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(sysErrPath);
+            model.addAttribute("filePath", sysErrPath);
+            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(sysErrPathRealPath);
         }else{
-            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(sysErrPath);
+            model.addAttribute("filePath", sysInfoPath);
+            list=medicalAnalyseServiceExcel.getAnalyseExcelUploadDtoList(sysInfoPathRealPath);
         }
         if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
             analyseExcelUploadDto.setPage("1");
@@ -158,6 +166,36 @@ public class SysService {
             if(file.exists()){
 
                 String html= POIExcelToHtmlA.excelToHtml(file);
+                    out.print(html);
+            }else {
+                out.print("文件不存在或已被删除!"+"<a href=\"javascript:window.opener=null;window.close();\">点击关闭</a>");
+            }
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return null;
+    }
+
+    //读取日志文本内容在网页中显示出来
+    @RequestMapping(value="/showLogInfoContent",method= RequestMethod.GET )
+    public String showLogInfoContent(@RequestParam(value = "filePath",required = false) String filePath, HttpServletResponse res){
+
+        String path=FileUtil.getBaseJarPath()+"/"+filePath;
+        File file = new File(path);
+        res.setContentType("text/html;charset=utf-8");
+
+
+        try {
+            PrintWriter out = null;
+            out = res.getWriter();
+            if(file.exists()){
+
+                String html= FileUtils.readTxt(file);
                     out.print(html);
             }else {
                 out.print("文件不存在或已被删除!"+"<a href=\"javascript:window.opener=null;window.close();\">点击关闭</a>");

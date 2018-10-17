@@ -5,10 +5,7 @@ import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.model.SomeXlsDto;
 import com.zzsc.infod.service.SomeXlsAnalyseServiceExcel;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.NumUtil;
-import com.zzsc.infod.util.PageBean;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,14 +141,11 @@ public class SomeXlsAnalyseController {
 
 
         if(type.equals(Constant.someXls)){
-            //applications.setAttribute(Constant.someXlsApplication,res);
+          applications.setAttribute(Constant.someXlsApplication,null);
             applications.setAttribute(Constant.someXlsFileApplication ,fileList);
 
         }
-        if(type.equals(Constant.someXls)){
-            applications.setAttribute(Constant.someXlsFileApplication ,fileList);
 
-        }
 
 
         return Constant.SUCCESS;
@@ -170,7 +164,7 @@ public class SomeXlsAnalyseController {
                 target=someXlsAnalyseServiceExcel.initByPath(someXlsUploadRealPath,Constant.someXls);
 
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
             }
             if(target==null)
@@ -236,12 +230,26 @@ public class SomeXlsAnalyseController {
 
     }
 
-    @RequestMapping(value="/outPutExcelAll",method= RequestMethod.GET )
-    public String getListSomeXlsDifExcelFileAll(HttpServletResponse response  ){
-        someXlsAnalyseServiceExcel.getListSomeXlsDifExcelFile(applications,response,Constant.someXlsAllApplication,Constant.dataTitleSomeXlsAll);
+    @RequestMapping(value="/outPutExcel",method= RequestMethod.GET )
+    public String getListSomeXlsDifExcelFile(HttpServletResponse response  ){
+        someXlsAnalyseServiceExcel.getListSomeXlsDifExcelFile(applications,response,Constant.someXlsApplication,Constant.dataTitleSomeXls);
         return null;
     }
 
+    @ResponseBody
+    @RequestMapping(value="/outPutExcelCheckAll",method= RequestMethod.GET )
+    public String checkSomeXlsDifExcelFileAll(    ){
 
+        return someXlsAnalyseServiceExcel.checkSomeXlsDifExcelFileAll(
+                applications,Constant.someXlsAllApplication,
+                Constant.ERR_ANALYSE_NOT_YET_SOMEXLS,Constant.EMPTY_ALL_ANALYSE_NOT_YET_SOMEXLS);
+
+    }
+
+    @RequestMapping(value="/outPutExcelAll",method= RequestMethod.GET )
+    public String getListSomeXlsDifExcelFileAll(HttpServletResponse response  ){
+        someXlsAnalyseServiceExcel.getListSomeXlsDifExcelFileAll(applications,response,Constant.someXlsAllApplication,Constant.dataTitleSomeXlsAll);
+        return null;
+    }
    
 }

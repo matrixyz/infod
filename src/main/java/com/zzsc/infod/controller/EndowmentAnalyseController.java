@@ -178,12 +178,12 @@ public class EndowmentAnalyseController {
 
 
         if(type.equals(Constant.endowmentCity)){
-            //applications.setAttribute(Constant.endowmentCityApplication,res);
+            applications.setAttribute(Constant.endowmentCityApplication,null);
             applications.setAttribute(Constant.endowmentCityFileApplication ,fileList);
 
         }
         if(type.equals(Constant.endowmentVallage)){
-            // applications.setAttribute(Constant.endowmentVallageApplication,res);
+           applications.setAttribute(Constant.endowmentVallageApplication,null);
             applications.setAttribute(Constant.endowmentVallageFileApplication ,fileList);
 
         }
@@ -209,7 +209,7 @@ public class EndowmentAnalyseController {
                 target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUploadRealPath,Constant.endowmentCity);
 
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
             }
             if(target==null)
@@ -240,7 +240,7 @@ public class EndowmentAnalyseController {
             try {
                 target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUploadRealPath,Constant.endowmentVallage);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
             }
 
