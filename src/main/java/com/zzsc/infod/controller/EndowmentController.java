@@ -11,9 +11,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.BindingResult;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

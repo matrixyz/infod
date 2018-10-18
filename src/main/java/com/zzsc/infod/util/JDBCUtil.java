@@ -1,6 +1,6 @@
 package com.zzsc.infod.util;
 
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+
 
 import java.io.IOException;
 import java.sql.*;
@@ -15,7 +15,7 @@ public class JDBCUtil {
     private static  String userName = "";//
     private static  String password = "";//JKpF1Mkd3sf
     private static  String jdbcDriver = "";
-   static StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+
     static {
     Properties prop = new Properties();
     try {
@@ -24,8 +24,7 @@ public class JDBCUtil {
         userName=( prop.getProperty("spring.datasource.username"));
         password=( prop.getProperty("spring.datasource.password"));
         jdbcDriver=( prop.getProperty("spring.datasource.driver-class-name"));
-        encryptor.setPassword(prop.getProperty("jasypt.encryptor.password"));
-        password= encryptor.decrypt("lS5+INoRk/erRTvhgvRDuA==");
+
     } catch (IOException e) {
         e.printStackTrace();
     }

@@ -6,7 +6,7 @@ import com.zzsc.infod.model.MedicalDto;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
 import com.zzsc.infod.util.*;
 import org.apache.tomcat.util.bcel.Const;
-import org.mybatis.spring.annotation.MapperScan;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 @EnableAutoConfiguration
 @ComponentScan(basePackages={"com.zzsc.infod.service.impl" })
-@MapperScan(basePackages={"com.zzsc.infod.mapper" })
+//@MapperScan(basePackages={"com.zzsc.infod.mapper" })
 @Controller
 @RequestMapping("/MedicalAnalyse")
 public class MedicalAnalyseController {
