@@ -31,22 +31,25 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 养老相关excel的分析控制类
+ */
 @Controller
 @RequestMapping("/EndowmentAnalyse")
 public class EndowmentAnalyseController {
-
+    //用于测试同一接口，多个实现类的 策略模式的依赖对象
     Map<String, ServiceFactory> map = ApplicationContextProvider.getApplicationContext().getBeansOfType(ServiceFactory.class);
 
 
-    @Autowired
+    @Autowired//分析养老excel的服务类
     private EndowmentAnalyseServiceExcel endowmentAnalyseServiceExcel;
 
     @Value( "${endowment.city.upload.path}")
-    private String endowmentCityUpload ;
+    private String endowmentCityUpload ;//上传城镇养老excel文件的相对路径
     @Value( "${endowment.vallage.upload.path}")
     private String endowmentVallageUpload ;
 
-    private String endowmentCityUploadRealPath ;
+    private String endowmentCityUploadRealPath ;//程序运行起来后得到的在服务器的真实物理路径
     private String endowmentVallageUploadRealPath ;
     @PostConstruct
     public void setPath(){
