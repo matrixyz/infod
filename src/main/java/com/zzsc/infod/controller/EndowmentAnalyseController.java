@@ -51,7 +51,7 @@ public class EndowmentAnalyseController {
 
     private String endowmentCityUploadRealPath ;//程序运行起来后得到的在服务器的真实物理路径
     private String endowmentVallageUploadRealPath ;
-    @PostConstruct
+    @PostConstruct//spring上下文内容加载之后执行的方法，在这里具体为形成文件上传的真实路径
     public void setPath(){
         endowmentCityUploadRealPath =FileUtil.getBaseJarPath()+"/"+endowmentCityUpload ;
         endowmentVallageUploadRealPath =FileUtil.getBaseJarPath()+"/"+endowmentVallageUpload ;
@@ -64,7 +64,7 @@ public class EndowmentAnalyseController {
 
     private Logger logger =   LoggerFactory.getLogger(this.getClass());
 
-
+    //获取并显示上传的文件列表
     @RequestMapping(value="/CityListview",method= RequestMethod.GET )
     public String getCityListview(Model model, AnalyseExcelUploadDto analyseExcelUploadDto  ){
         model.addAttribute("getFileListUrl","/EndowmentAnalyse/CityList");
@@ -91,6 +91,7 @@ public class EndowmentAnalyseController {
 
         return "adm/AnalyseExcelEndowmentUpload-list";
     }
+    //获取并显示城乡文件列表
     @RequestMapping(value="/VallageListview",method= RequestMethod.GET )
     public String getVallageListview(Model model,AnalyseExcelUploadDto analyseExcelUploadDto  ){
 
@@ -119,7 +120,7 @@ public class EndowmentAnalyseController {
 
         return "adm/AnalyseExcelEndowmentUpload-list";
     }
-
+    //获取文件上传的进度数据
     @ResponseBody
     @RequestMapping("/getProgress")
     public String getProgress(  ){
@@ -128,7 +129,7 @@ public class EndowmentAnalyseController {
         }
         return session.getAttribute("uploadProgress").toString();
     }
-
+//上传文件
     @ResponseBody
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
