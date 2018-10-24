@@ -210,8 +210,8 @@
                         $.ajax({
                             type: "GET",
                             url: "/PubService/login",
-                            data: "userPhone=" +   $('#userPhoneL').val()  + "&userPwd=" +  $('#userPwdL').val()  + "&check=" +  $('#check').val(),
-                            //data: "userPhone=1&password=1"  ,
+                            data: "userPhone=" +   encodeURIComponent(  $('#userPhoneL').val() ) + "&userPwd=" +  $('#userPwdL').val()  + "&check=" +  $('#check').val(),
+                            cache: false,
                             beforeSend: function () {
                                 //点击登录后显示loading，隐藏输入框
                                 // $("#btn-login").css("display", "none");
