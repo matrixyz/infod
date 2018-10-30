@@ -140,6 +140,9 @@ public class EndowmentAnalyseController {
         session.setAttribute("uploadProgress",0);
         Map<String,InputStream> files_;
         files_ = new HashMap<>();
+
+
+
         if(files.length>0){
             if(type.equals(Constant.endowmentCity)){
                 uploadPath=endowmentCityUploadRealPath;
