@@ -39,7 +39,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
 
 
     @Override
-    public List<SomeXlsDto> analyseSomeExcel(File file) {
+    public List<SomeXlsDto> analyseSomeExcel(File file ,String[] cols) {
         List<SomeXlsDto> SomeXlsDtos=new ArrayList<>();
 
         Workbook workbook = null;
@@ -48,14 +48,18 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             if(type==2003) {//2003
                 InputStream is = new FileInputStream(file);
                 workbook = new HSSFWorkbook(is);
-
-                List<String[]> cells = ExcelUtil.getWorkbookInfo(1, new int[]{2, 3, 4}, workbook);
+                int[] targetPos=ExcelUtil.getWorkbookKeyColumIndex(workbook);
+                if(targetPos==null||targetPos[2]==-1||targetPos[1]==-1)
+                    return null;//说明该文件未有取到姓名和身份证号列数据
+                List<String[]> cells = ExcelUtil.getWorkbookInfo(targetPos[0], new int[]{targetPos[1],targetPos[2],Integer.parseInt(cols[0]),Integer.parseInt(cols[2])}, workbook);
 
                 for (String[] item : cells) {
                     SomeXlsDto SomeXlsDto = new SomeXlsDto();
                     SomeXlsDto.setName(item[0]);
                     SomeXlsDto.setCid(item[1]);
                     SomeXlsDto.setOrgName(item[2]);
+                    SomeXlsDto.setSomeCol(item[3]);
+                    SomeXlsDto.setFileName(file.getName());
                     SomeXlsDtos.add(SomeXlsDto);
                 }
                 is.close();
@@ -101,7 +105,10 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                         SomeXlsDto.setCid(String.valueOf(o));
                     else if(col==4)
                         SomeXlsDto.setOrgName(String.valueOf(o));
+                    else if(col==6)
+                        SomeXlsDto.setSomeCol(String.valueOf(o));
 
+                    SomeXlsDto.setFileName(file.getName());
 
                     col++;
                 }
@@ -133,13 +140,17 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     
 
     @Override
-    public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files) throws Exception {
+    public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files,String[] cols) throws Exception {
 
         Map<String, SomeXlsDto> res=new HashMap<>();
         for (File file: files) {
             List<SomeXlsDto> SomeXlsDtos =null;
             if(type.equals(Constant.someXls)){
-                SomeXlsDtos= analyseSomeExcel(file);
+                SomeXlsDtos= analyseSomeExcel(file,cols);
+            }
+            if(SomeXlsDtos==null){
+                throw new Exception("未在文件["+file.getName()+"]中找到有效姓名和身份证列!");
+
             }
             if(StringUtil.isChineseName(SomeXlsDtos.get(0).getName())==false){
                 throw new Exception(Constant.ERR_SOME_XLS_FILE_FORMAT+"["+file.getName()+"]");
@@ -156,6 +167,8 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                     FinanceFeedDto o=res.get(key.toString());
                     o.setRepeatTimesAdd();
                     o.setOrgName(o.getOrgName()+"<br>"+one.getOrgName());
+                    o.setSomeCol(o.getSomeCol()+"<br>"+one.getSomeCol());
+                    o.setFileName(o.getFileName()+"<br>"+file.getName());
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -167,11 +180,11 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     }
    
     @Override
-    public Map<String, SomeXlsDto> initByPath(String path,String type) throws Exception {
+    public Map<String, SomeXlsDto> initByPath(String path,String type,String[] cols) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
-        return getSomeXlsFromRow(  type,files);
+        return getSomeXlsFromRow(  type,files,cols);
     }
     /**
      * 将城市、城镇医疗保险数据合并到一个map里
@@ -264,7 +277,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                     + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","重复次数"
+                    "序号","姓名","身份证号码","单位","其他列","所在文件名","重复次数"
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
@@ -274,6 +287,8 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                         medicalDto.getName(),
                         medicalDto.getCid(),
                         medicalDto.getOrgName(),
+                        medicalDto.getSomeCol(),
+                        medicalDto.getFileName(),
                         String.valueOf(medicalDto.getRepeatTimes())  };
                 index++;
                 tempData.add(item);
@@ -313,7 +328,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                     + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","重复次数"
+                    "序号","姓名","身份证号码","单位","所在文件名","重复次数"
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
@@ -323,6 +338,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                         financeFeedDto.getName(),
                         financeFeedDto.getCid(),
                         financeFeedDto.getOrgName(),
+                        financeFeedDto.getFileName(),
                         String.valueOf(financeFeedDto.getRepeatTimes())  };
                 index++;
                 tempData.add(item);

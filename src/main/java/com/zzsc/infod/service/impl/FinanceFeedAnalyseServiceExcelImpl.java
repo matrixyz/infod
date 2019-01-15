@@ -132,6 +132,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                     FinanceFeedDto.setName(item[0]);
                     FinanceFeedDto.setCid(item[1]);
                     FinanceFeedDto.setOrgName(item[2]);
+                    FinanceFeedDto.setFileName(file.getName());
                     FinanceFeedDtos.add(FinanceFeedDto);
                 }
                 is.close();
@@ -180,6 +181,8 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                     else if(col==4)
                         FinanceFeedDto.setOrgName(String.valueOf(o));
 
+                    FinanceFeedDto.setFileName(file.getName());
+
                     col++;
                 }
                 FinanceFeedDtos.add(FinanceFeedDto);
@@ -220,6 +223,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                     FinanceFeedDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
                     FinanceFeedDto.setName(row.getCell(2).toString());
                     FinanceFeedDto.setOrgName(row.getCell(4).toString());
+                    FinanceFeedDto.setFileName(file.getName());
                     FinanceFeedDtos.add(FinanceFeedDto);
 
                 }
@@ -270,6 +274,8 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                         FinanceFeedDto.setCid(String.valueOf(o));
                     else if(col==4)
                         FinanceFeedDto.setOrgName(String.valueOf(o));
+
+                    FinanceFeedDto.setFileName(file.getName());
                     col++;
                 }
                 FinanceFeedDtos.add(FinanceFeedDto);
@@ -349,7 +355,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                     FinanceFeedDto o=res.get(key.toString());
                     o.setRepeatTimesAdd();
                     o.setOrgName(o.getOrgName()+"<br>"+one.getOrgName());
-
+                    o.setFileName(o.getFileName()+"<br>"+one.getFileName());
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -464,7 +470,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                     + new String(excelFileTitle.getBytes("gb2312") , "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","重复次数"
+                    "序号","姓名","身份证号码","单位","所在文件名","重复次数"
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
@@ -474,6 +480,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                         medicalDto.getName(),
                         medicalDto.getCid(),
                         medicalDto.getOrgName(),
+                        medicalDto.getFileName(),
                         String.valueOf(medicalDto.getRepeatTimes())  };
                 index++;
                 tempData.add(item);

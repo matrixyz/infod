@@ -72,6 +72,7 @@
                                             <th>姓名</th>
                                             <th>身份证号码</th>
                                             <th>单位</th>
+                                            <th>所在文件名</th>
                                             <th>重复次数</th>
 
 
@@ -93,7 +94,7 @@
                                                 <td   th:text="${item.name}"> </td>
                                                 <td   th:text="${item.cid}"> </td>
                                                 <td   th:utext="${item.orgName}"> </td>
-
+                                            <td   th:utext="${item.fileName}"> </td>
                                                 <td   th:text="${item.repeatTimes}"> </td>
 
                                         </tr>

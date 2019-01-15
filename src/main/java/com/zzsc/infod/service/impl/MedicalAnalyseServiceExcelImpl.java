@@ -133,7 +133,9 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                     medicalDto.setCid(item[0]);
                     medicalDto.setName(item[1]);
                     medicalDto.setAreaName(area);
+                    medicalDto.setFileName(file.getName());
                     MedicalDtos.add(medicalDto);
+
                 }
                 is.close();
             }else{
@@ -186,11 +188,11 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                     medicalDto.setAreaName(areaName);
                     col++;
                 }
+                medicalDto.setFileName(file.getName());
                 MedicalDtos.add(medicalDto);
 
             }
 
-                    throw new Exception("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         } catch (Exception e) {
             logger.error(e.getMessage());
 
@@ -232,6 +234,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                 medicalDto.setCid(row.getCell(6).toString());
                 medicalDto.setName(row.getCell(3).toString());
                 medicalDto.setAreaName(row.getCell(11).toString());
+                medicalDto.setFileName(file.getName());
                 MedicalDtos.add(medicalDto);
 
             }
@@ -279,6 +282,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                         medicalDto.setAreaName(String.valueOf(o));
                     col++;
                 }
+                medicalDto.setFileName(file.getName());
                 MedicalDtos.add(medicalDto);
 
             }
@@ -366,6 +370,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                     MedicalDto medicalDto=res.get(key.toString());
                     medicalDto.setRepeatTimesAdd();
                     medicalDto.setAreaName(medicalDto.getAreaName()+"<br>"+one.getAreaName());
+                    medicalDto.setFileName(medicalDto.getFileName()+"<br>"+one.getFileName());
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -481,7 +486,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                     + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","重复次数"
+                    "序号","姓名","身份证号码","单位","所在文件","重复次数"
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
@@ -491,6 +496,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                         medicalDto.getName(),
                         medicalDto.getCid(),
                         medicalDto.getAreaName(),
+                        medicalDto.getFileName(),
                         String.valueOf(medicalDto.getRepeatTimes())  };
                 index++;
                 tempData.add(item);

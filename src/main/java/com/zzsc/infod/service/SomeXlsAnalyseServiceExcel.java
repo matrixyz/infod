@@ -14,13 +14,13 @@ import java.util.Map;
 public interface SomeXlsAnalyseServiceExcel {
 
 
-    List<SomeXlsDto> analyseSomeExcel(File file);
+    List<SomeXlsDto> analyseSomeExcel(File file,String[] cols);
     List<SomeXlsDto> analyseSomeExcelEventmode(File file);
     File[] getFiles(String path);
 
-    Map<String,SomeXlsDto> getSomeXlsFromRow(String type, File[] files) throws Exception;
+    Map<String,SomeXlsDto> getSomeXlsFromRow(String type, File[] files,String[] cols) throws Exception;
 
-    Map<String, SomeXlsDto> initByPath(String path, String type) throws Exception;
+    Map<String, SomeXlsDto> initByPath(String path, String type,String[] cols) throws Exception;
     //Map<String, SomeXlsDto> initMerge(String pathCity, String pathVallage);
     Map<String, FinanceFeedDto> initMerge(Map<String, FinanceFeedDto> city, Map<String, SomeXlsDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path);

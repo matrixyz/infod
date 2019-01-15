@@ -128,6 +128,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                     endowmentDto.setCid(item[1]);
                     endowmentDto.setName(item[0]);
                     endowmentDto.setOrgName(item[2]);
+                    endowmentDto.setFileName(file.getName());
                     EndowmentDtos.add(endowmentDto);
                 }
                 is.close();
@@ -173,6 +174,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                         endowmentDto.setCid(String.valueOf(o));
 
                     endowmentDto.setOrgName(areaName);
+                    endowmentDto.setFileName(file.getName());
                     col++;
                 }
                 EndowmentDtos.add(endowmentDto);
@@ -213,6 +215,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                     endowmentDto.setCid(row.getCell(3).toString().replaceAll("\"", ""));
                     endowmentDto.setName(row.getCell(4).toString());
                     endowmentDto.setOrgName(row.getCell(2).toString());
+                    endowmentDto.setFileName(file.getName());
                     EndowmentDtos.add(endowmentDto);
 
                 }
@@ -261,6 +264,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                         endowmentDto.setCid(String.valueOf(o));
                     else if(col==2)
                         endowmentDto.setOrgName(String.valueOf(o));
+
+                    endowmentDto.setFileName(file.getName());
                     col++;
                 }
                 EndowmentDtos.add(endowmentDto);
@@ -347,6 +352,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                     EndowmentDto endowmentDto=res.get(key.toString());
                     endowmentDto.setRepeatTimesAdd();
                     endowmentDto.setOrgName(endowmentDto.getOrgName()+"<br>"+one.getOrgName());
+                    endowmentDto.setFileName(endowmentDto.getFileName()+"<br>"+one.getFileName());
                 }else {
                     res.put(key.toString(), one);
                 }
@@ -463,7 +469,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                     + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","重复次数"
+                    "序号","姓名","身份证号码","单位","所在文件名","重复次数"
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
@@ -473,6 +479,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                         medicalDto.getName(),
                         medicalDto.getCid(),
                         medicalDto.getOrgName(),
+                        medicalDto.getFileName(),
                         String.valueOf(medicalDto.getRepeatTimes())  };
                 index++;
                 tempData.add(item);

@@ -7,6 +7,7 @@ public class SomeXlsDto extends FinanceFeedDto{
     String endDate;
     int repeatTimes;//重复次数
 
+
     public int getRepeatTimes() {
         return repeatTimes;
     }

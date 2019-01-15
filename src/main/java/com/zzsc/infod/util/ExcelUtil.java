@@ -42,6 +42,48 @@ public class ExcelUtil {
         }
         return res;
     }
+    /**
+     *
+     * @param workbook 工作表
+     * @return 需要获取的工作表的姓名和身份证列的索引
+     */
+    public static int[] getWorkbookKeyColumIndex( Workbook workbook){
+        Sheet sheet = workbook.getSheetAt(0);
+        int rowLength=sheet.getLastRowNum();
+        int startRowIndex=-1;
+        int idCardIndex=-1;
+        int nameIndex=-1;
+        for (int i = 1; i <= rowLength; i++) {
+            Row row = sheet.getRow(i);
+            for (int j = 0; j < 8; j++) {
+                String t=null;
+                if(row.getCell(j)!=null){
+                    t=row.getCell(j).toString();
+                }
+                if(IdcardUtils.validateCard(t)){
+                    idCardIndex=j;
+                    if(nameIndex>-1){
+                        break;
+                    }
+                }
+                if(StringUtil.isChineseName(t)){
+                    nameIndex=j;
+                    if(idCardIndex>-1){
+                        break;
+                    }
+                }
+            }
+            if(nameIndex>-1&&idCardIndex>-1){
+                startRowIndex=i;
+                return new int[]{startRowIndex,nameIndex,idCardIndex};
+            }
+            if(i>20){
+                return null;
+            }
+
+        }
+        return null;
+    }
     public static String getWorkbookInfo(int rowIndex,int colIndex,Workbook workbook){
         Sheet sheet = workbook.getSheetAt(0);
         if(sheet!=null){

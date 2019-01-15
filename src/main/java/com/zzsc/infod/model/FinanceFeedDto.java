@@ -6,6 +6,26 @@ public class FinanceFeedDto extends FinanceFeed{
     String beginDate;
     String endDate;
     int repeatTimes;//重复次数
+    String someCol;//某些需要导出的列数据
+    String fileName;//用来存储重复数据所在文件名
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getSomeCol() {
+        return someCol;
+    }
+
+    public void setSomeCol(String someCol) {
+        this.someCol = someCol;
+    }
+
+
 
     public int getRepeatTimes() {
         return repeatTimes;

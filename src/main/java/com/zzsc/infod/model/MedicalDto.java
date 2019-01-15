@@ -6,6 +6,15 @@ public class MedicalDto extends Medical{
     String beginDate;
     String endDate;
     int repeatTimes;//重复次数
+    String fileName;//用来存储重复数据所在文件名
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public int getRepeatTimes() {
         return repeatTimes;

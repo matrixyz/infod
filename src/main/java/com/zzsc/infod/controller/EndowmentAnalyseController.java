@@ -129,7 +129,7 @@ public class EndowmentAnalyseController {
         }
         return session.getAttribute("uploadProgress").toString();
     }
-//上传文件
+    //上传文件
     @ResponseBody
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,

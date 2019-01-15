@@ -47,27 +47,31 @@
                                         <td  >
 
                                             <input type="file" id="inputfile" name="inputfile" multiple="multiple" style="display:none;"/>
-                                            <a href="#">
-                                                <button class="btn btn-success  btn-sm " id="btn-upload-file" >
+
+                                            <div class="input-group col-sm-6">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-success  btn-sm " id="btn-upload-file" >
                                                     上传文件
                                                     <i class="ace-icon fa fa-pencil "></i>
-                                                </button>
-                                            </a>
-
-                                            <a href="#">
-                                                <button class="btn btn-warning  btn-sm" id="btn-analyse-excel" >
+                                                    </button>
+                                                </span>
+                                                <input class="form-control " type="text" id="form-field-mask-1" value="E,地址,F,其他列"
+                                                       data-rel="tooltip" th:attr="data-original-title='自定义提取重复数据的指定列，默认提取E，F两列，提取列导出到Excel的列名称分别为(地址，其他列)，如要提取其他列，请修改E,F的值即可。'">
+                                                <span class="input-group-btn">
+                                                     <button class="  btn btn-warning  btn-sm" id="btn-analyse-excel" >
                                                     分析并显示
                                                     <i class="ace-icon fa fa-pencil "></i>
-                                                </button>
-                                            </a>
-                                            <a href="#">
-                                                <button class="btn    btn-sm" id="btn-analyse-all-excel" >
+                                                    </button>
+                                                </span>
+                                                <span class="input-group-btn">
+                                                   <button class="btn    btn-sm" id="btn-analyse-all-excel" >
                                                     其他与财政重复分析查询
                                                     <i class="ace-icon fa fa-pencil "></i>
-                                                </button>
-                                            </a>
-                                        </td>
+                                                    </button>
+                                                </span>
+                                            </div>
 
+                                        </td>
 
 
                                     </tr>
@@ -241,16 +245,8 @@
 <script type="text/javascript">
 
     jQuery(function($) {
+        $('[data-rel=tooltip]').tooltip();
 
-        //时间选择器
-        laydate.render({
-            elem: '#beginDate'
-            ,type: 'datetime'
-        });
-        laydate.render({
-            elem: '#endDate'
-            ,type: 'datetime'
-        });
         $( "#btn-analyse-excel" ).click(function () {
             $('#postResWarning').modal('show');
             $(".progress-bar").css("width","100%");

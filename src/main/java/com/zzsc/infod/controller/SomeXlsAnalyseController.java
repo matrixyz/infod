@@ -161,7 +161,7 @@ public class SomeXlsAnalyseController {
         Object target=applications.getAttribute(Constant.someXlsApplication);
         if(target==null){
             try {
-                target=someXlsAnalyseServiceExcel.initByPath(someXlsUploadRealPath,Constant.someXls);
+                target=someXlsAnalyseServiceExcel.initByPath(someXlsUploadRealPath,Constant.someXls,new String[]{"4","a","5","b"});
 
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
