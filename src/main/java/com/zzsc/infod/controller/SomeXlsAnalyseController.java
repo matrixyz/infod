@@ -107,9 +107,6 @@ public class SomeXlsAnalyseController {
         if(files.length>0){
             if(type.equals(Constant.someXls)){
                 uploadPath=someXlsUploadRealPath;
-            }else if(type.equals(Constant.someXls)){
-                uploadPath=someXlsUploadRealPath;
-
             }
             FileUtil.createPath(uploadPath);
             FileUtil.emptyPath(uploadPath);
@@ -153,6 +150,22 @@ public class SomeXlsAnalyseController {
 
 
     }
+    @ResponseBody
+    @RequestMapping("/del")
+    public String  del(@RequestParam(value = "fileName",required = true) String fileName  ) throws IOException {
+
+        FileUtil.delPath(someXlsUploadRealPath+"\\"+fileName);
+        applications.setAttribute(Constant.someXlsApplication,null);
+        if(applications.getAttribute(Constant.someXlsFileApplication)!=null){
+            List<AnalyseExcelUploadDto> fileList=( List<AnalyseExcelUploadDto>) applications.getAttribute(Constant.someXlsFileApplication);
+            fileList.remove( fileList.stream().filter(x-> x.getFileName().equals(fileName)).findFirst());
+        }
+
+        return Constant.SUCCESS;
+
+    }
+
+
 
     @ResponseBody
     @RequestMapping(value="/analyse",method= RequestMethod.GET)

@@ -107,8 +107,12 @@
                                                 <td   th:text="${item.fileName}"> </td>
                                                 <td   th:text="${item.fileType}"> </td>
                                                 <td   th:text="${item.fileSize}"> </td>
-                                                <td    ><a target="_blank" class="btn    btn-sm" style="padding:0px 9px;" th:href="${'/SysService/showExcelContent?filePath='+filePath+'/'+item.fileName}">查看</a> </td>
                                                 <td   th:text="${item.result}"> </td>
+                                                <td>
+                                                    <a target="_blank" class="btn    btn-sm" style="padding:0px 9px;" th:href="${'/SysService/showExcelContent?filePath='+filePath+'/'+item.fileName}">查看</a>
+                                                    <a class="btn  btn-danger  btn-sm" style="padding:0px 9px;" th:href="'javascript:delFile(\''+${item.fileName}+'\')'">删除</a>
+                                                </td>
+
                                                <!-- <td  > <a th:href="'javascript:delFile('+${item.id}+')'">删除</a></td>-->
 
                                             </tr>
@@ -366,7 +370,26 @@
 
 
         });
+        function delFile(fileName) {
+            $.ajax({
+                url: '/SomeXlsAnalyse/del?fileName='+fileName,
+                type: 'GET',
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(msg){
+                    if(msg=='SUCCESS'){
+                        location.href="/SomeXlsAnalyse/Listview";
+                    }else{
+                        $('#postResContent').find("strong").html(msg);
+                        $('#processBar').css("display","none");
+                        $('#closeMsg').css("display","");
+                    }
 
+                }
+            });
+        }
+        window.delFile=delFile;
 
 
 
