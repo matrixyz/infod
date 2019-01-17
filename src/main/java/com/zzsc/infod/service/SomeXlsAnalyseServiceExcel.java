@@ -15,7 +15,7 @@ public interface SomeXlsAnalyseServiceExcel {
 
 
     List<SomeXlsDto> analyseSomeExcel(File file,String[] cols);
-    List<SomeXlsDto> analyseSomeExcelEventmode(File file);
+    List<SomeXlsDto> analyseSomeExcelEventmode(File file,String[] cols);
     File[] getFiles(String path);
 
     Map<String,SomeXlsDto> getSomeXlsFromRow(String type, File[] files,String[] cols) throws Exception;

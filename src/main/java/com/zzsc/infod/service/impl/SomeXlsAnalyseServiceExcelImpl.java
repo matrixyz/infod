@@ -51,7 +51,8 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                 int[] targetPos=ExcelUtil.getWorkbookKeyColumIndex(workbook);
                 if(targetPos==null||targetPos[2]==-1||targetPos[1]==-1)
                     return null;//说明该文件未有取到姓名和身份证号列数据
-                List<String[]> cells = ExcelUtil.getWorkbookInfo(targetPos[0], new int[]{targetPos[1],targetPos[2],Integer.parseInt(cols[0]),Integer.parseInt(cols[2])}, workbook);
+                List<String[]> cells =
+                        ExcelUtil.getWorkbookInfo(targetPos[0], new int[]{targetPos[1],targetPos[2],Integer.parseInt(cols[0]),Integer.parseInt(cols[2])}, workbook);
 
                 for (String[] item : cells) {
                     SomeXlsDto SomeXlsDto = new SomeXlsDto();
@@ -66,7 +67,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             }else{
                 logger.warn("分析了养老 xlsx文件- -  "+file.getName());
 
-                return analyseSomeExcelEventmode(file);
+                return analyseSomeExcelEventmode(file,cols);
             }
         } catch ( Exception e) {
             logger.error("methodName = analyseSomeExcel\n"+e.getMessage());
@@ -81,7 +82,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
         }
         return SomeXlsDtos;
     }
-    public List<SomeXlsDto> analyseSomeExcelEventmode(File file) {
+    public List<SomeXlsDto> analyseSomeExcelEventmode(File file,String[] cols) {
 
 
         long startTime = System.currentTimeMillis();
@@ -91,21 +92,24 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
         try {
             reader.processOneSheet(file);
             List<List<Object>> res=reader.getAllValueList();
-            String areaName=String.valueOf(res.get(0).get(3));
-            res=res.subList(1,res.size());
+            int[] targetPos=ExcelUtil.getWorkbookKeyColumIndex(res);
+            if(targetPos==null||targetPos[2]==-1||targetPos[1]==-1)
+                return null;//说明该文件未有取到姓名和身份证号列数据
+            res=res.subList(targetPos[0],res.size());
+
             for (List<Object> re : res) {
                 int col=0;
 
 
                 SomeXlsDto SomeXlsDto=new SomeXlsDto();
                 for (Object o : re) {
-                    if(col==2)
+                    if(col==targetPos[1])
                         SomeXlsDto.setName(String.valueOf(o));
-                    else if(col==3)
+                    else if(col==targetPos[2])
                         SomeXlsDto.setCid(String.valueOf(o));
-                    else if(col==4)
+                    else if(col==Integer.parseInt(cols[0]))
                         SomeXlsDto.setOrgName(String.valueOf(o));
-                    else if(col==6)
+                    else if(col==Integer.parseInt(cols[2]))
                         SomeXlsDto.setSomeCol(String.valueOf(o));
 
                     SomeXlsDto.setFileName(file.getName());

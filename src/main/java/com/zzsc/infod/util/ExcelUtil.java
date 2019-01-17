@@ -21,58 +21,145 @@ public class ExcelUtil {
      * @param workbook 工作表
      * @return 需要获取的工作表的集合
      */
-    public static List<String[]> getWorkbookInfo(int rowStartIndex,int[] targetColumnIndex,Workbook workbook){
+    public static List<String[]> getWorkbookInfo(int rowStartIndex,int[] targetColumnIndex,Workbook workbook) {
         List<String[]> res=new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0);
         int rowLength=sheet.getLastRowNum();
 
-        for (int i = rowStartIndex; i <= rowLength; i++) {
-            Row row = sheet.getRow(i);
+        try {
+            for (int i = rowStartIndex; i <= rowLength; i++) {
+                Row row = sheet.getRow(i);
 
 
-            String[] rowInfo=new String[targetColumnIndex.length];
-            int j=0;
-            for (int c  :targetColumnIndex) {
-                if(row.getCell(c)!=null)
-                    rowInfo[j++]=row.getCell(c).toString();
-                else
-                    rowInfo[j++]=null;
+                String[] rowInfo=new String[targetColumnIndex.length];
+                int j=0;
+                for (int c  :targetColumnIndex) {
+                    if(row.getCell(c)!=null)
+                        rowInfo[j++]=row.getCell(c).toString();
+                    else
+                        rowInfo[j++]=null;
+                }
+                res.add(rowInfo);
             }
-            res.add(rowInfo);
+        } catch (Exception e) {
+
+           e.printStackTrace();
         }
         return res;
     }
+
     /**
      *
      * @param workbook 工作表
      * @return 需要获取的工作表的姓名和身份证列的索引
      */
-    public static int[] getWorkbookKeyColumIndex( Workbook workbook){
+    public static int[] getWorkbookKeyColumIndex( Workbook workbook) {
         Sheet sheet = workbook.getSheetAt(0);
-        int rowLength=sheet.getLastRowNum();
+        int rowLength = sheet.getLastRowNum();
+        int startRowIndex = -1;
+        int idCardIndex = -1;
+        int nameIndex = -1;
+        for (int i = 1; i <= rowLength; i++) {
+            Row row = sheet.getRow(i);
+            for (int j = 0; j < 8; j++) {
+                String t = null;
+                if (row.getCell(j) != null) {
+                    t = row.getCell(j).toString();
+                }
+                if (IdcardUtils.validateCard(t)) {
+                    idCardIndex = j;
+                    if (nameIndex > -1) {
+                        break;
+                    }
+                }
+
+            }
+            if(idCardIndex>-1){
+                Row r1= sheet.getRow(i);
+                Row r2= sheet.getRow(i+1);
+                int k=0;
+               for (Cell c:r1 ){
+                   if(c!=null&&StringUtil.isNotEmpty(c.toString())){
+                       if(StringUtil.isChineseName(
+                               new String[]{c.toString(),
+                                       (r2==null?null:(r2.getCell(k)==null?null:r2.getCell(k).toString()))
+                               }
+                               )){
+
+                           nameIndex = k;
+                           break;
+
+                       }
+                   }
+                   k++;
+                   continue;
+               }
+            }
+
+
+            if (nameIndex > -1 && idCardIndex > -1) {
+                startRowIndex = i;
+                return new int[]{startRowIndex, nameIndex, idCardIndex};
+            }
+            if (i > 20) {
+                return null;
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * 需要获取的工作表的姓名和身份证列的索引
+     * @param res
+     * @return
+     */
+    public static int[] getWorkbookKeyColumIndex(  List<List<Object>> res){
+        int rowLength=res.size();
         int startRowIndex=-1;
         int idCardIndex=-1;
         int nameIndex=-1;
         for (int i = 1; i <= rowLength; i++) {
-            Row row = sheet.getRow(i);
-            for (int j = 0; j < 8; j++) {
+            List<Object> row=res.get(i);
+            int rowLen=row.size();
+            for (int j = 0; j <rowLen; j++) {
                 String t=null;
-                if(row.getCell(j)!=null){
-                    t=row.getCell(j).toString();
+                if(row.get(j)==null){
+                    continue;
                 }
+                t=String.valueOf( row.get(j));
                 if(IdcardUtils.validateCard(t)){
                     idCardIndex=j;
                     if(nameIndex>-1){
                         break;
                     }
                 }
-                if(StringUtil.isChineseName(t)){
-                    nameIndex=j;
-                    if(idCardIndex>-1){
-                        break;
+
+            }
+            if(idCardIndex>-1){
+                List<Object> r1=res.get(i);
+                List<Object> r2=res.get(i+1);
+                int k=0;
+                for (Object c:r1 ){
+                    if(c!=null&&StringUtil.isNotEmpty(c.toString())){
+                        if(StringUtil.isChineseName(
+                                new String[]{c.toString(),
+                                        (r2==null?null:(r2.get(k)==null?null:r2.get(k).toString()))
+                                }
+                        )){
+
+                            nameIndex = k;
+                            break;
+
+                        }
                     }
+                    k++;
+                    continue;
                 }
             }
+
+
+
             if(nameIndex>-1&&idCardIndex>-1){
                 startRowIndex=i;
                 return new int[]{startRowIndex,nameIndex,idCardIndex};
