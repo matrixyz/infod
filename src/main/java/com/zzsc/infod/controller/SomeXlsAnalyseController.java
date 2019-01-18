@@ -6,6 +6,7 @@ import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.model.SomeXlsDto;
 import com.zzsc.infod.service.SomeXlsAnalyseServiceExcel;
 import com.zzsc.infod.util.*;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Controller
@@ -66,7 +68,12 @@ public class SomeXlsAnalyseController {
         if(applications.getAttribute(Constant.someXlsFileApplication)==null){
             list=someXlsAnalyseServiceExcel.getAnalyseExcelUploadDtoList(someXlsUploadRealPath);
         }else{
+
             list=(List<AnalyseExcelUploadDto>)applications.getAttribute(Constant.someXlsFileApplication);
+            if(list.size()==0){
+                list=someXlsAnalyseServiceExcel.getAnalyseExcelUploadDtoList(someXlsUploadRealPath);
+
+            }
         }
         if (StringUtil.isEmpty(analyseExcelUploadDto.getPage()) ) {
             analyseExcelUploadDto.setPage("1");
@@ -158,7 +165,8 @@ public class SomeXlsAnalyseController {
         applications.setAttribute(Constant.someXlsApplication,null);
         if(applications.getAttribute(Constant.someXlsFileApplication)!=null){
             List<AnalyseExcelUploadDto> fileList=( List<AnalyseExcelUploadDto>) applications.getAttribute(Constant.someXlsFileApplication);
-            fileList.remove( fileList.stream().filter(x-> x.getFileName().equals(fileName)).findFirst());
+            AnalyseExcelUploadDto xt=fileList.stream().filter(x-> x.getFileName().equals(fileName)).findFirst().get();
+            fileList.remove(xt );
         }
 
         return Constant.SUCCESS;
@@ -170,11 +178,15 @@ public class SomeXlsAnalyseController {
     @ResponseBody
     @RequestMapping(value="/analyse",method= RequestMethod.GET)
     public String  analyse(  HttpServletRequest request) throws IOException {
-
+        String col=request.getParameter("someOtherColsName");
+        if(col==null|| Pattern.compile("^[A-Z],[A-Z]$").matcher(col).find()==false){
+            return "其他列格式错误，必须格式为  A,B   必须为大写字母";
+        }
         Object target=applications.getAttribute(Constant.someXlsApplication);
         if(target==null){
             try {
-                target=someXlsAnalyseServiceExcel.initByPath(someXlsUploadRealPath,Constant.someXls,new String[]{"4","a","5","b"});
+                target=someXlsAnalyseServiceExcel.initByPath(
+                        someXlsUploadRealPath,Constant.someXls,ExcelUtil.convertCharToNum(col.split(",")[0],col.split(",")[1]));
 
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));

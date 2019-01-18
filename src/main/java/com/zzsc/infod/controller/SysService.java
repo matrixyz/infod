@@ -113,7 +113,7 @@ public class SysService {
                 return "redirect:/MedicalAnalyse/CityListview";
         }
 
-        return "redirect:/FinanceFeedAnalyse/CityListview";
+        return "redirect:/SomeXlsAnalyse/Listview";
 
     }
 

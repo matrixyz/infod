@@ -52,7 +52,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                 if(targetPos==null||targetPos[2]==-1||targetPos[1]==-1)
                     return null;//说明该文件未有取到姓名和身份证号列数据
                 List<String[]> cells =
-                        ExcelUtil.getWorkbookInfo(targetPos[0], new int[]{targetPos[1],targetPos[2],Integer.parseInt(cols[0]),Integer.parseInt(cols[2])}, workbook);
+                        ExcelUtil.getWorkbookInfo(targetPos[0], new int[]{targetPos[1],targetPos[2],Integer.parseInt(cols[0]),Integer.parseInt(cols[1])}, workbook);
 
                 for (String[] item : cells) {
                     SomeXlsDto SomeXlsDto = new SomeXlsDto();
@@ -109,7 +109,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                         SomeXlsDto.setCid(String.valueOf(o));
                     else if(col==Integer.parseInt(cols[0]))
                         SomeXlsDto.setOrgName(String.valueOf(o));
-                    else if(col==Integer.parseInt(cols[2]))
+                    else if(col==Integer.parseInt(cols[1]))
                         SomeXlsDto.setSomeCol(String.valueOf(o));
 
                     SomeXlsDto.setFileName(file.getName());
@@ -281,7 +281,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                     + new String(excelFileTitle.getBytes("gb2312"), "iso8859-1") + ".xls\"");//fileName为下载时用户看到的文件名利用jxl 将数据从后台导出为excel
             response.setHeader("Content-Type", "application/msexcel");
             String[] titles = new String[]{
-                    "序号","姓名","身份证号码","单位","其他列","所在文件名","重复次数"
+                    "序号","姓名","身份证号码","其他列1","其他列2","所在文件名","重复次数"
             };
             List<String[]> tempData=new ArrayList<>();
             int index=1;
@@ -290,9 +290,9 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                         String.valueOf(index),
                         medicalDto.getName(),
                         medicalDto.getCid(),
-                        medicalDto.getOrgName(),
-                        medicalDto.getSomeCol(),
-                        medicalDto.getFileName(),
+                        medicalDto.getOrgName()==null?"":medicalDto.getOrgName().replace("<br>","\n"),
+                        medicalDto.getSomeCol()==null?"":medicalDto.getSomeCol().replace("<br>","\n"),
+                        medicalDto.getFileName()==null?"":medicalDto.getFileName().replace("<br>","\n"),
                         String.valueOf(medicalDto.getRepeatTimes())  };
                 index++;
                 tempData.add(item);

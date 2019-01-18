@@ -27,7 +27,7 @@
                             <div class="col-xs-12">
                                 <!-- search form title start-->
                                 <div class="table-header">
-                                    管理
+                                    [其他数据类型]上传不要求姓名、身份证号码列为指定的列，且可以自定义提取两列其它数据。
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
@@ -55,8 +55,8 @@
                                                     <i class="ace-icon fa fa-pencil "></i>
                                                     </button>
                                                 </span>
-                                                <input class="form-control " type="text" id="form-field-mask-1" value="E,地址,F,其他列"
-                                                       data-rel="tooltip" th:attr="data-original-title='自定义提取重复数据的指定列，默认提取E，F两列，提取列导出到Excel的列名称分别为(地址，其他列)，如要提取其他列，请修改E,F的值即可。'">
+                                                <input class="form-control " type="text" id="someOtherColsName" value="E,F"
+                                                       data-rel="tooltip" th:attr="data-original-title='自定义提取重复数据的指定列，默认提取E，F两列，提取列导出到Excel的列名称分别为(其他列1，其他列2)，如要提取其他列，请修改E,F的值即可。'">
                                                 <span class="input-group-btn">
                                                      <button class="  btn btn-warning  btn-sm" id="btn-analyse-excel" >
                                                     分析并显示
@@ -203,6 +203,72 @@
                         </div>
 
 
+                        <!-- 上传文件等待进度条-->
+                        <div class="modal fade" id="showHelpMp4" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel" aria-hidden="true"  data-keyboard="false" data-backdrop="static">
+                            <div class="modal-dialog"  style="width:1280px; height: 800px;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <h4 class="modal-title"  >
+                                            其他类型数据比对使用说明
+                                        </h4>
+                                    </div>
+                                    <div class="modal-body" style="padding: 0px;">
+
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#s1" aria-expanded="true">第一步</a>
+                                                </li>
+
+                                                <li class="">
+                                                    <a data-toggle="tab" href="#s2" aria-expanded="false">第二步</a>
+                                                </li>
+
+                                                <li>
+                                                    <a data-toggle="tab" href="#s3">第三步</a>
+                                                </li>
+                                                <li>
+                                                    <a data-toggle="tab" href="#s4">第四步</a>
+                                                </li>
+                                                <li>
+                                                    <a data-toggle="tab" href="#s5">注意事项</a>
+                                                </li>
+                                            </ul>
+
+                                            <div class="tab-content">
+                                                <div id="s1" class="tab-pane active">
+                                                   <img src="/static/sys/help/a1.png"/>
+                                                </div>
+
+                                                <div id="s2" class="tab-pane">
+                                                    <img src="/static/sys/help/a2.png"/>
+
+                                                </div>
+
+                                                <div id="s3" class="tab-pane">
+                                                    <img src="/static/sys/help/a3.png"/>
+
+                                                </div>
+                                                <div id="s4" class="tab-pane">
+                                                    <img src="/static/sys/help/a4.png"/>
+                                                </div>
+                                                <div id="s5" class="tab-pane">
+                                                    <img src="/static/sys/help/a5.png"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
+
+
                         <!-- PAGE CONTENT ENDS -->
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -258,7 +324,7 @@
             $('#processBar').css("display","");
             $('#closeMsg').css("display","none");
             $.ajax({
-                url: '[[${analyseType}]]',
+                url: '[[${analyseType}]]?someOtherColsName='+$("#someOtherColsName").val(),
                 type: 'GET',
                 cache: false,
                 processData: false,
@@ -276,6 +342,11 @@
                 }
             });
         });
+        $( "#btn-show-mp4" ).click(function () {
+            $('#showHelpMp4').modal('show');
+
+        });
+
         $( "#btn-analyse-all-excel" ).click(function () {
             $('#postResWarning').modal('show');
             $('#processBar').css("display","");

@@ -171,6 +171,12 @@ public class ExcelUtil {
         }
         return null;
     }
+
+    public static String[] convertCharToNum(String col_a,String col_b){
+        String squ="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return new String[]{String.valueOf(squ.indexOf(col_a.toUpperCase())),String.valueOf(squ.indexOf(col_b.toUpperCase()))};
+    }
+
     public static String getWorkbookInfo(int rowIndex,int colIndex,Workbook workbook){
         Sheet sheet = workbook.getSheetAt(0);
         if(sheet!=null){

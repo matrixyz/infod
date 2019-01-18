@@ -62,17 +62,12 @@
                                     <table id="sample-table-2" class="table table-striped table-bordered table-hover">
                                         <thead>
                                         <tr>
-                                            <th class="center">
-                                                <label class="position-relative">
-                                                    <input type="checkbox" class="ace" />
-                                                    <span class="lbl"></span>
-                                                </label>
-                                            </th>
+
 
                                             <th>姓名</th>
                                             <th>身份证号码</th>
-                                            <th>单位</th>
-                                            <th>其他列</th>
+                                            <th>其他列1</th>
+                                            <th>其他列2</th>
                                             <th>所在文件名</th>
                                             <th>重复次数</th>
 
@@ -83,13 +78,7 @@
                                         <tbody  class="tbody_td_padding_5">
 
                                         <tr th:each="item:${SomeXlsList}">
-                                            <!--复选框-->
-                                            <td class="center">
-                                                <label class="position-relative">
-                                                    <input type="checkbox" class="ace" th:value="${item.fid}" />
-                                                    <span class="lbl"></span>
-                                                </label>
-                                            </td>
+
                                             <!--具体数据-->
 
                                                 <td   th:text="${item.name}"> </td>
