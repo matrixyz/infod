@@ -40,6 +40,9 @@ public class ExcelUtil {
                         rowInfo[j++]=null;
                 }
                 res.add(rowInfo);
+                if (StringUtil.isEmpty(rowInfo[0])&&StringUtil.isEmpty(rowInfo[1])){
+                    break;
+                }
             }
         } catch (Exception e) {
 
@@ -61,10 +64,10 @@ public class ExcelUtil {
         int nameIndex = -1;
         for (int i = 1; i <= rowLength; i++) {
             Row row = sheet.getRow(i);
-            for (int j = 0; j < 8; j++) {
+            for (int j = 0; j < 19; j++) {//通过前8列定位身份证号码列的 列位置和行开始位置
                 String t = null;
                 if (row.getCell(j) != null) {
-                    t = row.getCell(j).toString();
+                    t = row.getCell(j).toString().replace("\"","");
                 }
                 if (IdcardUtils.validateCard(t)) {
                     idCardIndex = j;
@@ -78,7 +81,8 @@ public class ExcelUtil {
                 Row r1= sheet.getRow(i);
                 Row r2= sheet.getRow(i+1);
                 int k=0;
-               for (Cell c:r1 ){
+                for (int g = 0; g < 19; g++){
+                    Cell c =r1.getCell(g);
                    if(c!=null&&StringUtil.isNotEmpty(c.toString())){
                        if(StringUtil.isChineseName(
                                new String[]{c.toString(),
@@ -86,13 +90,12 @@ public class ExcelUtil {
                                }
                                )){
 
-                           nameIndex = k;
+                           nameIndex =g;
                            break;
 
                        }
                    }
-                   k++;
-                   continue;
+
                }
             }
 
@@ -128,6 +131,7 @@ public class ExcelUtil {
                     continue;
                 }
                 t=String.valueOf( row.get(j));
+                t=t.replace("\"","");
                 if(IdcardUtils.validateCard(t)){
                     idCardIndex=j;
                     if(nameIndex>-1){
