@@ -35,9 +35,6 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
 
     private static Logger logger = LoggerFactory.getLogger(SomeXlsAnalyseServiceExcelImpl.class);
 
-
-
-
     @Override
     public List<SomeXlsDto> analyseSomeExcel(File file ,String[] cols) {
         List<SomeXlsDto> SomeXlsDtos=new ArrayList<>();
@@ -84,7 +81,6 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     }
     public List<SomeXlsDto> analyseSomeExcelEventmode(File file,String[] cols) {
 
-
         long startTime = System.currentTimeMillis();
         List<SomeXlsDto> SomeXlsDtos=new ArrayList<>();
 
@@ -99,7 +95,6 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
 
             for (List<Object> re : res) {
                 int col=0;
-
 
                 SomeXlsDto SomeXlsDto=new SomeXlsDto();
                 for (Object o : re) {
@@ -120,12 +115,9 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
 
             }
 
-
         } catch (Exception e) {
             logger.error("methodName = analyseCityExcelEventmode\n"+e.getMessage());
         }
-
-
 
         long endTime = System.currentTimeMillis();
 
@@ -133,15 +125,11 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
 
         return SomeXlsDtos;
     }
-    
-    
 
     @Override
     public File[] getFiles(String path) {
         return FileUtil.getFilesInPath(path);
     }
-
-    
 
     @Override
     public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files,String[] cols) throws Exception {
@@ -182,7 +170,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
         }
         return res;
     }
-   
+
     @Override
     public Map<String, SomeXlsDto> initByPath(String path,String type,String[] cols) throws Exception {
         File[] files=getFiles(path);
@@ -298,7 +286,6 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                 tempData.add(item);
             }
 
-
             ExcelUtil obj = new ExcelUtil();
             obj.exportExcelFix(excelFileTitle,titles,tempData,os);
 
@@ -347,7 +334,6 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                 index++;
                 tempData.add(item);
             }
-
 
             ExcelUtil obj = new ExcelUtil();
             obj.exportExcelFix(excelFileTitle,titles,tempData,os);
