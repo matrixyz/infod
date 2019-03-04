@@ -55,7 +55,7 @@ public class StringUtil {
         if(null==str  ||"".equals(str.trim())){
             return null;
         }else{
-            return str;
+            return str.replace("\"","");
         }
     }
     /**
