@@ -1,10 +1,8 @@
 package com.zzsc.infod.util;
-
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.*;
-
 import javax.servlet.ServletOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 public class ExcelUtil {
     /**
      *
@@ -25,12 +22,9 @@ public class ExcelUtil {
         List<String[]> res=new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0);
         int rowLength=sheet.getLastRowNum();
-
         try {
             for (int i = rowStartIndex; i <= rowLength; i++) {
                 Row row = sheet.getRow(i);
-
-
                 String[] rowInfo=new String[targetColumnIndex.length];
                 int j=0;
                 for (int c  :targetColumnIndex) {
@@ -45,12 +39,10 @@ public class ExcelUtil {
                 }
             }
         } catch (Exception e) {
-
            e.printStackTrace();
         }
         return res;
     }
-
     /**
      *
      * @param workbook 工作表
@@ -75,31 +67,24 @@ public class ExcelUtil {
                         break;
                     }
                 }
-
             }
             if(idCardIndex>-1){
                 Row r1= sheet.getRow(i);
                 Row r2= sheet.getRow(i+1);
-                int k=0;
                 for (int g = 0; g < 19; g++){
                     Cell c =r1.getCell(g);
                    if(c!=null&&StringUtil.isNotEmpty(c.toString())){
                        if(StringUtil.isChineseName(
                                new String[]{c.toString(),
-                                       (r2==null?null:(r2.getCell(k)==null?null:r2.getCell(k).toString()))
+                                       (r2==null?null:(r2.getCell(g)==null?null:r2.getCell(g).toString()))
                                }
                                )){
-
                            nameIndex =g;
                            break;
-
                        }
                    }
-
                }
             }
-
-
             if (nameIndex > -1 && idCardIndex > -1) {
                 startRowIndex = i;
                 return new int[]{startRowIndex, nameIndex, idCardIndex};
@@ -107,11 +92,9 @@ public class ExcelUtil {
             if (i > 20) {
                 return null;
             }
-
         }
         return null;
     }
-
     /**
      * 需要获取的工作表的姓名和身份证列的索引
      * @param res
@@ -138,7 +121,6 @@ public class ExcelUtil {
                         break;
                     }
                 }
-
             }
             if(idCardIndex>-1){
                 List<Object> r1=res.get(i);
@@ -151,19 +133,14 @@ public class ExcelUtil {
                                         (r2==null?null:(r2.get(k)==null?null:r2.get(k).toString()))
                                 }
                         )){
-
                             nameIndex = k;
                             break;
-
                         }
                     }
                     k++;
                     continue;
                 }
             }
-
-
-
             if(nameIndex>-1&&idCardIndex>-1){
                 startRowIndex=i;
                 return new int[]{startRowIndex,nameIndex,idCardIndex};
@@ -171,22 +148,18 @@ public class ExcelUtil {
             if(i>20){
                 return null;
             }
-
         }
         return null;
     }
-
     public static String[] convertCharToNum(String col_a,String col_b){
         String squ="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return new String[]{String.valueOf(squ.indexOf(col_a.toUpperCase())),String.valueOf(squ.indexOf(col_b.toUpperCase()))};
     }
-
     public static String getWorkbookInfo(int rowIndex,int colIndex,Workbook workbook){
         Sheet sheet = workbook.getSheetAt(0);
         if(sheet!=null){
             Row row = sheet.getRow(rowIndex);
             if(row!=null){
-
                 return row.getCell(colIndex).toString();
             }
         }
@@ -205,15 +178,11 @@ public class ExcelUtil {
         int rowLen=cells.size();
         int colLen=titles.length;
         //设置标题样式-颜色
-
-
         // 设置字体
         HSSFFont font = workbook.createFont();
         font.setFontHeightInPoints((short) 20); //字体高度
         font.setColor(HSSFFont.COLOR_NORMAL); //字体颜色
         font.setFontName("黑体"); //字体
-
-
         HSSFCellStyle styleTitle = workbook.createCellStyle();
         styleTitle.setBorderBottom(BorderStyle.THIN); //下边框
         styleTitle.setBottomBorderColor((short)0 ); //下边框
@@ -221,18 +190,13 @@ public class ExcelUtil {
         styleTitle.setLeftBorderColor((short)0 ); //下边框
         styleTitle.setBorderTop(BorderStyle.THIN);//上边框
         styleTitle.setBorderRight(BorderStyle.THIN);//右边框
-
         styleTitle.setFillForegroundColor((short)256 );
         styleTitle.setFont(font);
         styleTitle.setAlignment( HorizontalAlignment.CENTER); //水平布局：居中
         styleTitle.setWrapText(true);
-
-
         HSSFFont fontContent = workbook.createFont();
         fontContent.setFontHeightInPoints((short) 10); //字体高度
         fontContent.setColor(HSSFFont.COLOR_NORMAL); //字体颜色
-
-
         HSSFCellStyle styleContent = workbook.createCellStyle();
         styleContent.setBorderBottom(BorderStyle.THIN); //下边框
         styleContent.setBottomBorderColor((short)0 ); //下边框
@@ -243,19 +207,14 @@ public class ExcelUtil {
         styleContent.setFont(fontContent);
         styleContent.setAlignment(HorizontalAlignment.CENTER); //水平布局：居中
         styleContent.setWrapText(true);
-
         HSSFRow rowFirst = sheet.createRow(0);
         for (int i = 0; i < colLen; i++) {
             HSSFCell cell=rowFirst.createCell(i);
             cell.setCellValue(titles[i]);
             cell.setCellStyle(styleTitle);
-
-
         }
-
         for (int i = 1; i <= rowLen; i++) {
             HSSFRow row = sheet.createRow(i);
-
             for (int j = 0; j < colLen; j++) {
                 HSSFCell cell=row.createCell(j);
                 cell.setCellValue( cells.get(i-1)[j]);
@@ -263,9 +222,7 @@ public class ExcelUtil {
             }
         }
         for (int i = 0; i < colLen; i++) {
-
             sheet.autoSizeColumn(i);//宽度自适应
-
         }
         //输出到磁盘中
         try {
@@ -274,11 +231,9 @@ public class ExcelUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
     public static int switchFileType(File file) throws IOException{
         InputStream inp=new FileInputStream(file);
-
         InputStream is = FileMagic.prepareToCheckMagic(inp);
         FileMagic fm = FileMagic.valueOf(is);
         switch(fm) {
@@ -291,6 +246,5 @@ public class ExcelUtil {
             default:
                 throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
-
     }
 }

@@ -26,9 +26,17 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <!-- search form title start-->
-                                <div class="table-header">
-                                    【县直财供人员】比对数据要求姓名列为C列，身份证号列为D列；【乡镇财供人员】比对数据要求姓名列为C列，身份证号列为D列；
+
+
+                                <div class="table-header"  style="background-color: #87b87f !important;">
+                                    【县直财供人员】比对数据要求姓名列为C列，身份证号列为D列，数据从第2行开始，E列为单位名称，所有数据在第一个工作表中；
                                 </div>
+                                <div class="space-4"> </div>
+                                <div class="table-header">
+                                    【乡镇财供人员】比对数据要求姓名列为C列，身份证号列为D列，数据从第2行开始，E列为单位名称，所有数据在第一个工作表中；
+                                </div>
+
+
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
                                 <form id="form-FinanceFeed"   role="form" th:action="${actionUrl}" METHOD="get">
