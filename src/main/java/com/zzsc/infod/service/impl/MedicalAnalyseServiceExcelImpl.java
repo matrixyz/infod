@@ -333,7 +333,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
         return medicalDtoMap;
     }
-
+    public static StringBuffer xy=new StringBuffer();
     @Override
     public Map<String, MedicalDto> getMedicalFromRow(String type,File[] files) throws Exception {
 
@@ -353,6 +353,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
             if(StringUtil.isChineseName(MedicalDtos.get(0).getName())==false){
                 throw new Exception(err_info+"["+file.getName()+"]");
+
             }
             if(StringUtil.isChineseUid(MedicalDtos.get(0).getCid())==false){
                 throw new Exception(err_info+"["+file.getName()+"]");
@@ -378,6 +379,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
             }
 
         }
+        System.out.println( xy.toString());
         return res;
     }
     @Override
