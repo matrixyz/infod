@@ -351,6 +351,11 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                 err_info=Constant.ERR_MEDICAL_VALLAGE_FILE_FORMAT;
             }
 
+            if(MedicalDtos==null||MedicalDtos.size()==0){
+                throw new Exception(err_info+"["+file.getName()+"]");
+
+            }
+
             if(StringUtil.isChineseName(MedicalDtos.get(0).getName())==false){
                 throw new Exception(err_info+"["+file.getName()+"]");
             }

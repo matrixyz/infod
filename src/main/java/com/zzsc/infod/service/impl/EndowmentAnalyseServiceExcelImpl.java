@@ -333,7 +333,9 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 EndowmentDtos= analyseVallageExcel(file);
                 err_info=Constant.ERR_ENDOWMENT_VALLAGE_FILE_FORMAT;
             }
-
+            if(EndowmentDtos==null||EndowmentDtos.size()==0){
+                throw new Exception(err_info+"["+file.getName()+"]");
+            }
             if(StringUtil.isChineseName(EndowmentDtos.get(0).getName())==false){
                 throw new Exception(err_info+"["+file.getName()+"]");
             }

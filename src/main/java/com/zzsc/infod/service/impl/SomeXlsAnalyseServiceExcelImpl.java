@@ -152,7 +152,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             if(type.equals(Constant.someXls)){
                 SomeXlsDtos= analyseSomeExcel(file,cols);
             }
-            if(SomeXlsDtos==null){
+            if(SomeXlsDtos==null||SomeXlsDtos.size()==0){
                 throw new Exception("未在文件["+file.getName()+"]中找到有效姓名和身份证列!");
 
             }
