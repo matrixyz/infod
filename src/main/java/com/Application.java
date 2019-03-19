@@ -65,6 +65,10 @@ public class Application {
         });
     }
 
+    /**
+     * 下面的方法是实现 SSL 功能
+     * @return
+     */
     @Bean
     public org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory servletContainer() {
         org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory tomcat = new org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory() {
