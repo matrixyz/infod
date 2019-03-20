@@ -133,7 +133,14 @@ public class MedicalAnalyseController {
         }
         return session.getAttribute("uploadProgress").toString();
     }
-
+    @ResponseBody
+    @RequestMapping("/getAnalyseProgress")
+    public String getAnalyseProgress(  ){
+        if(session.getAttribute("analyseProgress")==null){
+            return "0";
+        }
+        return session.getAttribute("analyseProgress").toString();
+    }
     @ResponseBody
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
@@ -170,7 +177,6 @@ public class MedicalAnalyseController {
         for ( MultipartFile file:files){
             String fileName=       file.getOriginalFilename();
             if (file.getSize()<Constant.maxFileSize){
-                //medicalAnalyseServiceExcel.init(res,file,type);
 
                 File file_=new File(uploadPath + "/" + fileName);
                 file.transferTo(file_);
@@ -185,17 +191,10 @@ public class MedicalAnalyseController {
                 info.setResult("上传成功");
                 info.setId(id++);
                 fileList.add(info);
-
-
-
             } else{
                return (Constant.ERR_FILE_MAX_SIZE);
             }
-            //files_.put(fileName,file.getInputStream());
         }
-
-
-
         if(type.equals(Constant.medicalCity)){
            applications.setAttribute(Constant.medicalCityApplication,null);
             applications.setAttribute(Constant.medicalCityFileApplication ,fileList);
@@ -206,80 +205,26 @@ public class MedicalAnalyseController {
              applications.setAttribute(Constant.medicalVallageFileApplication ,fileList);
 
         }
-       // applications.setAttribute(Constant.medicalAllApplication, null);
-       // new MyThread2(files_,uploadPath).start();
-
+        session.setAttribute("uploadProgress", "0");
         return Constant.SUCCESS;
-
-
-
     }
-    /**
-     * 将上传的文件异步的写入文件
-     */
-    class MyThread2 extends Thread {
-        private Map<String,InputStream>  files_;
-        private String finalUploadPath;
 
-        public MyThread2( Map<String,InputStream>  files,String finalUploadPath) {
-            this.files_ = files;
-            this.finalUploadPath = finalUploadPath;
-
-        }
-
-        public void run() {
-
-
-            for (String key : files_.keySet()) {
-                String fileName = key;
-                try {
-                    OutputStream outputStream =new FileOutputStream(new File(finalUploadPath + "\\" + fileName));
-
-                    int bytesWritten = 0;
-                    int byteCount = 0;
-                    byte[] bytes = new byte[1024*1000*10];
-                    while ((byteCount = files_.get(key).read(bytes)) != -1)
-                    {
-                        outputStream.write(bytes, bytesWritten, byteCount);
-                        bytesWritten += byteCount;
-                    }
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }finally {
-                    try {
-                        files_.get(key).close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-
-    }
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws Exception {
-
-        /*Object target=applications.getAttribute(Constant.medicalCityApplication);
+        Object target=applications.getAttribute(Constant.medicalCityApplication);
         if(target==null){
-            target=medicalAnalyseServiceExcel.initByPath(medicalCityUploadRealPath,Constant.medicalCity);
+            try {
+                target=  medicalAnalyseServiceExcel.initByPath(medicalCityUploadRealPath,Constant.medicalCity,request.getSession());
+            } catch (Exception e) {
+                logger.error(ExceptionUtil.getStackTraceInfo(e));
+                return e.getMessage();
+            }
+            if(target==null)
+                return Constant.ERR_NO_MEDICAL_CITY_FILE;
+
             applications.setAttribute(Constant.medicalCityApplicationMap,target);
-        }*/
-        Object target=  null;
-        try {
-            target=  medicalAnalyseServiceExcel.initByPath(medicalCityUploadRealPath,Constant.medicalCity);
-        } catch (Exception e) {
-            logger.error(ExceptionUtil.getStackTraceInfo(e));
-            return e.getMessage();
         }
-
-        if(target==null)
-            return Constant.ERR_NO_MEDICAL_CITY_FILE;
-
-            applications.setAttribute(Constant.medicalCityApplicationMap,target);
 
         if (  target instanceof Map ){
             Map<String, MedicalDto> res=(Map<String, MedicalDto> )target;
@@ -287,9 +232,13 @@ public class MedicalAnalyseController {
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.medicalCityApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
+
                 return Constant.SUCCESS;
             }
         }else if(  target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         logger.error("未找到有效的EXCLE文件");
@@ -303,7 +252,7 @@ public class MedicalAnalyseController {
         if(target==null){
 
             try {
-                target=medicalAnalyseServiceExcel.initByPath(medicalVallageUploadRealPath,Constant.medicalVallage);
+                target=medicalAnalyseServiceExcel.initByPath(medicalVallageUploadRealPath,Constant.medicalVallage,request.getSession());
             } catch (Exception e) {//说明该文件格式异常，姓名身份证号不在对应要求的列
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
@@ -319,9 +268,12 @@ public class MedicalAnalyseController {
                 List<MedicalDto> mapKeyList = new ArrayList<MedicalDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(MedicalDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.medicalVallageApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
                 return Constant.SUCCESS;
             }
         }else if( target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         return  Constant.ERR;

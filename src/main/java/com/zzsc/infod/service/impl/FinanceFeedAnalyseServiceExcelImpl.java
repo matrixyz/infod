@@ -4,10 +4,7 @@ import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.service.FinanceFeedAnalyseServiceExcel;
-import com.zzsc.infod.util.EventModelReadExcel;
-import com.zzsc.infod.util.ExcelUtil;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -303,7 +301,7 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
     }
 
     @Override
-    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(Map<String,FinanceFeedDto> FinanceFeedDtoMap, MultipartFile file,String type) {
+    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(Map<String,FinanceFeedDto> FinanceFeedDtoMap, MultipartFile file,String type ) {
 
 
         List<FinanceFeedDto> FinanceFeedDtos =null;
@@ -329,7 +327,8 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
     }
 
     @Override
-    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(String type,File[] files) throws Exception {
+    public Map<String, FinanceFeedDto> getFinanceFeedFromRow(String type,File[] files,HttpSession session) throws Exception {
+        int progress=0;
 
         Map<String, FinanceFeedDto> res=new HashMap<>();
         for (File file: files) {
@@ -361,7 +360,8 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
                 }
 
             }
-
+            progress++;
+            session.setAttribute("analyseProgress", NumUtil.getProgress(files.length,progress));
         }
         return res;
     }
@@ -371,28 +371,15 @@ public class FinanceFeedAnalyseServiceExcelImpl implements FinanceFeedAnalyseSer
         return getFinanceFeedFromRow(res,  file,type);
     }
     @Override
-    public Map<String, FinanceFeedDto> initByPath(String path,String type) throws Exception {
+    public Map<String, FinanceFeedDto> initByPath(String path,String type,HttpSession session) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
 
-        return getFinanceFeedFromRow(  type,files);
+        return getFinanceFeedFromRow(  type,files,session);
     }
 
-    /*public Map<String, FinanceFeedDto> initMerge(String pathCity,String pathVallage){
-        Map<String, FinanceFeedDto> city=getFinanceFeedFromRow(   Constant.financeFeedCity,getFiles(pathCity));
-        Map<String, FinanceFeedDto> vallage=getFinanceFeedFromRow( Constant.financeFeedVallage,getFiles(pathVallage));
-        Set<String> set=city.keySet();
-        for (String key:set ) {
-            if(vallage.containsKey(key)){
-                vallage.get(key).setRepeatTimesAdd(city.get(key).getRepeatTimes());
 
-            }else {
-                vallage.put(key,city.get(key));
-            }
-        }
-        return vallage;
-    }*/
     /**
      * 将城市、城镇 财政供养数据合并到一个map里
      */

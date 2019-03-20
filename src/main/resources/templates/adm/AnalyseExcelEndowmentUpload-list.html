@@ -257,8 +257,21 @@
         });
         $( "#btn-analyse-excel" ).click(function () {
             $('#postResWarning').modal('show');
-            $(".progress-bar").css("width","100%");
-            $('#postResContent').find("strong").html("正在分析，请稍后...");
+            processBar=setInterval(function (args) {
+                $.ajax({
+                    url:"/EndowmentAnalyse/getAnalyseProgress",
+                    type: 'GET',
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(msg){
+                        $(".progress-bar").css("width",msg+"%");
+                        $('#postResContent').find("strong").html("正在分析，请稍后...   进度 "+msg+"%");
+
+                    }
+                });
+            },2000);
+           // $(".progress-bar").css("width","100%");
             $('#processBar').css("display","");
             $('#closeMsg').css("display","none");
             $.ajax({
@@ -276,7 +289,8 @@
                         $('#processBar').css("display","none");
                         $('#closeMsg').css("display","");
                     }
-
+                    $(".progress-bar").css("width","0px");
+                    clearInterval(processBar);
                 }
             });
         });
@@ -333,6 +347,7 @@
                     }
                 });
             },2000);
+            $('#postResContent').find("strong").html("正在上传，请稍后...   ");
             var files = $('#inputfile').prop('files');
 
             var data = new FormData();
@@ -366,7 +381,7 @@
                             $('#postResContent').find("strong").html(msg);
                             $('#processBar').css("display","none");
                             $('#closeMsg').css("display","");
-
+                            $(".progress-bar").css("width","0px");
                         }
                         clearInterval(processBar);
                     }

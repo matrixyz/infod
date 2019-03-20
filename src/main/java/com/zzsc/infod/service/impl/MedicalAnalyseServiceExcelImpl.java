@@ -4,10 +4,7 @@ import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.MedicalDto;
 import com.zzsc.infod.service.MedicalAnalyseServiceExcel;
-import com.zzsc.infod.util.EventModelReadExcel;
-import com.zzsc.infod.util.ExcelUtil;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -208,7 +206,7 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
     }
     @Override
     public List<MedicalDto> analyseVallageExcel(File file) {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         List<MedicalDto> MedicalDtos=new ArrayList<>();
         Workbook workbook = null;
 
@@ -253,16 +251,17 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                 e.printStackTrace();
             }
         }
-        long endTime = System.currentTimeMillis();
+        //long endTime = System.currentTimeMillis();
 
-        System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
+       // System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
+        logger.warn("分析了医疗 xls文件- -  "+file.getName()+" 数据总数 "+MedicalDtos.size());
 
         return MedicalDtos;
     }
     public List<MedicalDto> analyseVallageExcelEventmode(File file) {
 
 
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         List<MedicalDto> MedicalDtos=new ArrayList<>();
 
         EventModelReadExcel reader=new EventModelReadExcel(2);
@@ -296,9 +295,10 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
 
 
-        long endTime = System.currentTimeMillis();
+       // long endTime = System.currentTimeMillis();
 
-        System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
+        //System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
+        logger.warn("分析了医疗 xlsx文件- -  "+file.getName()+" 数据总数 "+MedicalDtos.size());
 
         return MedicalDtos;
     }
@@ -333,10 +333,10 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
 
         return medicalDtoMap;
     }
-    public static StringBuffer xy=new StringBuffer();
-    @Override
-    public Map<String, MedicalDto> getMedicalFromRow(String type,File[] files) throws Exception {
 
+    @Override
+    public Map<String, MedicalDto> getMedicalFromRow(String type,File[] files,HttpSession session) throws Exception {
+        int progress=0;
         Map<String, MedicalDto> res=new HashMap<>();
         for (File file: files) {
             List<MedicalDto> MedicalDtos =null;
@@ -382,9 +382,10 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
                 }
 
             }
-
+            progress++;
+            session.setAttribute("analyseProgress", NumUtil.getProgress(files.length,progress));
         }
-        System.out.println( xy.toString());
+
         return res;
     }
     @Override
@@ -393,34 +394,13 @@ public class MedicalAnalyseServiceExcelImpl implements MedicalAnalyseServiceExce
         return getMedicalFromRow(res,  file,type);
     }
     @Override
-    public Map<String, MedicalDto> initByPath(String path,String type) throws Exception {
+    public Map<String, MedicalDto> initByPath(String path,String type,HttpSession session) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
-        return getMedicalFromRow(  type,files);
+        return getMedicalFromRow(  type,files,session);
     }
-    /**
-     * 将城市、城镇医疗保险数据合并到一个map里
-     */
-    public Map<String, MedicalDto> initMerge(String pathCity,String pathVallage){
-        Map<String, MedicalDto> city= null;
-        Map<String, MedicalDto> vallage= null;
-        try {
-            city = getMedicalFromRow(   Constant.medicalCity,getFiles(pathCity));
-            vallage=getMedicalFromRow( Constant.medicalVallage,getFiles(pathVallage));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        for (String key:city.keySet()  ) {
-            if(vallage.containsKey(key)){
-                vallage.get(key).setRepeatTimesAdd(city.get(key).getRepeatTimes());
-            }else {
-                vallage.put(key,city.get(key));
-            }
-        }
-        return vallage;
-    }
     public Map<String, MedicalDto> initMerge( Map<String, MedicalDto> city, Map<String, MedicalDto> vallage){
 
 

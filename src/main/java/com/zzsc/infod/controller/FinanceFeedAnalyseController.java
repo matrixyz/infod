@@ -118,7 +118,14 @@ public class FinanceFeedAnalyseController {
         }
         return session.getAttribute("uploadProgress").toString();
     }
-
+    @ResponseBody
+    @RequestMapping("/getAnalyseProgress")
+    public String getAnalyseProgress(  ){
+        if(session.getAttribute("analyseProgress")==null){
+            return "0";
+        }
+        return session.getAttribute("analyseProgress").toString();
+    }
     @ResponseBody
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
@@ -166,9 +173,6 @@ public class FinanceFeedAnalyseController {
                 return (Constant.ERR_FILE_MAX_SIZE);
             }
         }
-
-
-
         if(type.equals(Constant.financeFeedCity)){
             applications.setAttribute(Constant.financeFeedCityApplication,null);
             applications.setAttribute(Constant.financeFeedCityFileApplication ,fileList);
@@ -179,12 +183,7 @@ public class FinanceFeedAnalyseController {
             applications.setAttribute(Constant.financeFeedVallageFileApplication ,fileList);
 
         }
-
-
         return Constant.SUCCESS;
-
-
-
     }
 
     @ResponseBody
@@ -194,7 +193,7 @@ public class FinanceFeedAnalyseController {
         Object target=applications.getAttribute(Constant.financeFeedCityApplication);
         if(target==null){
             try {
-                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUploadRealPath,Constant.financeFeedCity);
+                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedCityUploadRealPath,Constant.financeFeedCity,request.getSession());
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
                 
@@ -211,9 +210,13 @@ public class FinanceFeedAnalyseController {
                 List<FinanceFeedDto> mapKeyList = new ArrayList<FinanceFeedDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.financeFeedCityApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
+
                 return Constant.SUCCESS;
             }
         }else if(  target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         return  Constant.ERR;
@@ -225,7 +228,7 @@ public class FinanceFeedAnalyseController {
         Object target=applications.getAttribute(Constant.financeFeedVallageApplication);
         if(target==null){
             try {
-                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUploadRealPath,Constant.financeFeedVallage);
+                target=financeFeedAnalyseServiceExcel.initByPath(financeFeedVallageUploadRealPath,Constant.financeFeedVallage,request.getSession());
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
@@ -240,9 +243,13 @@ public class FinanceFeedAnalyseController {
                 List<FinanceFeedDto> mapKeyList = new ArrayList<FinanceFeedDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(FinanceFeedDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.financeFeedVallageApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
+
                 return Constant.SUCCESS;
             }
         }else if( target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         return  Constant.ERR;

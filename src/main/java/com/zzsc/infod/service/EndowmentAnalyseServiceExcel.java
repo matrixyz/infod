@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,10 @@ public interface EndowmentAnalyseServiceExcel {
     List<EndowmentDto> analyseVallageExcel( File  file);
     File[] getFiles(String path);
     /*Map<String,EndowmentDto> getEndowmentFromRow(Map<String,EndowmentDto> EndowmentDtoMap,MultipartFile file,String type);*/
-    Map<String,EndowmentDto> getEndowmentFromRow( String type,File[] files) throws Exception;
+    Map<String,EndowmentDto> getEndowmentFromRow( String type,File[] files ,HttpSession session) throws Exception;
     /*Map<String, EndowmentDto> init( Map<String,EndowmentDto>  res,MultipartFile file,String type);*/
-    Map<String, EndowmentDto> initByPath(String path,String type) throws Exception;
-    Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage);
+    Map<String, EndowmentDto> initByPath(String path,String type ,HttpSession session) throws Exception;
+   // Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage);
     Map<String, EndowmentDto> initMerge( Map<String, EndowmentDto> city, Map<String, EndowmentDto> vallage);
     List<AnalyseExcelUploadDto> getAnalyseExcelUploadDtoList(String path  );
     String checkEndowmentDifExcelFile(ServletContext applications, String appType, String errType, String emptyType);

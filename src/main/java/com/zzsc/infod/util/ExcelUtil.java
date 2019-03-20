@@ -34,9 +34,9 @@ public class ExcelUtil {
                         rowInfo[j++]=null;
                 }
                 res.add(rowInfo);
-                if (StringUtil.isEmpty(rowInfo[0])&&StringUtil.isEmpty(rowInfo[1])){
+                /*if (StringUtil.isEmpty(rowInfo[0])&&StringUtil.isEmpty(rowInfo[1])){
                     break;
-                }
+                }*/
             }
         } catch (Exception e) {
            e.printStackTrace();
@@ -105,12 +105,12 @@ public class ExcelUtil {
         int startRowIndex=-1;
         int idCardIndex=-1;
         int nameIndex=-1;
-        for (int i = 1; i <= rowLength; i++) {
+        for (int i = 0; i < rowLength; i++) {
             List<Object> row=res.get(i);
             int rowLen=row.size();
             for (int j = 0; j <rowLen; j++) {
                 String t=null;
-                if(row.get(j)==null){
+                if(row.get(j)==null||"".equals(row.get(j))){
                     continue;
                 }
                 t=String.valueOf( row.get(j));

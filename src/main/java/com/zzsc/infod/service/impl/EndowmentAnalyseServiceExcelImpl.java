@@ -5,11 +5,8 @@ import com.zzsc.infod.model.AnalyseExcelUploadDto;
 import com.zzsc.infod.model.EndowmentDto;
 import com.zzsc.infod.model.MedicalDto;
 import com.zzsc.infod.service.EndowmentAnalyseServiceExcel;
-import com.zzsc.infod.util.EventModelReadExcel;
-import com.zzsc.infod.util.ExcelUtil;
-import com.zzsc.infod.util.FileUtil;
+import com.zzsc.infod.util.*;
 
-import com.zzsc.infod.util.StringUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -20,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -239,8 +237,8 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
     }*/
 
     @Override
-    public Map<String, EndowmentDto> getEndowmentFromRow(String type,File[] files) throws Exception {
-
+    public Map<String, EndowmentDto> getEndowmentFromRow(String type,File[] files,HttpSession session) throws Exception {
+        int progress=0;
         Map<String, EndowmentDto> res=new HashMap<>();
         for (File file: files) {
             List<EndowmentDto> EndowmentDtos =null;
@@ -280,7 +278,9 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
                 }
 
             }
+            progress++;
 
+            session.setAttribute("analyseProgress", NumUtil.getProgress(files.length,progress));
         }
         return res;
     }
@@ -290,22 +290,22 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
         return getEndowmentFromRow(res,  file,type);
     }*/
     @Override
-    public Map<String, EndowmentDto> initByPath(String path,String type) throws Exception {
+    public Map<String, EndowmentDto> initByPath(String path,String type,HttpSession session) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
-        return getEndowmentFromRow(  type,files);
+        return getEndowmentFromRow(  type,files,session);
     }
     /**
      * 将城市、城镇医疗保险数据合并到一个map里
      */
-    public Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage){
+   /* public Map<String, EndowmentDto> initMerge(String pathCity,String pathVallage){
         Map<String, EndowmentDto> city= null;
         Map<String, EndowmentDto> vallage= null;
 
         try {
-            city = getEndowmentFromRow(   Constant.endowmentCity,getFiles(pathCity));
-            vallage = getEndowmentFromRow( Constant.endowmentVallage,getFiles(pathVallage));
+            city = getEndowmentFromRow(   Constant.endowmentCity,getFiles(pathCity),null);
+            vallage = getEndowmentFromRow( Constant.endowmentVallage,getFiles(pathVallage),null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -319,7 +319,7 @@ public class EndowmentAnalyseServiceExcelImpl implements EndowmentAnalyseService
             }
         }
         return vallage;
-    }
+    }*/
     public Map<String, EndowmentDto> initMerge( Map<String, EndowmentDto> city, Map<String, EndowmentDto> vallage){
 
 

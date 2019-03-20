@@ -129,6 +129,14 @@ public class EndowmentAnalyseController {
         }
         return session.getAttribute("uploadProgress").toString();
     }
+    @ResponseBody
+    @RequestMapping("/getAnalyseProgress")
+    public String getAnalyseProgress(  ){
+        if(session.getAttribute("analyseProgress")==null){
+            return "0";
+        }
+        return session.getAttribute("analyseProgress").toString();
+    }
     //上传文件
     @ResponseBody
     @RequestMapping("/upload")
@@ -206,14 +214,11 @@ public class EndowmentAnalyseController {
     @ResponseBody
     @RequestMapping(value="/analyseCity",method= RequestMethod.GET)
     public String  analyseCity(  HttpServletRequest request) throws IOException {
-        for (String key : map.keySet()) {
-            System.out.println(key);
-            System.out.println(map.get(key));
-        }
+
         Object target=applications.getAttribute(Constant.endowmentCityApplication);
         if(target==null){
             try {
-                target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUploadRealPath,Constant.endowmentCity);
+                target=endowmentAnalyseServiceExcel.initByPath(endowmentCityUploadRealPath,Constant.endowmentCity,request.getSession());
 
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
@@ -231,9 +236,13 @@ public class EndowmentAnalyseController {
                 List<EndowmentDto> mapKeyList = new ArrayList<EndowmentDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.endowmentCityApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
+
                 return Constant.SUCCESS;
             }
         }else if(  target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         return  Constant.ERR;
@@ -245,7 +254,7 @@ public class EndowmentAnalyseController {
         Object target=applications.getAttribute(Constant.endowmentVallageApplication);
         if(target==null){
             try {
-                target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUploadRealPath,Constant.endowmentVallage);
+                target=endowmentAnalyseServiceExcel.initByPath(endowmentVallageUploadRealPath,Constant.endowmentVallage,request.getSession());
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
                 return e.getMessage();
@@ -261,9 +270,13 @@ public class EndowmentAnalyseController {
                 List<EndowmentDto> mapKeyList = new ArrayList<EndowmentDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(EndowmentDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.endowmentVallageApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
+
                 return Constant.SUCCESS;
             }
         }else if( target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         return  Constant.ERR;

@@ -616,4 +616,8 @@ public class IdcardUtils  {
         }
         return (iDate >= 1) && (iDate <= datePerMonth);
     }
+
+    public static void main(String[] args) {
+        System.out.println( validateCard("410422193703150033"));
+    }
 }

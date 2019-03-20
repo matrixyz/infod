@@ -6,10 +6,7 @@ import com.zzsc.infod.model.FinanceFeed;
 import com.zzsc.infod.model.FinanceFeedDto;
 import com.zzsc.infod.model.SomeXlsDto;
 import com.zzsc.infod.service.SomeXlsAnalyseServiceExcel;
-import com.zzsc.infod.util.EventModelReadExcel;
-import com.zzsc.infod.util.ExcelUtil;
-import com.zzsc.infod.util.FileUtil;
-import com.zzsc.infod.util.StringUtil;
+import com.zzsc.infod.util.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -23,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -61,13 +59,14 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                     SomeXlsDtos.add(SomeXlsDto);
                 }
                 is.close();
+                logger.warn("分析了养老 xls文件- -  "+file.getName()+"总记录数量 "+SomeXlsDtos.size());
+
             }else{
-                logger.warn("分析了养老 xlsx文件- -  "+file.getName());
 
                 return analyseSomeExcelEventmode(file,cols);
             }
         } catch ( Exception e) {
-            logger.error("methodName = analyseSomeExcel\n"+e.getMessage());
+            logger.error("methodName = analyseSomeExcel\n"+ExceptionUtil.getStackTraceInfo(e));
         }finally {
             try {
                 if(workbook!=null){
@@ -81,7 +80,7 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     }
     public List<SomeXlsDto> analyseSomeExcelEventmode(File file,String[] cols) {
 
-        long startTime = System.currentTimeMillis();
+       // long startTime = System.currentTimeMillis();
         List<SomeXlsDto> SomeXlsDtos=new ArrayList<>();
 
         EventModelReadExcel reader=new EventModelReadExcel(1);
@@ -116,12 +115,14 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
             }
 
         } catch (Exception e) {
-            logger.error("methodName = analyseCityExcelEventmode\n"+e.getMessage());
+
+            logger.error("methodName = analyseCityExcelEventmode\n"+ExceptionUtil.getStackTraceInfo(e));
         }
 
-        long endTime = System.currentTimeMillis();
+        //long endTime = System.currentTimeMillis();
 
-        System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
+       // System.out.println("程序运行时间：" + (endTime - startTime) + "ms"+file.getName());
+        logger.warn("分析了养老 xlsx文件- -  "+file.getName()+" 数据总数 "+SomeXlsDtos.size());
 
         return SomeXlsDtos;
     }
@@ -132,7 +133,8 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
     }
 
     @Override
-    public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files,String[] cols) throws Exception {
+    public Map<String, SomeXlsDto> getSomeXlsFromRow(String type,File[] files,String[] cols, HttpSession session) throws Exception {
+        int progress=0;
 
         Map<String, SomeXlsDto> res=new HashMap<>();
         for (File file: files) {
@@ -166,17 +168,18 @@ public class SomeXlsAnalyseServiceExcelImpl implements SomeXlsAnalyseServiceExce
                 }
 
             }
-
+            progress++;
+            session.setAttribute("analyseProgress", NumUtil.getProgress(files.length,progress));
         }
         return res;
     }
 
     @Override
-    public Map<String, SomeXlsDto> initByPath(String path,String type,String[] cols) throws Exception {
+    public Map<String, SomeXlsDto> initByPath(String path,String type,String[] cols, HttpSession session) throws Exception {
         File[] files=getFiles(path);
         if(files==null||files.length==0)
             return null;
-        return getSomeXlsFromRow(  type,files,cols);
+        return getSomeXlsFromRow(  type,files,cols,session);
     }
     /**
      * 将城市、城镇医疗保险数据合并到一个map里

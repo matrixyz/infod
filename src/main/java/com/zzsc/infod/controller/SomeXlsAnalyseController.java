@@ -96,7 +96,14 @@ public class SomeXlsAnalyseController {
         }
         return session.getAttribute("uploadProgress").toString();
     }
-
+    @ResponseBody
+    @RequestMapping("/getAnalyseProgress")
+    public String getAnalyseProgress(  ){
+        if(session.getAttribute("analyseProgress")==null){
+            return "0";
+        }
+        return session.getAttribute("analyseProgress").toString();
+    }
     @ResponseBody
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
@@ -178,7 +185,7 @@ public class SomeXlsAnalyseController {
         if(target==null){
             try {
                 target=someXlsAnalyseServiceExcel.initByPath(
-                        someXlsUploadRealPath,Constant.someXls,ExcelUtil.convertCharToNum(col.split(",")[0],col.split(",")[1]));
+                        someXlsUploadRealPath,Constant.someXls,ExcelUtil.convertCharToNum(col.split(",")[0],col.split(",")[1]),request.getSession());
 
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTraceInfo(e));
@@ -195,9 +202,13 @@ public class SomeXlsAnalyseController {
                 List<SomeXlsDto> mapKeyList = new ArrayList<SomeXlsDto>(res.values());
                 mapKeyList.sort(Comparator.comparingInt(SomeXlsDto::getRepeatTimes).reversed());
                 applications.setAttribute(Constant.someXlsApplication,mapKeyList);
+                session.setAttribute("analyseProgress", "0");
+
                 return Constant.SUCCESS;
             }
         }else if(  target instanceof List ){
+            session.setAttribute("analyseProgress", "0");
+
             return Constant.SUCCESS;
         }
         return  Constant.ERR;
