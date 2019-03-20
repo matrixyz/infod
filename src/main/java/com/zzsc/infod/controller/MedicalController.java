@@ -25,15 +25,10 @@ import com.zzsc.infod.util.UuidUtil;
 @EnableAutoConfiguration
 @RequestMapping("/Medical")
 public class MedicalController {
-
     @Autowired
     ServletContext applications;
     @Autowired
     HttpSession session;
-
-
-
-
     @RequestMapping(value="/list",method= RequestMethod.GET)
     public String  getAnalyseRusultList( Model model, MedicalDto MedicalDto, @RequestParam(value = "type",required = true) String type  ) throws IOException {
         if (StringUtil.isEmpty(MedicalDto.getPage()) ) {
@@ -94,13 +89,6 @@ public class MedicalController {
         }
         return  "adm/AnalyseExcelResut-list";
     }
-
-
-
-
-
-
-
 
     public static void main(String argv[]){
         SpringApplication.run(MedicalController.class,argv);

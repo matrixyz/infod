@@ -49,8 +49,6 @@ public class SysService {
     @Value( "${someXls.upload.path}")
     private String someXlsUpload;
 
-
-
     @Value( "${sys.err.path}")
     private String sysErrPath;
     @Value( "${sys.info.path}")
@@ -64,17 +62,15 @@ public class SysService {
         sysErrPathRealPath =FileUtil.getBaseJarPath()+"/"+sysErrPath ;
         sysInfoPathRealPath=FileUtil.getBaseJarPath()+"/"+sysInfoPath ;
     }
-    
+
     @Autowired
     ServletContext applications;
 
     @Autowired
     private MedicalAnalyseServiceExcel medicalAnalyseServiceExcel;
 
-
     @RequestMapping(value="/clearAll",method= RequestMethod.GET )
     public String clearAll(HttpServletRequest request){
-
 
         FileUtil.emptyPath( FileUtil.fixRealPath(medicalCityUpload));
         FileUtil.emptyPath( FileUtil.fixRealPath(medicalVallageUpload));
@@ -120,15 +116,12 @@ public class SysService {
     @RequestMapping(value="/help",method= RequestMethod.GET )
     public String help(HttpServletRequest request){
 
-
-
         return "adm/help";
 
     }
     //查看日志信息
     @RequestMapping(value="/log/{type}",method= RequestMethod.GET )
     public String getErrLs(Model model, @PathVariable String type,AnalyseExcelUploadDto analyseExcelUploadDto){
-
 
         model.addAttribute("actionUrl","/SysService/log/"+type);
         List<AnalyseExcelUploadDto> list=null;
@@ -159,7 +152,6 @@ public class SysService {
         File file = new File(path);
         res.setContentType("text/html;charset=utf-8");
 
-
         try {
             PrintWriter out = null;
             out = res.getWriter();
@@ -176,8 +168,6 @@ public class SysService {
             e.printStackTrace();
         }
 
-
-
         return null;
     }
 
@@ -188,7 +178,6 @@ public class SysService {
         String path=FileUtil.getBaseJarPath()+"/"+filePath;
         File file = new File(path);
         res.setContentType("text/html;charset=utf-8");
-
 
         try {
             PrintWriter out = null;
@@ -205,8 +194,6 @@ public class SysService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
         return null;
     }

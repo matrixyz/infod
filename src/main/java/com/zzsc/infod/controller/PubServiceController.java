@@ -1,6 +1,5 @@
 package com.zzsc.infod.controller;
 
- 
 import com.zzsc.infod.constant.Constant;
 import com.zzsc.infod.model.SysUser;
 import com.zzsc.infod.util.MD5Util;
@@ -30,8 +29,6 @@ import java.util.Properties;
 @EnableAutoConfiguration
 @RequestMapping("/PubService")
 public class PubServiceController {
-
-
 
     @Autowired
     ServletContext applications;
@@ -75,7 +72,6 @@ public class PubServiceController {
             PropertiesUtil.setSomeValue(ux.getUserName(), sysUser.getUserPwd(), p);
             return Constant.SUCCESS;
         }
-
 
         return Constant.ERR;
 
@@ -147,7 +143,5 @@ public class PubServiceController {
         VerifyCodeUtil.outputImage(w, h, response.getOutputStream(), verifyCode );
 
     }
-
-
 
 }

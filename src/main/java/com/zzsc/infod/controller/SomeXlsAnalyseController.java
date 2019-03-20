@@ -142,19 +142,13 @@ public class SomeXlsAnalyseController {
             }
         }
 
-
-
         if(type.equals(Constant.someXls)){
           applications.setAttribute(Constant.someXlsApplication,null);
             applications.setAttribute(Constant.someXlsFileApplication ,fileList);
 
         }
 
-
-
         return Constant.SUCCESS;
-
-
 
     }
     @ResponseBody
@@ -172,8 +166,6 @@ public class SomeXlsAnalyseController {
         return Constant.SUCCESS;
 
     }
-
-
 
     @ResponseBody
     @RequestMapping(value="/analyse",method= RequestMethod.GET)
@@ -211,7 +203,6 @@ public class SomeXlsAnalyseController {
         return  Constant.ERR;
     }
 
-
     @ResponseBody
     @RequestMapping(value="/analyseAll",method= RequestMethod.GET)
     public String  analyseAll(  HttpServletRequest request) throws IOException {
@@ -230,7 +221,6 @@ public class SomeXlsAnalyseController {
             Map<String, SomeXlsDto> someXls=(Map<String, SomeXlsDto> )someXlsApplicationMap;
             all=someXlsAnalyseServiceExcel.initMerge(financeFeed,someXls);
         }
-
 
         if(!all.isEmpty()){
             List<FinanceFeedDto> mapKeyList = new ArrayList<FinanceFeedDto>(all.values());
@@ -276,5 +266,5 @@ public class SomeXlsAnalyseController {
         someXlsAnalyseServiceExcel.getListSomeXlsDifExcelFileAll(applications,response,Constant.someXlsAllApplication,Constant.dataTitleSomeXlsAll);
         return null;
     }
-   
+
 }

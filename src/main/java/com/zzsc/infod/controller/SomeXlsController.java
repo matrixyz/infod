@@ -27,8 +27,6 @@ public class SomeXlsController {
     @Autowired
     ServletContext applications;
 
-
-
     @RequestMapping(value="/list",method= RequestMethod.GET)
     public String  getAnalyseRusultList( Model model, SomeXlsDto financeFeedDto, @RequestParam(value = "type",required = true) String type  ) throws IOException {
         if (StringUtil.isEmpty(financeFeedDto.getPage()) ) {
@@ -65,11 +63,9 @@ public class SomeXlsController {
                 model.addAttribute("pageInfo",pageInfo);
                model.addAttribute("SomeXlsList",lists.subList(pageInfo.getFromIndex(),pageInfo.getToIndex()));
 
-
                 model.addAttribute("queryParams",financeFeedDto);
                 model.addAttribute("type",type);
             }
-
 
         }else{
             flag=true;
@@ -91,11 +87,6 @@ public class SomeXlsController {
         }
         return  "adm/AnalyseExcelSomeXlsResut-list";
     }
-
-
-
-
-
 
     public static void main(String argv[]){
         SpringApplication.run(SomeXlsController.class,argv);
