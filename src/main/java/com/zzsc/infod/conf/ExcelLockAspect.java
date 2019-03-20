@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.servlet.ServletContext;
-
-@Aspect
-@Component
+//禁止了
+//@Aspect
+//@Component
 public class ExcelLockAspect {
 
     private Logger logger =   LoggerFactory.getLogger(this.getClass());
