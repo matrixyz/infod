@@ -27,8 +27,9 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <!-- search form title start-->
-                                <div class="table-header" th:text="${dataTitle}">
-                                    管理
+                                <div class="table-header"  >
+                                    <span th:text="${dataTitle}"></span>
+                                    <span th:text="${dataCount}" style="font-size: 20px;color:#ff9900;"></span>&nbsp; 条
                                 </div>
                                 <div class="space-4"> </div>
                                 <!-- 查询输入表单开始-->
@@ -47,11 +48,7 @@
                                             </a>
 
                                         </td>
-
-
-
                                     </tr>
-
                                 </table>
                                 <!-- 分割线-->
                                 <div class="space-4"> </div>

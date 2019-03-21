@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 身份证号码有效性校验工具类
@@ -617,7 +619,22 @@ public class IdcardUtils  {
         return (iDate >= 1) && (iDate <= datePerMonth);
     }
 
+    /**
+     * 判断18或15位身份证，只验证是不是18为或15位数字
+     */
+    public static boolean checkIdCardNumbers(String str){
+        if(StringUtil.isEmpty(str))
+            return false;
+        Pattern p=Pattern.compile("^(([0-9]{15})|([0-9xX]{18}))$");
+        Matcher m=p.matcher(str);
+        if(m.find())
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        System.out.println( validateCard("410422193703150033"));
+        System.out.println( checkIdCardNumbers("41041119885623125X"));
     }
 }

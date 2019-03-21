@@ -33,10 +33,10 @@ public class ExcelUtil {
                     else
                         rowInfo[j++]=null;
                 }
-                res.add(rowInfo);
-                /*if (StringUtil.isEmpty(rowInfo[0])&&StringUtil.isEmpty(rowInfo[1])){
-                    break;
-                }*/
+
+                if (StringUtil.isNotEmpty(rowInfo[0])&&StringUtil.isNotEmpty(rowInfo[1])){
+                    res.add(rowInfo);
+                }
             }
         } catch (Exception e) {
            e.printStackTrace();
@@ -61,7 +61,7 @@ public class ExcelUtil {
                 if (row.getCell(j) != null) {
                     t = row.getCell(j).toString().replace("\"","");
                 }
-                if (IdcardUtils.validateCard(t)) {
+                if (IdcardUtils.checkIdCardNumbers(t)) {
                     idCardIndex = j;
                     if (nameIndex > -1) {
                         break;

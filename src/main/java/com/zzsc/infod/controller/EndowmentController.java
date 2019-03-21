@@ -65,7 +65,8 @@ public class EndowmentController {
             }else {
                 int pageNum= Integer.parseInt(EndowmentDto.getPage());
                 long targetCount=lists.stream().filter(x-> x.getRepeatTimes()>0).count();
-                model.addAttribute("dataTitle",dataTitle+targetCount+" 条");
+                model.addAttribute("dataTitle",dataTitle );
+                model.addAttribute("dataCount", targetCount );
                 PageBean pageInfo=new PageBean();
                 pageInfo.setTotalCount(lists.size());
                 pageInfo.setPageNo(pageNum);
