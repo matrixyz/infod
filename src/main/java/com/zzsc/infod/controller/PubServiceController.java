@@ -65,7 +65,7 @@ public class PubServiceController {
     @RequestMapping(value="users",method= RequestMethod.PUT )
     public  String  SetUsers(@RequestBody SysUser sysUser, HttpServletRequest request ) throws UnsupportedEncodingException {
         Properties p =PropertiesUtil.getCommonCgf("user");
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(false);
         Object u=session.getAttribute("user");
         if(u!=null){
             SysUser ux=(SysUser)u;
@@ -78,8 +78,8 @@ public class PubServiceController {
     }
 
     @RequestMapping(value="getUserspwdForm",method= RequestMethod.GET )
-    public  String  getUserspwdForm( ) throws  Exception {
-
+    public  String  getUserspwdForm(HttpServletRequest req ) throws  Exception {
+        req.setAttribute("currUrl",req.getRequestURL());
         return "adm/chg-pwd-form";
 
     }

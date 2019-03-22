@@ -163,7 +163,13 @@
                 contentType:'application/json;charset=UTF-8', //contentType很重要
                 success: function (msg) {
                     $("#postResWarning").modal('show');
-                    $("#postResContent").html(msg);
+                    if(msg=='SUCCESS')
+                        $("#postResContent").html("修改成功!");
+                    else{
+
+                        $("#postResContent").html(msg);
+                    }
+
                 },
                 complete: function (data) {
 

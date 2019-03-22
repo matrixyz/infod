@@ -145,15 +145,20 @@ public class MedicalAnalyseController {
     @RequestMapping("/upload")
     public String  fileUpload(@RequestParam(value = "inputfile",required = false) MultipartFile[] files,
                                                    @RequestParam(value = "type",required = true) String type  ) throws IOException {
+
+
         for ( MultipartFile file:files) {
             String fileName = file.getOriginalFilename();
+
+
             if(!fileName.endsWith(Constant.FILE_EXT_XLS)&&!fileName.endsWith(Constant.FILE_EXT_XLSX)){
                 return Constant.ERR_UPLOAD_FILE_TYPE;
             }
         }
+        session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,100));
 
         String uploadPath=null;
-        session.setAttribute("uploadProgress",0);
+
         Map<String,InputStream> files_;
         files_ = new HashMap<>();
         if(files.length>0){
@@ -170,7 +175,7 @@ public class MedicalAnalyseController {
         }
 
 
-        int progress=0;
+
         Map<String, MedicalDto> res =new HashMap<>();
         List<AnalyseExcelUploadDto> fileList=new ArrayList<>();
         int id=1;
@@ -180,8 +185,6 @@ public class MedicalAnalyseController {
 
                 File file_=new File(uploadPath + "/" + fileName);
                 file.transferTo(file_);
-                progress++;
-                session.setAttribute("uploadProgress", NumUtil.getProgress(files.length,progress));
 
                 AnalyseExcelUploadDto info=new AnalyseExcelUploadDto();
                 info.setFileName(fileName);
