@@ -28,7 +28,7 @@ public class FileUtil {
         if(files!=null&&files.length>0){
             for (File file:files  ) {
                 file.delete();
-                System.out.println("sys had delete file "+path);
+
             }
         }
 
